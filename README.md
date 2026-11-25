@@ -44,11 +44,26 @@ It replaces the stock assistant on Yandex and VK speakers, and also runs on a Ra
 | --- | --- | --- |
 | Yandex Station Mini 3 | `yandex-pickle` | daily use |
 | Yandex Station Midi | `yandex-midi` | works, some parts still unchecked |
-| VK Capsula Mini | `vk-capsula-mini` | early: it installs and links, voice is not confirmed yet |
-| Yandex Station Micro / Lite | `yandex-micro` | experimental |
-| Raspberry Pi 4/5 (HDMI screen, Bluetooth speaker) | `rpi` | early |
-| Android TV stick | `android-tv` | works, some parts still unchecked |
+| VK Capsula Mini | `vk-capsula-mini` | works, but its wake word doesn't yet: use the talk key |
+| Yandex Station Micro / Lite | `yandex-micro` | works (one firmware only) |
+| Raspberry Pi 4/5 (HDMI screen, Bluetooth speaker) | `rpi` | works; screen hot-plug is untested |
+| Android TV stick | `android-tv` | works |
 | Simulated speaker and screen | `sim`, `sim-tv` | for development |
+
+### Features by device
+
+| Feature | Mini 3 | Midi | Micro / Lite | Capsula Mini | Raspberry Pi | Android TV |
+| --- | :-: | :-: | :-: | :-: | :-: | :-: |
+| Voice with the stock wake word | ✅ | ✅ | ✅ | talk key only | via a room speaker¹ | via a room speaker¹ |
+| Custom wake word² | ✅ | ✅ | ✅ | ✅ | — | — |
+| Spotify Connect | ✅ | ✅ | — | — | — | ✅ |
+| AirPlay | ✅ | ✅ | — | — | ✅ | ✅ |
+| Bluetooth receive | — | ✅ | ✅ | — | ✅ | — |
+| Multiroom groups | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Screen, video, HDMI-CEC | — | — | — | — | ✅ | ✅ |
+
+1. These devices have no microphone of their own: a speaker in the same room listens for them.
+2. New, and not yet tried on real hardware.
 
 What each device has and hasn't been tested on yet is listed under *Open items* in [AGENTS.md](AGENTS.md).
 

@@ -1,8 +1,8 @@
-# Experimental Yandex Station Micro v1.2 (Lite)
+# Cadence on a Yandex Station Micro v1.2 (Lite)
 
 ## Quick path
 
-**Experimental.** Only one firmware is supported (below). You need:
+Only one firmware is supported (below). You need:
 - root ADB on port 5555 that survives reboots. The [provisioning proxy](../yandex/README.md) keeps it on.
 - Router rules that block Yandex's OTA servers for the speaker.
 

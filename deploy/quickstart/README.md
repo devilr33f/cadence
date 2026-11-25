@@ -68,7 +68,7 @@ Each speaker has its own guide:
 | --- | --- |
 | Yandex Station Mini 3 (`yandex-pickle`) | [deploy/pickle](../pickle/README.md) |
 | Yandex Station Midi (`yandex-midi`) | [deploy/midi](../midi/README.md) |
-| Yandex Station Micro / Lite (`yandex-micro`, experimental) | [deploy/micro](../micro/README.md) |
+| Yandex Station Micro / Lite (`yandex-micro`) | [deploy/micro](../micro/README.md) |
 | VK Capsula Mini (`vk-capsula-mini`) | [deploy/vk-capsula-mini](../vk-capsula-mini/README.md) |
 | Raspberry Pi 4/5 | [deploy/rpi](../rpi/README.md) |
 | Android TV stick | [android](../../android/README.md) |
