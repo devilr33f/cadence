@@ -1,0 +1,4 @@
+#!/bin/sh
+# cadence's stand-in for the vendor's swupdate.sh (rule 1): no image is written to a slot, and no slot is switched
+logger -t cadence "vendor ota disabled"
+exit 1

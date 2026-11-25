@@ -1,0 +1,1 @@
+mirror_stop { session_id: "mir-1" reason: "sender" }

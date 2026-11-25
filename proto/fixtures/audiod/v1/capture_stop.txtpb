@@ -1,0 +1,1 @@
+capture_stop { session_id: "sess-1" }

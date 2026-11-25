@@ -1,0 +1,4 @@
+capability_state {
+  capability: "media.mpv"
+  json: "{\"screen\":true,\"applied\":[\"profile\",\"scale\"],\"pending\":[\"hwdec\"],\"refused\":[\"userAgent\"]}"
+}

@@ -1,0 +1,1 @@
+pcm { seq: 1 sample_rate: 48000 channels: 2 samples: "\x00\x00\x00\x00\x00\x00\x80\x3f" mono_ns: 123456789 }

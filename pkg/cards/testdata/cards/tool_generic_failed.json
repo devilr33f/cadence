@@ -1,0 +1,26 @@
+{
+ "version": 1,
+ "id": "tool-ad4b522b2ab333e3a7",
+ "revision": 1,
+ "fallbackText": "notes_add: Не получилось",
+ "root": {
+  "card": {
+   "title": "notes_add",
+   "subtitle": "Инструмент",
+   "icon": "warning",
+   "tone": "TONE_DANGER",
+   "children": [
+    {
+     "state": {
+      "label": "Не получилось",
+      "kind": "STATE_KIND_UNAVAILABLE"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state"
+ ]
+}

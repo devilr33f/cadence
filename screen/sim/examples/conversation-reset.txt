@@ -1,0 +1,15 @@
+# a reset turn (by voice or the dashboard) in the assistant drawer: the old chat fades, the confirmation starts the new one
+start --headless --lang ru --size 1280x720
+wait-for route:home
+hold BACK 800
+wait-for drawer
+send {"assistant_turn": {"turnId": "t-1", "state": "listening", "transcript": "какая завтра погода"}}
+send {"assistant_turn": {"turnId": "t-1", "revision": 2, "state": "speaking", "reply": "Завтра будет дождь."}}
+wait 350
+screenshot sim-out/conversation-reset-before.png
+send {"assistant_turn": {"turnId": "t-1", "revision": 3, "state": "resting", "reply": "Начинаем заново.", "conversationReset": true}}
+wait 60
+screenshot sim-out/conversation-reset-fading.png
+wait 350
+screenshot sim-out/conversation-reset-after.png
+quit

@@ -1,0 +1,57 @@
+{
+  "sessionId": "video-31",
+  "ref": "c:series",
+  "episode": "7",
+  "choices": {
+    "quality": "1080",
+    "voiceover": "AniLibria"
+  },
+  "options": {
+    "groups": [
+      {
+        "kind": "voiceover",
+        "label": "Voiceover",
+        "choices": [
+          {
+            "id": "AniLibria",
+            "label": "AniLibria",
+            "stream": {
+              "quality": 1080
+            }
+          },
+          {
+            "id": "Crunchyroll",
+            "label": "Crunchyroll",
+            "stream": {
+              "quality": 720
+            }
+          },
+          {
+            "id": "dead",
+            "label": "Unavailable dub",
+            "unavailable": true,
+            "reason": "no_seeders"
+          }
+        ]
+      },
+      {
+        "kind": "quality",
+        "label": "Quality",
+        "choices": [
+          {
+            "id": "1080",
+            "label": "1080p"
+          },
+          {
+            "id": "720",
+            "label": "720p"
+          }
+        ]
+      }
+    ],
+    "selected": {
+      "quality": "1080",
+      "voiceover": "AniLibria"
+    }
+  }
+}

@@ -1,0 +1,134 @@
+{
+ "version": 1,
+ "id": "remote-kitchen",
+ "revision": 1,
+ "fallbackText": "Кухня: Играет",
+ "root": {
+  "card": {
+   "title": "Кухня",
+   "subtitle": "Кухня · играет",
+   "icon": "music",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "row": {
+      "gap": "GAP_M",
+      "children": [
+       {
+        "image": {
+         "ref": "img:AAAAAAAAAAAAAAAAAAAASxyz",
+         "alt": "Обложка",
+         "aspect": "ASPECT_SQUARE"
+        }
+       },
+       {
+        "column": {
+         "gap": "GAP_S",
+         "children": [
+          {
+           "text": {
+            "text": "Song",
+            "style": "TEXT_STYLE_TITLE"
+           }
+          },
+          {
+           "text": {
+            "text": "Artist",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "Album",
+            "style": "TEXT_STYLE_META"
+           }
+          },
+          {
+           "text": {
+            "text": "Spotify Connect",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "slider": {
+      "value": 10,
+      "max": 200,
+      "step": 10,
+      "label": "Позиция",
+      "action": {
+       "id": "a:seek"
+      },
+      "timeline": {
+       "anchorAtMs": "1800000000000",
+       "rate": 1
+      }
+     }
+    },
+    {
+     "row": {
+      "gap": "GAP_S",
+      "children": [
+       {
+        "button": {
+         "label": "Пауза",
+         "icon": "pause",
+         "primary": true,
+         "action": {
+          "id": "a:pause"
+         }
+        }
+       },
+       {
+        "button": {
+         "label": "Дальше",
+         "icon": "next",
+         "action": {
+          "id": "a:next"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "slider": {
+      "value": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Кухня",
+      "valueLabel": "20 %",
+      "action": {
+       "id": "a:vol"
+      }
+     }
+    }
+   ],
+   "actions": [
+    {
+     "label": "Играть и здесь",
+     "icon": "share_to_speaker",
+     "action": {
+      "id": "a:join"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "button",
+  "card",
+  "column",
+  "image",
+  "row",
+  "slider",
+  "slider.timeline",
+  "text"
+ ]
+}

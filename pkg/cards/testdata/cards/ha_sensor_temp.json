@@ -1,0 +1,25 @@
+{
+ "version": 1,
+ "id": "ha-ea0bec9fab2968cbb9",
+ "revision": 1,
+ "fallbackText": "Temperature: 21.5",
+ "root": {
+  "card": {
+   "title": "Temperature",
+   "icon": "sensor",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "value": {
+      "value": "21,5",
+      "unit": "°C"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "value"
+ ]
+}

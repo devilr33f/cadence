@@ -1,0 +1,36 @@
+{
+ "version": 1,
+ "id": "ha-d6fefd7bbae73474d6",
+ "revision": 1,
+ "fallbackText": "Front door: Заперто",
+ "root": {
+  "card": {
+   "title": "Front door",
+   "icon": "lock",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Заперто",
+      "kind": "STATE_KIND_LOCKED"
+     }
+    }
+   ],
+   "actions": [
+    {
+     "label": "Открыть замок",
+     "icon": "unlocked",
+     "action": {
+      "id": "a:1",
+      "confirm": "Открыть замок «Front door»?"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "button",
+  "card",
+  "state"
+ ]
+}

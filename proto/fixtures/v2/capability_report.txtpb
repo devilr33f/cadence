@@ -1,0 +1,10 @@
+capability_report {
+  descriptors {
+    id: "audio.output"
+    version: 3
+    config_schema: "{\"type\":\"object\"}"
+    state_schema: "{\"type\":\"object\"}"
+    secrets { name: "api_key" description: "upstream key" }
+  }
+  hash: "\x0a\x0b\x0c\x0d"
+}

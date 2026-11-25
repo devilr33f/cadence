@@ -1,0 +1,95 @@
+# the frame profile, repeatable: focus moves and scrolling through home's rows, a title page, then an idle stretch.
+# each block resets the profile and prints one `perf` line (frame time percentiles, ms). 1080p, as the stick
+#   build/screen-sim/sim run screen/sim/examples/perf.txt
+#   build/screen-sim/sim --windowed run screen/sim/examples/perf.txt   (with start --windowed --vsync: real pacing)
+
+start --headless --lang ru --size 1920x1080 --async-images
+
+wait-for route:home
+wait 2000
+
+# along the first row and back, then down through the rows (each a scroll), and along a lower row
+perf reset
+press DOWN
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press LEFT
+press LEFT
+press LEFT
+press LEFT
+press LEFT
+press LEFT
+press LEFT
+press LEFT
+press LEFT
+press LEFT
+press DOWN
+press DOWN
+press DOWN
+press DOWN
+press DOWN
+press DOWN
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press UP
+press UP
+press UP
+press UP
+press UP
+press UP
+wait 600
+perf home
+
+# the title page: its detail loads, then focus walks its buttons and episodes
+send {"route": {"route": "title", "ref": "ref-tg-1"}}
+wait-for route:title
+wait 1500
+perf reset
+press DOWN
+press DOWN
+press DOWN
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press LEFT
+press LEFT
+press LEFT
+press LEFT
+press LEFT
+press LEFT
+press UP
+press UP
+press UP
+wait 600
+perf title
+
+# back home: the page is built again
+perf reset
+press BACK
+wait-for route:home
+wait 1500
+perf back-home
+
+# nothing moves: idle turns and frames should be near zero
+perf reset
+wait 3000
+perf idle
+
+quit

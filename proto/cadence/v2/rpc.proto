@@ -1,0 +1,56 @@
+syntax = "proto3";
+package cadence.v2;
+
+import "cadence/cards/v1/cards.proto";
+import "cadence/v2/session.proto";
+
+option go_package = "git.shino.boo/devilreef/cadence/pkg/gen/cadence/v2;cadencev2";
+
+// device -> server: a json call (D5) to a server method (catalog.search, media.queue, card.action, ...; the names are
+// pkg/rpc's). id is the device's, unique among its open calls. json is the method's args object; its content is never
+// logged (refs, queries and titles are private, rule 8)
+message RpcRequest {
+  string id = 1;
+  string method = 2;
+  string json = 3;
+  // the server keeps the call open and pushes RpcEvent frames (search results per provider, card revisions) until it
+  // sends one with last, or the device sends RpcCancel
+  bool subscribe = 4;
+  // the caller's span (the device's rpc client span): the server's handling is its child
+  TraceContext trace = 5;
+}
+
+// server -> device: the one answer to a call; for a subscribed call it opens the stream (RpcEvent follows) unless
+// status is not ok. status is a token: ok, invalid, unknown_method, not_found, refused, expired, unavailable, busy,
+// internal; json is the result on ok, else {"code": ...} with no upstream text
+message RpcResponse {
+  string id = 1;
+  string status = 2;
+  string json = 3;
+  // the page of a method that answers cards (media.panel, tasks.list, tasks.item), validated by pkg/cards;
+  // wire-compatible with the bytes it was before W0-C2
+  cadence.cards.v1.Page page = 4;
+  // card.action's typed answer (json keeps its {code, toast, revision} for one release)
+  cadence.cards.v1.CardActionResult card_action = 5;
+  // the server's span of the call
+  TraceContext trace = 6;
+}
+
+// server -> device: the next message of a subscribed call
+message RpcEvent {
+  string id = 1;
+  // 1, 2, ... per call, so the device sees a gap
+  uint32 seq = 2;
+  string json = 3;
+  // the stream is over; nothing follows for this id
+  bool last = 4;
+  // as RpcResponse.page
+  cadence.cards.v1.Page page = 5;
+  // the server's span that produced the event
+  TraceContext trace = 6;
+}
+
+// device -> server: end a subscribed call (the drawer or the panel closed); an unknown or finished id is ignored
+message RpcCancel {
+  string id = 1;
+}

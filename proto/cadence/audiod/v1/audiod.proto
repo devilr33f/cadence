@@ -1,0 +1,1387 @@
+syntax = "proto3";
+package cadence.audiod.v1;
+
+option go_package = "git.shino.boo/devilreef/cadence/pkg/gen/cadence/audiod/v1;audiodv1";
+
+message Envelope {
+  oneof body {
+    HealthPing ping = 1;
+    HealthPong pong = 2;
+    Configure configure = 3;
+    Ready ready = 4;
+    CaptureStart capture_start = 5;
+    CaptureStop capture_stop = 6;
+    MicOpus mic_opus = 7;
+    StreamStart stream_start = 8;
+    AudioDown audio_down = 9;
+    StreamEnd stream_end = 10;
+    StreamDone stream_done = 11;
+    VolumeSet volume_set = 12;
+    VolumeApplied volume_applied = 13;
+    Tone tone = 14;
+    LogLine log_line = 15;
+    CaptureFailed capture_failed = 16;
+    StreamCancel stream_cancel = 17;
+    UrlPlay url_play = 18;
+    MediaCommand media_command = 19;
+    CommandResult command_result = 20;
+    MediaState media_state = 21;
+    DuckSet duck_set = 22;
+    MediaSettings media_settings = 23;
+    VizFrame viz_frame = 24;
+    SoloistConfig soloist_config = 25;
+    SoloistStatus soloist_status = 26;
+    SoloistProbe soloist_probe = 27;
+    SoloistProbeResult soloist_probe_result = 28;
+    SoloistSwitch soloist_switch = 29;
+    SenderVolume sender_volume = 30;
+    SenderVolumeSet sender_volume_set = 31;
+    AirplayConfig airplay_config = 32;
+    AirplayStatus airplay_status = 33;
+    WakeEvent wake_event = 34;
+    CommandWord command_word = 35;
+    MuteState mute_state = 36;
+    VendorStatus vendor_status = 37;
+    ToneStart tone_start = 38;
+    ToneStop tone_stop = 39;
+    ToneState tone_state = 40;
+    LogsSet logs_set = 41;
+    ExternalSource external_source = 42;
+    ExternalAction external_action = 43;
+    SessionControl session_control = 44;
+    RouteControl route_control = 45;
+    TapConfig tap_config = 46;
+    MirrorState mirror_state = 47;
+    AirplayPin airplay_pin = 48;
+    OutputDelay output_delay = 49;
+    HlsCast hls_cast = 50;
+    HlsPlaybackInfo hls_playback_info = 51;
+    SystemVolume system_volume = 52;
+    // multiroom playback (media.group): cadenced -> audiod, and audiod -> cadenced
+    GroupConfig group_config = 53;
+    GroupStatus group_status = 54;
+    // a group's acoustic calibration: cadenced -> the leader's audiod, and its result back
+    GroupCalibrate group_calibrate = 55;
+    GroupCalibrated group_calibrated = 56;
+    // bluetooth receive (the bluetooth capability): cadenced owns bluez and bluealsa, audiod only plays the pcm
+    BluetoothConfig bluetooth_config = 57;
+    BluetoothStream bluetooth_stream = 58;
+    BluetoothStreamEnd bluetooth_stream_end = 59;
+    BluetoothPlayer bluetooth_player = 60;
+    BluetoothControl bluetooth_control = 61;
+    // tracing: audiod -> cadenced, a stage of a capture or a stream (cadenced turns it into a span event)
+    TraceMark trace_mark = 62;
+    // audiod -> cadenced: one opt-in ultrasonic tracking window, or the tracking state changing
+    GroupTracked group_tracked = 63;
+    // the custom wake word (wake.custom): cadenced -> audiod whether to listen, audiod -> cadenced the microphone
+    WakeListen wake_listen = 64;
+    MicPcm mic_pcm = 65;
+  }
+}
+
+enum Backend {
+  BACKEND_UNSPECIFIED = 0;
+  BACKEND_ALSA = 1;
+  BACKEND_FILE = 2;
+  // android's aaudio (the android-tv app's audiod, in process): output only on the stick, which has no microphone
+  BACKEND_AAUDIO = 3;
+}
+
+enum ToneKind {
+  TONE_KIND_UNSPECIFIED = 0;
+  TONE_KIND_WAKE = 1;
+  TONE_KIND_DONE = 2;
+  TONE_KIND_ERROR = 3;
+  // looped by ToneStart only; a one-shot Tone with this kind is invalid
+  TONE_KIND_ALARM = 4;
+  TONE_KIND_TIMER = 5;
+  // a reminder's soft two-note chime: a one-shot Tone, or a segment of a ring
+  TONE_KIND_REMINDER = 6;
+}
+
+enum LogLevel {
+  LOG_LEVEL_UNSPECIFIED = 0;
+  LOG_LEVEL_DEBUG = 1;
+  LOG_LEVEL_INFO = 2;
+  LOG_LEVEL_WARN = 3;
+  LOG_LEVEL_ERROR = 4;
+}
+
+message HealthPing {
+  uint64 seq = 1;
+}
+
+message HealthPong {
+  uint64 seq = 1;
+  string version = 2;
+}
+
+message CaptureConfig {
+  Backend backend = 1;
+  string device = 2;
+  string file_path = 3;
+  uint32 sample_rate = 4;
+  uint32 channels = 5;
+  // alsa backend: frames per period, 0 = the device default
+  uint32 period_frames = 6;
+  // alsa backend: device buffer in frames, 0 = the device default
+  uint32 buffer_frames = 7;
+  // the mic and reference channels in the capture stream, empty = one mic
+  MicLayout layout = 8;
+  // vendor voice engines (echo cancel, wake); absent = button wake only
+  VendorEngines engines = 9;
+  // alsa and file backends: a keyword model of the board's own, run by audiod on the capture stream (on the vk capsula
+  // mini the vendor plugin's processed signal, not the raw microphone) instead of the vendor engines; absent = no
+  // keyword engine
+  KeywordEngine keyword = 10;
+}
+
+// a board's keyword model, read from the device at runtime and never shipped; audiod runs it only when the file's
+// sha256 is model_sha256. thresholds left at 0 take the engine's own defaults
+message KeywordEngine {
+  // the engine, a token: vk-kws
+  string kind = 1;
+  string model_path = 2;
+  // lowercase hex; empty = the keyword engine stays off
+  string model_sha256 = 3;
+  // the keyword's probability a model call must reach
+  float pos_threshold = 4;
+  // the probability the keyword was meant, at the frame of that score
+  float sp_threshold = 5;
+  // the 10 ms frames no call scores after the start, a detection and a re-arm
+  uint32 rearm_frames = 6;
+  // the calls in a row that must fire for a detection
+  uint32 consecutive_calls = 7;
+}
+
+// which channels of an interleaved capture stream are microphones and which carry the speaker reference
+message MicLayout {
+  uint32 channels = 1;
+  repeated uint32 mic_channels = 2;
+  repeated uint32 reference_channels = 3;
+  uint32 sample_rate = 4;
+}
+
+// the board vendor voice stack, loaded at runtime from the device and never shipped
+message VendorEngines {
+  // false = button wake only (safe mode, or no vendor stack)
+  bool enabled = 1;
+  // searched in order for the library and the models
+  repeated string stock_roots = 2;
+  // library file name under a stock root
+  string library = 3;
+  // relative to a stock root
+  string activation_model = 4;
+  // optional absolute path, a model pushed to the device from outside the repo
+  string command_model = 5;
+  string vqe_preset = 6;
+  // the words cadenced acts on (its own policy vocabulary, never vendor material), matched exactly against the
+  // phrase the command model reports, surrounding whitespace aside; CommandWord.id is the index into this list
+  repeated string command_words = 7;
+}
+
+message OutputConfig {
+  Backend backend = 1;
+  string device = 2;
+  string dir = 3;
+  string mixer_control = 4;
+  // 0 = 2
+  uint32 channels = 5;
+  // the board's speaker profile
+  EqSettings eq = 6;
+  // alsa backend: frames per period, 0 = the device default
+  uint32 period_frames = 7;
+  // alsa backend: device buffer in frames, 0 = the device default
+  uint32 buffer_frames = 8;
+  // the board's audio delay trim in ms, -1000..1000 (audio.output's delayMs; a tv's hdmi path, a soundbar): added to
+  // when each frame is heard, as the ring's writer, the pcm snapshots and the presentation clock are told, so a
+  // player's own a/v sync moves its video by it. outside the bounds it is clamped. OutputDelay changes it live
+  sint32 delay_ms = 9;
+  // the level is the host's system volume (android's STREAM_MUSIC, through the app's hook): VolumeSet moves it and
+  // audiod's own gain stays at unity; without a hook, or one that cannot read the stream (a fixed-volume tv), the
+  // level stays a software gain over the mix
+  bool system_volume = 10;
+}
+
+// cadenced -> audiod, after every Ready once audio.output's config was applied, and on every change: the trim that
+// replaces OutputConfig.delay_ms (the board's own) without reopening the output
+message OutputDelay {
+  sint32 delay_ms = 1;
+}
+
+// mic uplink encoder settings
+message MicConfig {
+  uint32 sample_rate = 1;
+  uint32 bitrate = 2;
+  uint32 frame_ms = 3;
+}
+
+message VolumeConfig {
+  // informational; audiod applies only VolumeSet
+  uint32 level = 1;
+}
+
+message Configure {
+  CaptureConfig capture = 1;
+  OutputConfig output = 2;
+  // ignored until M4b: the mic encoder is fixed at 16 kHz, 24 kbps, 20 ms
+  MicConfig mic = 3;
+  VolumeConfig volume = 4;
+  string ca_file = 5;
+  // where the spoken prompts are: <prompts_dir>/<lang>/<id>.opus, Ogg Opus mono 48 kHz; "" or a missing file plays
+  // the earcon in their place
+  string prompts_dir = 6;
+}
+
+message Ready {
+  string version = 1;
+  repeated Backend backends = 2;
+  // the system volume as it stood at Configure, when the output's level is the system's (OutputConfig.system_volume);
+  // cadenced reconciles with it before its first VolumeSet and never raises it
+  SystemVolume system_volume = 3;
+}
+
+message CaptureStart {
+  string session_id = 1;
+  // cadenced's capture span; audiod's marks of this capture name session_id and belong to it
+  TraceContext trace = 2;
+  // a custom wake word's session (WakeListen): the session starts with the listened frames audiod still keeps that
+  // were read after this instant (unix ms on the device clock, a MicPcm's at_ms), so speech right after the word is
+  // not lost; 0 = no pre-roll beyond what the engines give
+  int64 preroll_from_ms = 3;
+}
+
+message CaptureStop {
+  string session_id = 1;
+}
+
+// the capture of the current session failed, or its CaptureStart was refused (unconfigured, session_id), and
+// sends nothing more; reason is a token
+message CaptureFailed {
+  string session_id = 1;
+  string reason = 2;
+}
+
+// cadenced -> audiod: the custom wake word listens (or stops). while it does and no session streams, audiod sends the
+// processed microphone as MicPcm, and keeps its last frames for a session's pre-roll (CaptureStart.preroll_from_ms).
+// with the vendor engines that is the vqe's output, with the keyword engine its mono capture, else a capture audiod
+// keeps open for it (raw sessions then stream from that capture). muted, nothing is sent. reset by a new connection
+message WakeListen {
+  bool enabled = 1;
+}
+
+// audiod -> cadenced: 20 ms of the microphone for the custom wake word, 16 kHz mono s16le (640 bytes), read at at_ms
+// (unix ms on the device clock). gap: audio was lost or silenced before it (a mute, a session, a read error), so the
+// detector starts again. never stored anywhere (rule 8)
+message MicPcm {
+  uint64 seq = 1;
+  int64 at_ms = 2;
+  bytes pcm = 3;
+  bool gap = 4;
+}
+
+message MicOpus {
+  string session_id = 1;
+  uint32 seq = 2;
+  bytes opus = 3;
+}
+
+message StreamStart {
+  string stream_id = 1;
+  // ignored until M4b: the decoder folds every stream to mono
+  uint32 channels = 2;
+  // cadenced's playback span; audiod's marks of this stream name stream_id and belong to it
+  TraceContext trace = 3;
+}
+
+message AudioDown {
+  string stream_id = 1;
+  uint32 seq = 2;
+  bytes opus = 3;
+}
+
+message StreamEnd {
+  string stream_id = 1;
+}
+
+// cuts the named stream at once, and every stream queued after it: their queued audio is dropped and each gets
+// exactly one StreamDone. a stream queued before it plays out. an unknown or finished id is ignored
+message StreamCancel {
+  string stream_id = 1;
+}
+
+message StreamDone {
+  string stream_id = 1;
+  uint32 played_ms = 2;
+}
+
+message VolumeSet {
+  // 0-100
+  uint32 level = 1;
+  // applied to the hardware like any level but never the level in force: the playback gate and the reported level
+  // stay as they were (an alarm's ramp); a later non-transient set, or one with transient false to the same
+  // value, restores
+  bool transient = 2;
+}
+
+message VolumeApplied {
+  uint32 level = 1;
+  bool ok = 2;
+  // the answer to a transient VolumeSet, which audiod never sets again
+  bool transient = 3;
+  // why a level did not hold, when ok is false: range, output, control, readback, gated (a transient set while the gate
+  // is shut) or no_ring (a transient set while no looped tone sounds)
+  string code = 4;
+}
+
+// a one-shot earcon: WAKE, DONE or ERROR; ALARM and TIMER are invalid here (tone_invalid, no answer). with a
+// prompt_id ([a-z_], at most 32) and a lang ([a-z], 2 or 3), audiod plays the spoken prompt
+// <Configure.prompts_dir>/<lang>/<prompt_id>.opus instead, and kind's earcon when that prompt is missing or unreadable
+message Tone {
+  ToneKind kind = 1;
+  string prompt_id = 2;
+  string lang = 3;
+}
+
+// one stretch of a ring: a tone kind's sound (an alarm's or a timer's period, the reminder chime), a spoken prompt
+// (<Configure.prompts_dir>/<lang>/<prompt_id>.opus, kind's sound when it is missing), a url audiod streams (an
+// Ogg Opus ring sound of the server's, 48 kHz) or silence_ms of silence. exactly one of tone, prompt_id, url and
+// silence_ms is set. a url is at most 512 bytes, a ring at most 4 segments and 4 of fallback
+message RingSegment {
+  ToneKind tone = 1;
+  string prompt_id = 2;
+  string lang = 3;
+  string url = 4;
+  uint32 silence_ms = 5;
+}
+
+// cadenced -> audiod: loop an alarm or timer tone until the matching ToneStop; id is at most 64 characters. with
+// segments, the ring plays them in order instead, from the first again after the last when loop is set (else silence
+// until the ToneStop). a url segment that gives no audio within 3 s, or fails while it plays, switches the ring to
+// fallback (kind's period looped when fallback is empty) for the rest of it, which ToneState says (fallback true,
+// code the url's failure). url_authorization is the Authorization header every url segment is fetched with: never in
+// the url, never logged
+message ToneStart {
+  string id = 1;
+  ToneKind kind = 2;
+  repeated RingSegment segments = 3;
+  bool loop = 4;
+  repeated RingSegment fallback = 5;
+  string url_authorization = 6;
+}
+
+message ToneStop {
+  string id = 1;
+}
+
+// audiod -> cadenced: the answer to a ToneStart (sounding true, or false with code gated, busy or invalid), when a
+// looped tone stops, sounding false with code stopped, and when a ring falls back from its url, sounding true with
+// fallback set
+message ToneState {
+  string id = 1;
+  bool sounding = 2;
+  string code = 3;
+  // the ring that sounds left its url for its fallback; code is the url's failure (timeout, http_error, ...)
+  bool fallback = 4;
+}
+
+// audiod -> cadenced: a line of audiod's own (source audiod) or of one of its children (soloist, shairport-sync, nqptp,
+// dbus, avahi). text is at most 4096 bytes of utf-8; truncated says audiod cut its end (a longer line, ended with …, a
+// partial one sent after 1 s without its newline, or one its stream ended without one), and continued says it is the
+// rest of a line audiod sent partially before, so cadenced redacts what a cut left of a secret at either end
+message LogLine {
+  string source = 1;
+  LogLevel level = 2;
+  string text = 3;
+  bool truncated = 4;
+  bool continued = 5;
+}
+
+// cadenced -> audiod: whether the lines of audiod's children (soloist, shairport-sync, ...) go out as LogLine; audiod
+// ships them until the first LogsSet, so the default is on
+message LogsSet {
+  bool third_party = 1;
+}
+
+enum MediaSourceKind {
+  MEDIA_SOURCE_KIND_UNSPECIFIED = 0;
+  MEDIA_SOURCE_KIND_URL = 1;
+  MEDIA_SOURCE_KIND_SOLOIST = 2;
+  MEDIA_SOURCE_KIND_AIRPLAY = 3;
+  MEDIA_SOURCE_KIND_STREAM = 4;
+  // a screen's player; audiod sees it as an ExternalSource
+  MEDIA_SOURCE_KIND_VIDEO = 5;
+  // airplay mirroring (libairplay)
+  MEDIA_SOURCE_KIND_SCREENCAST = 6;
+  // a handoff or another app
+  MEDIA_SOURCE_KIND_EXTERNAL = 7;
+  // a member's playout of its group leader's stream
+  MEDIA_SOURCE_KIND_GROUP = 8;
+  // a phone or pc playing to this device over bluetooth a2dp
+  MEDIA_SOURCE_KIND_BLUETOOTH = 9;
+}
+
+enum PlaybackState {
+  PLAYBACK_STATE_UNSPECIFIED = 0;
+  PLAYBACK_STATE_IDLE = 1;
+  PLAYBACK_STATE_PLAYING = 2;
+  PLAYBACK_STATE_PAUSED = 3;
+  PLAYBACK_STATE_BUFFERING = 4;
+}
+
+enum MediaAction {
+  MEDIA_ACTION_UNSPECIFIED = 0;
+  MEDIA_ACTION_PAUSE = 1;
+  MEDIA_ACTION_RESUME = 2;
+  MEDIA_ACTION_STOP = 3;
+  MEDIA_ACTION_SEEK = 4;
+  MEDIA_ACTION_NEXT = 5;
+  MEDIA_ACTION_PREVIOUS = 6;
+}
+
+enum UrlMode {
+  URL_MODE_UNSPECIFIED = 0;
+  URL_MODE_SESSION = 1;
+  URL_MODE_OVERLAY = 2;
+}
+
+enum DuckMode {
+  // unspecified = duck
+  DUCK_MODE_UNSPECIFIED = 0;
+  DUCK_MODE_DUCK = 1;
+  DUCK_MODE_MUFFLE = 2;
+}
+
+enum EqType {
+  EQ_TYPE_UNSPECIFIED = 0;
+  EQ_TYPE_PEAKING = 1;
+  EQ_TYPE_LOW_SHELF = 2;
+  EQ_TYPE_HIGH_SHELF = 3;
+  EQ_TYPE_LOW_PASS = 4;
+  EQ_TYPE_HIGH_PASS = 5;
+}
+
+enum VizSource {
+  // unspecified = music
+  VIZ_SOURCE_UNSPECIFIED = 0;
+  VIZ_SOURCE_MUSIC = 1;
+  VIZ_SOURCE_ALL = 2;
+}
+
+message MediaMetadata {
+  string title = 1;
+  string artist = 2;
+  string album = 3;
+  string artwork_url = 4;
+  // a cover the source handed over as bytes (airplay): audiod wrote it to the source's scratch as run/artwork, and
+  // this changes whenever the image does; empty when there is none
+  string artwork_id = 5;
+  // the sending device's name (an airplay sender's), empty when unknown: memory-only, never logged (D11)
+  string sender = 6;
+}
+
+message EqBand {
+  EqType type = 1;
+  float freq_hz = 2;
+  float gain_db = 3;
+  float q = 4;
+}
+
+message EqSettings {
+  float preamp_db = 1;
+  repeated EqBand bands = 2;
+}
+
+message VizSettings {
+  bool enabled = 1;
+  VizSource source = 2;
+}
+
+message UrlPlay {
+  string request_id = 1;
+  string url = 2;
+  UrlMode mode = 3;
+  MediaMetadata metadata = 4;
+  uint64 start_ms = 5;
+}
+
+message MediaCommand {
+  string request_id = 1;
+  MediaAction action = 2;
+  uint64 position_ms = 3;
+}
+
+// code is empty when ok, else a token (no_session, unsupported, invalid, refused, failed)
+message CommandResult {
+  string request_id = 1;
+  bool ok = 2;
+  string code = 3;
+}
+
+// sent on change only; an empty session_id with state IDLE means no session
+message MediaState {
+  string session_id = 1;
+  MediaSourceKind source = 2;
+  PlaybackState state = 3;
+  uint64 position_ms = 4;
+  // unix ms on the device clock
+  int64 position_at_ms = 5;
+  float rate = 6;
+  // 0 = live or unknown
+  uint64 duration_ms = 7;
+  MediaMetadata metadata = 8;
+  repeated MediaAction actions = 9;
+  // sender volume, absent until M4c/M4d
+  optional uint32 volume = 10;
+  // MIXER for every source audiod renders; unspecified from an audiod before routes
+  AudioRoute audio_route = 11;
+  repeated AudioControl audio_controls = 12;
+  // 0 = sample-exact or unknown
+  uint32 control_latency_ms = 13;
+  // the ExternalSource id when the session is one cadenced registered (a screen's player), empty for audiod's own
+  string external_id = 14;
+}
+
+message DuckSet {
+  bool active = 1;
+}
+
+message MediaSettings {
+  DuckMode duck_mode = 1;
+  EqSettings eq = 2;
+  VizSettings viz = 3;
+}
+
+// 16 bytes, 0-255 each
+message VizFrame {
+  bytes bands = 1;
+}
+
+enum SoloistState {
+  SOLOIST_STATE_UNSPECIFIED = 0;
+  SOLOIST_STATE_OFF = 1;
+  SOLOIST_STATE_KEY_MISSING = 2;
+  SOLOIST_STATE_NO_BUILD = 3;
+  SOLOIST_STATE_STARTING = 4;
+  SOLOIST_STATE_READY = 5;
+  SOLOIST_STATE_EXPIRED = 6;
+  SOLOIST_STATE_FAILED = 7;
+}
+
+enum Sender {
+  SENDER_UNSPECIFIED = 0;
+  SENDER_SOLOIST = 1;
+  SENDER_AIRPLAY = 2;
+  SENDER_BLUETOOTH = 3;
+}
+
+// cadenced -> audiod; enabled false stops soloist; sent after every Ready and on change
+message SoloistConfig {
+  bool enabled = 1;
+  // secret: never logged, never echoed back
+  string api_key = 2;
+  string device_name = 3;
+  // the board soloist dir (builds + runtime)
+  string dir = 4;
+  // under the board runtime dir
+  string scratch_dir = 5;
+  string ca_file = 6;
+  // 0..100; the known level, else 50
+  uint32 initial_volume = 7;
+}
+
+// audiod -> cadenced, on change
+message SoloistStatus {
+  SoloistState state = 1;
+  // code token for FAILED (auth_failed, spawn_failed, ...)
+  string code = 2;
+  // of the running build, when known
+  string version = 3;
+  int64 build_epoch = 4;
+  // last exit, -1 = signal, 0 = none
+  int32 exit_code = 5;
+  // consecutive starts with no websocket answer
+  uint32 silent_starts = 6;
+}
+
+// run path --version in the jail
+message SoloistProbe {
+  string request_id = 1;
+  string path = 2;
+}
+
+message SoloistProbeResult {
+  string request_id = 1;
+  bool ok = 2;
+  string code = 3;
+  string version = 4;
+  int64 build_epoch = 5;
+}
+
+// restart onto the installed build once nothing plays
+message SoloistSwitch {}
+
+// audiod -> cadenced: a deliberate slider move
+message SenderVolume {
+  Sender sender = 1;
+  uint32 level = 2;
+}
+
+// cadenced -> audiod: the speaker level
+message SenderVolumeSet {
+  Sender sender = 1;
+  uint32 level = 2;
+}
+
+enum AirplayState {
+  AIRPLAY_STATE_UNSPECIFIED = 0;
+  AIRPLAY_STATE_OFF = 1;
+  AIRPLAY_STATE_STARTING = 2;
+  AIRPLAY_STATE_READY = 3;
+  AIRPLAY_STATE_FAILED = 4;
+}
+
+// cadenced -> audiod; enabled false stops the receiver; sent after every Ready and on change
+message AirplayConfig {
+  bool enabled = 1;
+  // the advertised name
+  string name = 2;
+  // the board airplay runtime dir
+  string dir = 3;
+  // under the board runtime dir
+  string scratch_dir = 4;
+  // unspecified = shairport (the speakers); screens run libairplay
+  AirplayBackend backend = 5;
+  // libairplay only: offer screen mirroring (media.screencast)
+  bool mirroring = 6;
+  // libairplay only: the largest mirror size offered, 0 = the screen's
+  uint32 max_width = 7;
+  uint32 max_height = 8;
+  // libairplay only: offer h265 mirroring
+  bool h265 = 9;
+  // libairplay only: a sender must enter the pin shown on screen
+  bool require_pin = 10;
+}
+
+enum AirplayBackend {
+  AIRPLAY_BACKEND_UNSPECIFIED = 0;
+  // shairport sync with nqptp and avahi (the speakers)
+  AIRPLAY_BACKEND_SHAIRPORT = 1;
+  // uxplay's lib/ in audiod (screens): audio, mirroring, pin
+  AIRPLAY_BACKEND_LIBAIRPLAY = 2;
+}
+
+// audiod -> cadenced, on change
+message AirplayStatus {
+  AirplayState state = 1;
+  // code token for FAILED (foreign_service, runtime_missing, ports_busy, spawn_failed, bus_failed, ...; from the
+  // running receiver: session_lost, wrong_protocol, invalid_state)
+  string code = 2;
+}
+
+// audiod -> cadenced: the wake engine heard the wake word. engine is a token: stock (the vendor engines) or the
+// keyword engine's kind (vk-kws)
+message WakeEvent {
+  string engine = 1;
+  float score = 2;
+  // unix ms on the device clock
+  int64 at_ms = 3;
+  // the same instant in unix nanoseconds (CLOCK_REALTIME), 0 from an audiod before tracing: cadenced backdates the
+  // turn's root span to it, else to at_ms
+  int64 at_unix_ns = 4;
+}
+
+// audiod -> cadenced: the command engine heard one of Configure's command_words; ids, never phrases
+message CommandWord {
+  // the index into VendorEngines.command_words
+  uint32 id = 1;
+  float score = 2;
+  // unix ms on the device clock
+  int64 at_ms = 3;
+}
+
+// cadenced -> audiod: the mute switch; audiod drops the microphone while muted
+// audiod -> cadenced: the host's system volume (OutputConfig.system_volume) moved by something other than a VolumeSet:
+// the remote's volume keys android handled, another app, the tv's hdmi-cec volume. level is 0-100 mapped from the
+// stream's index (an index that is the level in force's own maps back to it, so no level drifts by rounding); muted
+// is the stream's own mute, which leaves the level as it is
+message SystemVolume {
+  uint32 level = 1;
+  bool muted = 2;
+}
+
+message MuteState {
+  bool muted = 1;
+}
+
+// audiod -> cadenced: whether the vendor engines run; code is empty when they do, else a token (disabled,
+// library_missing, model_missing, probe_failed, probe_timeout, ...). the keyword engine answers code keyword when it
+// runs, else why not (kind_unknown, model_unknown, model_missing, model_invalid, model_shape, arena_exceeded,
+// layout_invalid, start_failed, keyword_unsupported from an audiod built without it, and invoke_failed once a running
+// one stopped)
+message VendorStatus {
+  bool engines = 1;
+  string code = 2;
+}
+
+// who renders a session's sound (cadence.v2.AudioRoute, mirrored here so audiod.proto stays self-contained)
+enum AudioRoute {
+  AUDIO_ROUTE_UNSPECIFIED = 0;
+  AUDIO_ROUTE_MIXER = 1;
+  AUDIO_ROUTE_DIRECT = 2;
+  AUDIO_ROUTE_EXTERNAL = 3;
+  AUDIO_ROUTE_REMOTE = 4;
+  AUDIO_ROUTE_NONE = 5;
+}
+
+enum AudioControl {
+  AUDIO_CONTROL_UNSPECIFIED = 0;
+  AUDIO_CONTROL_VOLUME = 1;
+  AUDIO_CONTROL_DUCK = 2;
+  AUDIO_CONTROL_MUTE = 3;
+  AUDIO_CONTROL_EQ = 4;
+  AUDIO_CONTROL_VIZ_PCM = 5;
+  AUDIO_CONTROL_VIZ_BANDS = 6;
+}
+
+enum ExternalOp {
+  EXTERNAL_OP_UNSPECIFIED = 0;
+  // a new session, or a known one's new state
+  EXTERNAL_OP_UPDATE = 1;
+  EXTERNAL_OP_UNREGISTER = 2;
+}
+
+// cadenced -> audiod: a session audiod does not render (a screen's video, a handoff, another app), so audiod's
+// arbitration (last to play wins, duck, the rule 7 gate) covers it as one of its own. control only, no pcm; a MIXER
+// session (mpv through ao_cadence) is registered too, its pcm arriving on the ring as a PcmInput
+message ExternalSource {
+  // cadenced's session id, at most 64 characters
+  string id = 1;
+  ExternalOp op = 2;
+  MediaSourceKind kind = 3;
+  PlaybackState state = 4;
+  AudioRoute audio_route = 5;
+  repeated AudioControl audio_controls = 6;
+  // where the player is: position_ms at position_at_ms (unix ms on the device clock), as its state last said. a group
+  // leader's epoch of a screen's ring starts at the player's own position (multiroom P4: a follower's picture seeks
+  // there); 0 when the player says none
+  uint64 position_ms = 7;
+  int64 position_at_ms = 8;
+}
+
+// audiod -> cadenced: what arbitration wants of an external session (pause or stop when another source takes the
+// speaker); cadenced forwards it to the session's player
+message ExternalAction {
+  string id = 1;
+  MediaAction action = 2;
+  // a token: displaced, gated, alarm
+  string reason = 3;
+  // where a SEEK goes; 0 for every other action
+  uint64 position_ms = 4;
+}
+
+enum DuckReason {
+  DUCK_REASON_UNSPECIFIED = 0;
+  DUCK_REASON_ASSISTANT = 1;
+  DUCK_REASON_ANNOUNCEMENT = 2;
+  DUCK_REASON_ALARM = 3;
+}
+
+// the effective gain is level x duck x the session's gain; a duck never raises a level (rule 7)
+message Duck {
+  bool active = 1;
+  // 0-1 of the level; 0 = the media settings' duck depth
+  float level = 2;
+  uint32 ramp_ms = 3;
+  DuckReason reason = 4;
+}
+
+message SetLevel {
+  // 0-100, the persisted device level
+  uint32 level = 1;
+  uint32 ramp_ms = 2;
+}
+
+// a preset token or bands, never both
+message SetEq {
+  string preset = 1;
+  EqSettings eq = 2;
+}
+
+message Mute {
+  bool muted = 1;
+}
+
+// cadenced -> audiod: one control for one session (empty session_id = the whole mix). audiod applies it in the mixer
+// for a MIXER session, or hands it back as a RouteControl for a DIRECT one; the answer is a CommandResult, code
+// unsupported when the session's route lacks the control
+message SessionControl {
+  string request_id = 1;
+  string session_id = 2;
+  oneof control {
+    Duck duck = 3;
+    SetLevel set_level = 4;
+    SetEq set_eq = 5;
+    Mute mute = 6;
+  }
+}
+
+// audiod -> cadenced: a control for a DIRECT session, which its own player applies (mpv's volume, an af equalizer)
+message RouteControl {
+  string session_id = 1;
+  oneof control {
+    Duck duck = 2;
+    SetLevel set_level = 3;
+    SetEq set_eq = 4;
+    Mute mute = 5;
+  }
+}
+
+// cadenced -> audiod, after every Ready and on change: serve the screen's tap (TapEnvelope frames) at path, an
+// abstract name when it starts with @; empty path = no tap
+message TapConfig {
+  string path = 1;
+  // pcm snapshots for the visualizer
+  bool pcm = 2;
+  // the 16 bands
+  bool bands = 3;
+  // airplay mirror frames
+  bool mirror = 4;
+}
+
+enum MirrorCodec {
+  MIRROR_CODEC_UNSPECIFIED = 0;
+  MIRROR_CODEC_H264 = 1;
+  MIRROR_CODEC_H265 = 2;
+}
+
+// audiod -> cadenced, on change: airplay mirroring began (active) or ended; cadenced tells the screen (MirrorStart,
+// MirrorStop) and the server (a SCREENCAST session)
+message MirrorState {
+  string session_id = 1;
+  bool active = 2;
+  MirrorCodec codec = 3;
+  uint32 width = 4;
+  uint32 height = 5;
+  // memory-only, never logged
+  string client_name = 6;
+  // a token when it ended, as screen/v1's MirrorStop documents them: sender, stopped, displaced, failed, disabled
+  string reason = 7;
+}
+
+// audiod -> cadenced: a sender asks for the pin (libairplay); active false when it is entered, refused or gone
+message AirplayPin {
+  bool active = 1;
+  // 4 digits; never logged
+  string pin = 2;
+  // memory-only, never logged
+  string client_name = 3;
+}
+
+// audiod -> screen, on the tap socket only (never the cadenced socket): one frame per message. mirror frames make it
+// larger than any Envelope, so it has a nanopb size of its own and its frame field is a callback
+message TapEnvelope {
+  oneof body {
+    PcmSnapshot pcm = 1;
+    VizFrame bands = 2;
+    PresentationClock clock = 3;
+    MirrorFrame mirror_frame = 4;
+    RingOffer ring_offer = 5;
+    GroupClock group_clock = 6;
+  }
+}
+
+// audiod -> screen, on the tap socket: a multiroom group's media timeline as this device hears it (multiroom P4), while
+// it plays the group's stream (a member's GROUP session, or a leader's own playout): 4 times a second, and at once on
+// an epoch's change or a stop. a follower screen's picture follows it (its mpv plays no audio: the sound is the
+// group's). none while the device plays no group stream
+message GroupClock {
+  // the source's media position (ns) heard at mono_ns: this device's trim included, so it is when the group hears it
+  int64 media_ns = 1;
+  // CLOCK_MONOTONIC ns
+  int64 mono_ns = 2;
+  // the stream's epoch heard: a new one is a seek, a new track or a resume
+  uint32 epoch = 3;
+  // false while nothing is heard (a pause, a stall, the end): media_ns is where it stopped
+  bool playing = 4;
+}
+
+// the last 512 frames of the music (audiod's music and the ring of a screen's player) before the duck, the eq, the
+// limiter and the software volume, about 60 a second while the tap's pcm is on: the visualizer shows the music at a
+// steady size, whatever the level or a duck under a reply. no overlay (tts, tones, alarms) is in it
+message PcmSnapshot {
+  uint64 seq = 1;
+  uint32 sample_rate = 2;
+  uint32 channels = 3;
+  // interleaved little-endian f32, at most 2048 frames a channel of at most 2 channels
+  bytes samples = 4;
+  // CLOCK_MONOTONIC ns when the first frame is heard: the output's latency, the limiter's look-ahead and the board's
+  // delay trim (OutputConfig.delay_ms) included; 0 while the device's latency is not known
+  int64 mono_ns = 5;
+}
+
+// audiod -> screen, on the tap socket: the pcm ring (ring/cadence_ring.h) audiod made for a MIXER external session,
+// which the screen's player (mpv's ao_cadence) writes. the frame carries two fds as SCM_RIGHTS ancillary data, in
+// this order: [0] the ring's memfd (sealed against grow and shrink, mapped shared read-write), [1] its eventfd (the
+// reader signals it each period). a frame of this body without exactly two fds is dropped. the screen owns its
+// copies and closes them when the session ends or a new offer for it arrives; the fields repeat the ring header's,
+// so a mismatch with the mapped header is refused before anything is written
+message RingOffer {
+  // the ExternalSource id
+  string session_id = 1;
+  // a power of two
+  uint32 capacity_frames = 2;
+  uint32 rate = 3;
+  uint32 channels = 4;
+}
+
+// the mixer's playback clock against the monotonic clock, a few times a second while mirroring, so the screen shows
+// each mirror frame when its sound is heard (one clock for every source)
+message PresentationClock {
+  // the media time (the senders' pts timeline, ns) sounding at mono_ns
+  int64 media_ns = 1;
+  // CLOCK_MONOTONIC ns
+  int64 mono_ns = 2;
+  // the output latency included, ns
+  int64 latency_ns = 3;
+}
+
+// one access unit of a mirror stream: annex b nals with the pts on the presentation clock's media timeline. a unit
+// larger than one tap message (a seqpacket message is bounded by the socket's send buffer: audiod keeps each frame
+// under 256 KiB) goes as fragments: every fragment repeats session_id, pts_ns, config, keyframe and seq, carries
+// data[offset, offset + len(data)) of the unit's total_size bytes, and they go in order, back to back. the screen
+// joins them by seq and decodes the unit once offset + len(data) reaches total_size; a fragment whose seq or offset is
+// not the one it waits for drops the unit (and the screen waits for the next keyframe). total_size 0: the unit whole,
+// as before fragments
+message MirrorFrame {
+  string session_id = 1;
+  int64 pts_ns = 2;
+  // sps/pps (or vps/sps/pps): codec config, sent before the first frame and on each change
+  bool config = 3;
+  bool keyframe = 4;
+  bytes data = 5;
+  // the unit's number in its session (1, 2, ...), the same on each of its fragments
+  uint32 seq = 6;
+  // where data starts in the unit
+  uint32 offset = 7;
+  // the unit's whole size; 0 when data is the unit whole
+  uint32 total_size = 8;
+}
+
+enum HlsCastAction {
+  HLS_CAST_ACTION_UNSPECIFIED = 0;
+  // POST /play: url and the start position
+  HLS_CAST_ACTION_PLAY = 1;
+  // POST /scrub?position=: seek to position_ms
+  HLS_CAST_ACTION_SCRUB = 2;
+  // POST /rate?value=: 0 pauses, 1 plays
+  HLS_CAST_ACTION_RATE = 3;
+  // POST /stop, or the sender left
+  HLS_CAST_ACTION_STOP = 4;
+}
+
+// audiod -> cadenced: an airplay sender casts a video by url (youtube's and safari's airplay video: an hls playlist
+// libairplay serves to the screen, or a sender's url). cadenced plays it on the screen as a media.video session with
+// session_id (source VIDEO, metadata.provider airplay), displacing what plays as any new session
+// does, gated until the persisted level holds (rule 7); the sender's rate never sets a level. urls are never logged
+message HlsCast {
+  string session_id = 1;
+  HlsCastAction action = 2;
+  // PLAY: what the screen opens (libairplay's local playlist url, or the sender's)
+  string url = 3;
+  // PLAY: where to start, ms; start_fraction when the sender gave a fraction of the duration instead
+  uint64 start_ms = 4;
+  float start_fraction = 5;
+  // SCRUB: the position, ms
+  uint64 position_ms = 6;
+  // RATE: 0 or 1 (a sender sends no other)
+  float rate = 7;
+  // PLAY: the sender's name for the toast; memory-only, never logged
+  string client_name = 8;
+}
+
+// cadenced -> audiod: the cast's playback as the screen's player reports it, on each change and at least once a
+// second while it plays; audiod answers the sender's GET /playback-info and /scrub from the last one. ended: the cast
+// finished (its end, an error, a displacement), so audiod ends the sender's session with reason
+message HlsPlaybackInfo {
+  string session_id = 1;
+  uint64 position_ms = 2;
+  // 0 = live or unknown
+  uint64 duration_ms = 3;
+  // 0 paused, 1 playing
+  float rate = 4;
+  // the player opened the url and can play (readyToPlay)
+  bool ready = 5;
+  // buffered ahead of position (loadedTimeRanges' end)
+  uint64 buffered_ms = 6;
+  // the buffer ran dry (playbackBufferEmpty) / holds enough to play on (playbackLikelyToKeepUp)
+  bool buffer_empty = 7;
+  bool likely_to_keep_up = 8;
+  bool ended = 9;
+  // a token with ended: finished, stopped, displaced, failed
+  string reason = 10;
+}
+
+// multiroom playback (cadence.sync.v1 between audiods). cadenced -> audiod after every Ready and on every change of the
+// media.group capability's config or key; enabled false (or a GroupConfig never sent) leaves audiod out of any group.
+// a leader binds port (tcp for the stream, udp for the clock unless clock_host names another device) and owns the
+// group's session: the media sources it plays feed the group, its own output plays as one more member. a member dials
+// leader_host:port and plays the leader's stream as a GROUP media session, which displaces its own sources as any
+// newer session does
+message GroupConfig {
+  bool enabled = 1;
+  string group_id = 2;
+  GroupRole role = 3;
+  // this device's id: the member id in the stream's Hello
+  string member_id = 4;
+  // a member's leader; a leader's own lan address is not needed
+  string leader_host = 5;
+  // the leader's port (a leader binds it on every address); 0 = 7701
+  uint32 port = 6;
+  // the group key, 32 bytes (media.group's groupKey secret, hex on the wire to cadenced)
+  bytes key = 7;
+  GroupChannel channel = 8;
+  // the group latency: 200..5000 ms
+  uint32 latency_ms = 9;
+  // this member's trim within the group, -500..500 ms, added to audio.output's delay for the group's audio alone
+  sint32 trim_ms = 10;
+  // the clock error under which this member counts as synced: 100 us for a stereo pair, 1000 in one room, 5000
+  // across rooms
+  uint32 budget_us = 11;
+  // leader: the opus bitrate, 64..510 kbps (0 = 256); pcm when codec_pcm
+  uint32 bitrate_kbps = 12;
+  bool codec_pcm = 13;
+  // leader: the members it waits for at a start (up to wait_ms), ids as in member_id
+  repeated string members = 14;
+  // leader: how long a start waits for every member to be ready; 0 = 3000, at most 10000
+  uint32 wait_ms = 15;
+  // this member's trim to the microsecond, -500000..500000 (a calibration's): when non-zero it is the trim and trim_ms
+  // (its value rounded) is not read
+  sint32 trim_us = 16;
+  // leader: tune latency_ms itself (latency_ms is where it starts): raised after a member's underrun or rejoin, lowered
+  // slowly while every member keeps a wide margin, between 200 and 5000 ms, changed only at an epoch's start
+  bool auto_latency = 17;
+  // leader: step the opus bitrate down (256, 192, 128, 96) while a member falls behind and back up to bitrate_kbps when
+  // all is clean again; never with codec_pcm
+  bool auto_bitrate = 18;
+  // leader: the start wait from how long members took to be ready (wait_ms is the ceiling)
+  bool auto_wait = 19;
+  // the clock master's lan address when another device serves the group clock (udp, on port): the stream leader then
+  // dials it as a member does and stamps its frames in the master's time, and a member dials it for its clock and
+  // leader_host for the stream. empty: the stream leader serves the clock, a member dials leader_host for both
+  string clock_host = 20;
+  // this device serves the group clock (binds port over udp) although it is not the stream leader: a member whose
+  // own clock is the group's. it wins over clock_host; on a leader with clock_host empty it changes nothing
+  bool clock_master = 21;
+  // opt-in ultrasonic live tracking; tracking_members is the leader's allow-list from the server (capable members)
+  bool tracking_enabled = 22;
+  repeated string tracking_members = 23;
+  // this device's active output kind: speaker, hdmi, bluetooth or other; bluetooth skips ultrasound
+  string output_kind = 24;
+}
+
+enum GroupRole {
+  GROUP_ROLE_UNSPECIFIED = 0;
+  GROUP_ROLE_LEADER = 1;
+  GROUP_ROLE_MEMBER = 2;
+}
+
+enum GroupChannel {
+  // both channels as they are (stereo)
+  GROUP_CHANNEL_UNSPECIFIED = 0;
+  GROUP_CHANNEL_LEFT = 1;
+  GROUP_CHANNEL_RIGHT = 2;
+  // (l + r) / 2 on both outputs
+  GROUP_CHANNEL_MONO = 3;
+}
+
+enum GroupState {
+  GROUP_STATE_UNSPECIFIED = 0;
+  // enabled false
+  GROUP_STATE_OFF = 1;
+  // a leader with no session, a member connected and synced with nothing to play
+  GROUP_STATE_IDLE = 2;
+  GROUP_STATE_CONNECTING = 3;
+  GROUP_STATE_SYNCING = 4;
+  GROUP_STATE_BUFFERING = 5;
+  GROUP_STATE_PLAYING = 6;
+  GROUP_STATE_REJOINING = 7;
+  // a config it cannot run (error says why)
+  GROUP_STATE_FAILED = 8;
+}
+
+// one member as its leader sees it (numbers only, rule 8)
+message GroupMemberStatus {
+  string member_id = 1;
+  GroupState state = 2;
+  bool connected = 3;
+  bool synced = 4;
+  uint32 clock_error_us = 5;
+  uint32 queue_ms = 6;
+  uint32 rejoins = 7;
+  sint32 placement_error_us = 8;
+}
+
+// audiod -> cadenced, on every state change and every 5 s while enabled: media.group's state
+message GroupStatus {
+  string group_id = 1;
+  GroupRole role = 2;
+  GroupState state = 3;
+  // a token when FAILED or a member's link refused: bad_config, bind_failed, unreachable, refused, auth_failed,
+  // wrong_group, protocol
+  string error = 4;
+  bool synced = 5;
+  uint32 clock_error_us = 6;
+  uint32 queue_ms = 7;
+  sint32 steer_ppm = 8;
+  uint32 rejoins = 9;
+  uint32 underruns = 10;
+  sint32 placement_error_us = 11;
+  // the latency in force (a leader may have raised it after repeated rejoins)
+  uint32 latency_ms = 12;
+  // leader: its members
+  repeated GroupMemberStatus members = 13;
+  // leader: the opus bitrate in force, kbps (0 with pcm)
+  uint32 bitrate_kbps = 14;
+  // leader: the start wait in force, ms
+  uint32 wait_ms = 15;
+}
+
+// cadenced -> audiod, a group's leader alone: run an acoustic calibration of the group (cadence.sync.v1.CalibrateStart:
+// every member plays a short chirp through its group playout, rounds times, and records its microphones, in memory
+// only). the owner's, from the dashboard, never a voice turn (rule 7). refused while the group plays. answered by
+// GroupCalibrated with the same request_id: mics mode within about 30 s (eight members, four rounds, one silent);
+// listener mode at once with its schedule
+message GroupCalibrate {
+  string request_id = 1;
+  GroupCalibrateMode mode = 2;
+  // the owner's boost for members heard faintly before (mics and listener modes): each named member's chirps play
+  // gain_db louder, at most 14 dB (-6 dBFS)
+  repeated GroupCalibrateBoost boost = 3;
+  // listener_result mode: the run_id a listener calibration's schedule carried
+  uint32 run_id = 4;
+  // coded probes: direct-path arrivals closer than this belong together, us; 0 = 2000 (250 for a stereo pair)
+  uint32 tolerance_us = 5;
+  // per member output-latency prior and how far either side of it an arrival may fall; defaults 0 and 150000 us
+  repeated GroupCalibratePrior priors = 6;
+}
+
+message GroupCalibratePrior {
+  string member_id = 1;
+  sint32 prior_us = 2;
+  uint32 prior_span_us = 3;
+}
+
+message GroupCalibrateBoost {
+  string member_id = 1;
+  uint32 gain_db = 2;
+}
+
+enum GroupCalibrateMode {
+  // every member plays its chirps and records its own microphones (the distance-free pairwise solve)
+  GROUP_CALIBRATE_MODE_UNSPECIFIED = 0;
+  // every member plays its chirps at its slots, and those with a microphone record them as in mics mode, while a
+  // listener's microphone (the dashboard's, in the owner's browser, never stored) measures the arrivals where they
+  // listen. answered at once with the schedule (code scheduled, starts_in_ms, slots, run_id, the chirp), before the
+  // first chirp plays
+  GROUP_CALIBRATE_MODE_LISTENER = 1;
+  // the speakers' own measure of the listener calibration run_id: answered with its result (as mics mode's) once its
+  // members answered or its answer wait passed; code expired for a run the leader no longer holds (only its last)
+  GROUP_CALIBRATE_MODE_LISTENER_RESULT = 2;
+}
+
+// a listener calibration's slot: member_id's chirp (of round round) starts offset_ms after the first slot (the
+// leader's of round 0, offset 0)
+message GroupCalibrateSlot {
+  string member_id = 1;
+  uint32 offset_ms = 2;
+  uint32 round = 3;
+  // the gold code of this slot's probe; 0 is a valid code, and legacy chirps ignore it
+  uint32 code = 4;
+}
+
+// one member's result: offset_us is its output latency (its trim left out) less the measured members' mean, so its
+// trim should be -offset_us. code: ok, no_self (it did not hear its own chirp), isolated (no pair links it to the
+// others), unstable (its rounds disagree), no_answer (it sent no arrivals in time), or its own refusal (busy, gated,
+// no_capture, muted, epoch)
+message GroupCalibratedMember {
+  string member_id = 1;
+  string code = 2;
+  sint32 offset_us = 3;
+  float confidence = 4;
+  // how far its rounds spread (the largest spread among the arrivals its offset rests on), us
+  uint32 spread_us = 5;
+  // the fewest rounds kept among those arrivals
+  uint32 rounds = 6;
+  // the microphone channels it analysed (0: none, or it did not answer)
+  uint32 mic_channels = 7;
+  // the two-sided 95% confidence interval's half-width around offset_us, us; 0 from a legacy run
+  uint32 ci95_us = 8;
+  // version 3 capability round: ok, weak, missed or unsupported; empty when no ultrasonic round ran
+  string ultrasonic = 9;
+}
+
+// audiod -> cadenced: a calibration's result. code: ok (every member measured; the offsets apply), incomplete,
+// inconsistent (the pairs disagree past 1 ms), too_few (no member connected), not_leader, playing (the group plays:
+// pause it first), busy (a calibration runs), gated (the leader's volume does not hold yet), no_capture, expired
+// (listener_result for a run it no longer holds), failed. the leader is members[0]. numbers and ids only (rule 8)
+message GroupCalibrated {
+  string request_id = 1;
+  string code = 2;
+  repeated GroupCalibratedMember members = 3;
+  // the weighted rms of the pairs' disagreement with the solution
+  uint32 residual_us = 4;
+  // listener mode (code scheduled): the first slot starts this long after the answer was made, leader first
+  uint32 starts_in_ms = 5;
+  repeated GroupCalibrateSlot slots = 6;
+  // listener mode (code scheduled): the id listener_result takes, the rounds, and the sweep the members play
+  uint32 run_id = 7;
+  uint32 rounds = 8;
+  GroupChirp chirp = 9;
+  // scheduled with calibration version 2: the coded probes; chirp stays present for a legacy leader
+  GroupProbe probe = 10;
+}
+
+enum GroupProbeKind {
+  GROUP_PROBE_KIND_UNSPECIFIED = 0;
+  GROUP_PROBE_KIND_GOLD = 1;
+}
+
+// a listener calibration's coded probe: its amplitude stays implicit (-20 dBFS plus each slot's gain)
+message GroupProbe {
+  GroupProbeKind kind = 1;
+  uint32 band_lo_hz = 2;
+  uint32 band_hi_hz = 3;
+  uint32 fade_us = 4;
+}
+
+// cadence.sync.v1.ChirpShape as audiod hands it to cadenced: an exponential sweep, raised-cosine fades
+message GroupChirp {
+  uint32 f0_hz = 1;
+  uint32 f1_hz = 2;
+  uint32 duration_us = 3;
+  uint32 fade_us = 4;
+}
+
+// audiod -> cadenced after each six-cycle sliding-window solve, and when tracking becomes off, idle or unsupported.
+// correction_us is non-zero only when the bounded correction rule fires; audiod never applies it (the server owns trims).
+// correction_id increments with each new correction and stays on later reports, so the server applies a replay once
+message GroupTracked {
+  string group_id = 1;
+  // off, idle, tracking, needs_calibration or unsupported
+  string state = 2;
+  repeated GroupTrackedMember members = 3;
+}
+
+message GroupTrackedMember {
+  string member_id = 1;
+  sint32 offset_us = 2;
+  uint32 ci95_us = 3;
+  uint32 cycles = 4;
+  sint32 correction_us = 5;
+  uint32 correction_id = 6;
+}
+
+// bluetooth receive (the bluetooth capability, basic tier). cadenced talks to bluez and bluealsa over the system bus,
+// opens a phone's a2dp sink pcm (org.bluealsa.PCM1.Open) and hands audiod the pcm's data fd; audiod plays it as the
+// bluetooth media source. no audio crosses cadenced, and audiod speaks no bluetooth d-bus.
+
+// cadenced -> audiod; enabled false drops every stream and detaches the source; sent after every Ready and on change
+message BluetoothConfig {
+  bool enabled = 1;
+}
+
+// cadenced -> audiod: a phone's pcm is open. the frame carries exactly one fd as SCM_RIGHTS in the same sendmsg: the
+// read end of bluealsa's pcm pipe (interleaved s16le at rate and channels). audiod owns the fd from then on and
+// closes it at the stream's end. a frame without its fd, or an fd with any other frame, is refused and the fd closed.
+// a stream with an id already open replaces it (a codec change reopens the pcm)
+message BluetoothStream {
+  // [A-Za-z0-9_-]{1,64}: cadenced's short id for the phone (a hash of its address, never the address)
+  string stream_id = 1;
+  uint32 rate = 2;
+  uint32 channels = 3;
+  // the phone's name: memory-only, never logged (D11); becomes MediaMetadata.sender
+  string sender = 4;
+}
+
+// cadenced -> audiod: the phone's pcm closed (the transport went idle, the phone disconnected); audiod closes the fd.
+// a pcm that reads eof ends the stream on audiod's side too
+message BluetoothStreamEnd {
+  string stream_id = 1;
+}
+
+// cadenced -> audiod: the phone's avrcp player (org.bluez.MediaPlayer1), on change; metadata memory-only (D11)
+message BluetoothPlayer {
+  string stream_id = 1;
+  // the player's Status: playing true for "playing", false for "paused" and "stopped"; a stream with no player
+  // counts as playing while its pcm flows
+  bool playing = 2;
+  MediaMetadata metadata = 3;
+  // 0 = unknown
+  uint64 duration_ms = 4;
+  uint64 position_ms = 5;
+}
+
+// audiod -> cadenced: a transport action for the phone's player (pause, resume, next, previous, stop); fire and
+// forget: audiod answers its own MediaCommand once sent, and the player's next BluetoothPlayer says what happened.
+// a displacement or a shut gate sends pause
+message BluetoothControl {
+  string stream_id = 1;
+  MediaAction action = 2;
+}
+
+// a w3c trace context (as cadence.v2.TraceContext): ids and flags only. audiod may log the trace id beside its lines
+// of the capture or stream; it never needs to parse it to send marks
+message TraceContext {
+  // 00-<trace id>-<span id>-<flags>, 55 characters
+  string traceparent = 1;
+  // at most 512 characters; cadenced never sends a longer one
+  string tracestate = 2;
+}
+
+// a stage audiod marks; cadenced records each as an event (or, with a duration, a child span) of the capture's or the
+// stream's span. a stage cadenced does not know is recorded by its number
+enum TraceStage {
+  TRACE_STAGE_UNSPECIFIED = 0;
+  // the wake engine fired (no ids: cadenced attaches it to the turn the wake opens, within 5 s); values: score
+  TRACE_STAGE_WAKE_DETECTED = 1;
+  // a CaptureStart's capture runs (the device opened, or the running one was taken); session_id
+  TRACE_STAGE_CAPTURE_STARTED = 2;
+  // the capture's first MicOpus left audiod; session_id; values: frames held before it
+  TRACE_STAGE_FIRST_OPUS_FRAME = 3;
+  // the capture's totals at its stop (frames, bytes, vqe and encode time); session_id
+  TRACE_STAGE_CAPTURE_STATS = 4;
+  // the capture stopped; session_id
+  TRACE_STAGE_CAPTURE_STOPPED = 5;
+  // a StreamStart's stream entered the mix; stream_id
+  TRACE_STAGE_PLAYBACK_OPENED = 6;
+  // the stream's first sample reached the output device; stream_id; values: buffered_ms
+  TRACE_STAGE_FIRST_SAMPLE_PLAYED = 7;
+  // the output ran dry while the stream played; stream_id; values: count, gap_ms
+  TRACE_STAGE_UNDERRUN = 8;
+  // the stream is done (as StreamDone); stream_id; values: played_ms, underruns
+  TRACE_STAGE_STREAM_DONE = 9;
+  // the vendor engines' or the encoder's stats over a span of time (with duration_ns); session_id
+  TRACE_STAGE_VQE_STATS = 10;
+}
+
+// a number a mark carries: key is a fixed snake_case code (score, frames, bytes, played_ms, underruns, gap_ms,
+// buffered_ms, encode_us, vqe_us), never text of the user's
+message TraceValue {
+  string key = 1;
+  double value = 2;
+}
+
+// audiod -> cadenced: a stage of a capture (session_id: CaptureStart's) or a stream (stream_id: StreamStart's), at
+// at_unix_ns. the clock is CLOCK_REALTIME in unix nanoseconds, the clock otel spans use, read in audiod at the stage
+// (both processes are on one host, so no offset applies). a mark whose ids name no capture or stream cadenced traces
+// is dropped, as is every mark while tracing is off; audiod sends them regardless, at most a few per second
+message TraceMark {
+  TraceStage stage = 1;
+  int64 at_unix_ns = 2;
+  string session_id = 3;
+  string stream_id = 4;
+  // 0: an instant; else the stage lasted this long, starting at at_unix_ns (a child span rather than an event)
+  int64 duration_ns = 5;
+  repeated TraceValue values = 6;
+}

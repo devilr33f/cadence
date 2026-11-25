@@ -1,0 +1,787 @@
+{
+ "contents": {
+  "singleColumnMusicWatchNextResultsRenderer": {
+   "tabbedRenderer": {
+    "watchNextTabbedResultsRenderer": {
+     "tabs": [
+      {
+       "tabRenderer": {
+        "title": "Up next",
+        "content": {
+         "musicQueueRenderer": {
+          "content": {
+           "playlistPanelRenderer": {
+            "contents": [
+             {
+              "playlistPanelVideoRenderer": {
+               "title": {
+                "runs": [
+                 {
+                  "text": "Easier to Run"
+                 }
+                ]
+               },
+               "longBylineText": {
+                "runs": [
+                 {
+                  "text": "Linkin Park",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseId": "UCxgN32UVVztKAQd2HkXzBtw",
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "Meteora",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseId": "MPREb_qMlbe7gLeuH",
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ALBUM"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "2003"
+                 }
+                ]
+               },
+               "thumbnail": {
+                "thumbnails": [
+                 {
+                  "url": "https://yt3.googleusercontent.com/dNfpEZtqYYsrHaHpSE9ik5vGgUSVLKE5DycRz8VMLdIQV_GYz7GpGUkMnU9I0926zLRQEAIUwdsjYCuG=w60-h60-l90-rj",
+                  "width": 60,
+                  "height": 60
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/dNfpEZtqYYsrHaHpSE9ik5vGgUSVLKE5DycRz8VMLdIQV_GYz7GpGUkMnU9I0926zLRQEAIUwdsjYCuG=w120-h120-l90-rj",
+                  "width": 120,
+                  "height": 120
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/dNfpEZtqYYsrHaHpSE9ik5vGgUSVLKE5DycRz8VMLdIQV_GYz7GpGUkMnU9I0926zLRQEAIUwdsjYCuG=w180-h180-l90-rj",
+                  "width": 180,
+                  "height": 180
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/dNfpEZtqYYsrHaHpSE9ik5vGgUSVLKE5DycRz8VMLdIQV_GYz7GpGUkMnU9I0926zLRQEAIUwdsjYCuG=w226-h226-l90-rj",
+                  "width": 226,
+                  "height": 226
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/dNfpEZtqYYsrHaHpSE9ik5vGgUSVLKE5DycRz8VMLdIQV_GYz7GpGUkMnU9I0926zLRQEAIUwdsjYCuG=w302-h302-l90-rj",
+                  "width": 302,
+                  "height": 302
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/dNfpEZtqYYsrHaHpSE9ik5vGgUSVLKE5DycRz8VMLdIQV_GYz7GpGUkMnU9I0926zLRQEAIUwdsjYCuG=w544-h544-l90-rj",
+                  "width": 544,
+                  "height": 544
+                 }
+                ]
+               },
+               "lengthText": {
+                "runs": [
+                 {
+                  "text": "3:25"
+                 }
+                ]
+               },
+               "selected": true,
+               "navigationEndpoint": {
+                "watchEndpoint": {
+                 "videoId": "M3nlvAb8Kc8",
+                 "playlistId": "RDEMww6ZEHgLhQ-8eu_x7Z-FJw",
+                 "index": 0,
+                 "params": "OAHyAQIIAQ%3D%3D",
+                 "playerParams": "8AUBygYQNTZCNDRGNkQxMDU1N0NDNrAIAg%3D%3D"
+                }
+               },
+               "videoId": "M3nlvAb8Kc8",
+               "shortBylineText": {
+                "runs": [
+                 {
+                  "text": "Linkin Park"
+                 }
+                ]
+               },
+               "canReorder": true,
+               "queueNavigationEndpoint": {
+                "queueAddEndpoint": {
+                 "queueTarget": {
+                  "videoId": "M3nlvAb8Kc8"
+                 },
+                 "queueInsertPosition": "INSERT_AT_END",
+                 "params": "Q0FJJTNE"
+                }
+               }
+              }
+             },
+             {
+              "playlistPanelVideoRenderer": {
+               "title": {
+                "runs": [
+                 {
+                  "text": "Already Over"
+                 }
+                ]
+               },
+               "longBylineText": {
+                "runs": [
+                 {
+                  "text": "Mike Shinoda",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseId": "UCjZCpUyBTuYRQhkYKZR_mdg",
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "Already Over",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseId": "MPREb_uM0lW7t4hhY",
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ALBUM"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "2023"
+                 }
+                ]
+               },
+               "thumbnail": {
+                "thumbnails": [
+                 {
+                  "url": "https://yt3.googleusercontent.com/CNKhmim0HzbtkhpFiumwxWsDJzScKZvFte9YOdXgxjRZYi1Fd6i5H5mDafpgsnW8wP14W2mb1BaaPcc=w60-h60-l90-rj",
+                  "width": 60,
+                  "height": 60
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/CNKhmim0HzbtkhpFiumwxWsDJzScKZvFte9YOdXgxjRZYi1Fd6i5H5mDafpgsnW8wP14W2mb1BaaPcc=w120-h120-l90-rj",
+                  "width": 120,
+                  "height": 120
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/CNKhmim0HzbtkhpFiumwxWsDJzScKZvFte9YOdXgxjRZYi1Fd6i5H5mDafpgsnW8wP14W2mb1BaaPcc=w180-h180-l90-rj",
+                  "width": 180,
+                  "height": 180
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/CNKhmim0HzbtkhpFiumwxWsDJzScKZvFte9YOdXgxjRZYi1Fd6i5H5mDafpgsnW8wP14W2mb1BaaPcc=w226-h226-l90-rj",
+                  "width": 226,
+                  "height": 226
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/CNKhmim0HzbtkhpFiumwxWsDJzScKZvFte9YOdXgxjRZYi1Fd6i5H5mDafpgsnW8wP14W2mb1BaaPcc=w302-h302-l90-rj",
+                  "width": 302,
+                  "height": 302
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/CNKhmim0HzbtkhpFiumwxWsDJzScKZvFte9YOdXgxjRZYi1Fd6i5H5mDafpgsnW8wP14W2mb1BaaPcc=w544-h544-l90-rj",
+                  "width": 544,
+                  "height": 544
+                 }
+                ]
+               },
+               "lengthText": {
+                "runs": [
+                 {
+                  "text": "2:41"
+                 }
+                ]
+               },
+               "selected": false,
+               "navigationEndpoint": {
+                "watchEndpoint": {
+                 "videoId": "ixmOn-bA3is",
+                 "playlistId": "RDEMww6ZEHgLhQ-8eu_x7Z-FJw",
+                 "index": 1,
+                 "params": "OAHyAQIIAQ%3D%3D",
+                 "playerParams": "8AUBygYQMjg5RjRBNDZERjBBMzBEMrAIAg%3D%3D"
+                }
+               },
+               "videoId": "ixmOn-bA3is",
+               "shortBylineText": {
+                "runs": [
+                 {
+                  "text": "Mike Shinoda"
+                 }
+                ]
+               },
+               "canReorder": true,
+               "queueNavigationEndpoint": {
+                "queueAddEndpoint": {
+                 "queueTarget": {
+                  "videoId": "ixmOn-bA3is"
+                 },
+                 "queueInsertPosition": "INSERT_AT_END",
+                 "params": "Q0FJJTNE"
+                }
+               }
+              }
+             },
+             {
+              "playlistPanelVideoRenderer": {
+               "title": {
+                "runs": [
+                 {
+                  "text": "The Kids Aren't Alright"
+                 }
+                ]
+               },
+               "longBylineText": {
+                "runs": [
+                 {
+                  "text": "The Offspring",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseId": "UCQVUXQu8RpxhihAMla6ke5A",
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "Americana",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseId": "MPREb_jiOKvtimX2Y",
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ALBUM"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "1998"
+                 }
+                ]
+               },
+               "thumbnail": {
+                "thumbnails": [
+                 {
+                  "url": "https://yt3.googleusercontent.com/DeFbw-G0QFpSJps9bOyvHGcVcWyzIyq6_hMqV3HBmjdOwGGBwO05vpNdKwiRXq5acdQzP_87iLVNbLnXaQ=w60-h60-l90-rj",
+                  "width": 60,
+                  "height": 60
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/DeFbw-G0QFpSJps9bOyvHGcVcWyzIyq6_hMqV3HBmjdOwGGBwO05vpNdKwiRXq5acdQzP_87iLVNbLnXaQ=w120-h120-l90-rj",
+                  "width": 120,
+                  "height": 120
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/DeFbw-G0QFpSJps9bOyvHGcVcWyzIyq6_hMqV3HBmjdOwGGBwO05vpNdKwiRXq5acdQzP_87iLVNbLnXaQ=w180-h180-l90-rj",
+                  "width": 180,
+                  "height": 180
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/DeFbw-G0QFpSJps9bOyvHGcVcWyzIyq6_hMqV3HBmjdOwGGBwO05vpNdKwiRXq5acdQzP_87iLVNbLnXaQ=w226-h226-l90-rj",
+                  "width": 226,
+                  "height": 226
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/DeFbw-G0QFpSJps9bOyvHGcVcWyzIyq6_hMqV3HBmjdOwGGBwO05vpNdKwiRXq5acdQzP_87iLVNbLnXaQ=w302-h302-l90-rj",
+                  "width": 302,
+                  "height": 302
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/DeFbw-G0QFpSJps9bOyvHGcVcWyzIyq6_hMqV3HBmjdOwGGBwO05vpNdKwiRXq5acdQzP_87iLVNbLnXaQ=w544-h544-l90-rj",
+                  "width": 544,
+                  "height": 544
+                 }
+                ]
+               },
+               "lengthText": {
+                "runs": [
+                 {
+                  "text": "3:01"
+                 }
+                ]
+               },
+               "selected": false,
+               "navigationEndpoint": {
+                "watchEndpoint": {
+                 "videoId": "-uQi0vJK9lk",
+                 "playlistId": "RDEMww6ZEHgLhQ-8eu_x7Z-FJw",
+                 "index": 2,
+                 "params": "OAHyAQIIAQ%3D%3D",
+                 "playerParams": "8AUBygYQMDE3MjA4RkFBODUyMzNGObAIAg%3D%3D"
+                }
+               },
+               "videoId": "-uQi0vJK9lk",
+               "shortBylineText": {
+                "runs": [
+                 {
+                  "text": "The Offspring"
+                 }
+                ]
+               },
+               "canReorder": true,
+               "queueNavigationEndpoint": {
+                "queueAddEndpoint": {
+                 "queueTarget": {
+                  "videoId": "-uQi0vJK9lk"
+                 },
+                 "queueInsertPosition": "INSERT_AT_END",
+                 "params": "Q0FJJTNE"
+                }
+               }
+              }
+             },
+             {
+              "playlistPanelVideoRenderer": {
+               "title": {
+                "runs": [
+                 {
+                  "text": "Starting To Fly"
+                 }
+                ]
+               },
+               "longBylineText": {
+                "runs": [
+                 {
+                  "text": "Grey Daze",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseId": "UCSd2i_j-TxUHuuyicnuEJBw",
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "The Phoenix",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseId": "MPREb_cfCyU8QSCg3",
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ALBUM"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "2022"
+                 }
+                ]
+               },
+               "thumbnail": {
+                "thumbnails": [
+                 {
+                  "url": "https://yt3.googleusercontent.com/dZBNJZzUk7YlYVNUZZRYhLZo7NKWmOzDfiFBJAVrcFGDA7xGlG6-VAg-t9ewZM5UiR-5e-uZygMxiHNA=w60-h60-l90-rj",
+                  "width": 60,
+                  "height": 60
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/dZBNJZzUk7YlYVNUZZRYhLZo7NKWmOzDfiFBJAVrcFGDA7xGlG6-VAg-t9ewZM5UiR-5e-uZygMxiHNA=w120-h120-l90-rj",
+                  "width": 120,
+                  "height": 120
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/dZBNJZzUk7YlYVNUZZRYhLZo7NKWmOzDfiFBJAVrcFGDA7xGlG6-VAg-t9ewZM5UiR-5e-uZygMxiHNA=w180-h180-l90-rj",
+                  "width": 180,
+                  "height": 180
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/dZBNJZzUk7YlYVNUZZRYhLZo7NKWmOzDfiFBJAVrcFGDA7xGlG6-VAg-t9ewZM5UiR-5e-uZygMxiHNA=w226-h226-l90-rj",
+                  "width": 226,
+                  "height": 226
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/dZBNJZzUk7YlYVNUZZRYhLZo7NKWmOzDfiFBJAVrcFGDA7xGlG6-VAg-t9ewZM5UiR-5e-uZygMxiHNA=w302-h302-l90-rj",
+                  "width": 302,
+                  "height": 302
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/dZBNJZzUk7YlYVNUZZRYhLZo7NKWmOzDfiFBJAVrcFGDA7xGlG6-VAg-t9ewZM5UiR-5e-uZygMxiHNA=w544-h544-l90-rj",
+                  "width": 544,
+                  "height": 544
+                 }
+                ]
+               },
+               "lengthText": {
+                "runs": [
+                 {
+                  "text": "3:28"
+                 }
+                ]
+               },
+               "selected": false,
+               "navigationEndpoint": {
+                "watchEndpoint": {
+                 "videoId": "hHEfLF5jSd0",
+                 "playlistId": "RDEMww6ZEHgLhQ-8eu_x7Z-FJw",
+                 "index": 3,
+                 "params": "OAHyAQIIAQ%3D%3D",
+                 "playerParams": "8AUBygYQNTIxNTJCNDk0NkMyRjczRrAIAg%3D%3D"
+                }
+               },
+               "videoId": "hHEfLF5jSd0",
+               "shortBylineText": {
+                "runs": [
+                 {
+                  "text": "Grey Daze"
+                 }
+                ]
+               },
+               "canReorder": true,
+               "queueNavigationEndpoint": {
+                "queueAddEndpoint": {
+                 "queueTarget": {
+                  "videoId": "hHEfLF5jSd0"
+                 },
+                 "queueInsertPosition": "INSERT_AT_END",
+                 "params": "Q0FJJTNE"
+                }
+               }
+              }
+             }
+            ],
+            "playlistId": "RDEMww6ZEHgLhQ-8eu_x7Z-FJw",
+            "isInfinite": true,
+            "continuations": [
+             {
+              "nextRadioContinuationData": {
+               "continuation": "CDESQRILRjE0RUFmdGFOZEUiGlJERU13dzZaRUhnTGhRLThldV94N1otRkp3ODDQAQH6ARA1RTNBREYwMkI5QzU3RkY2GAo%3D"
+              }
+             }
+            ],
+            "numItemsToShow": 25,
+            "shuffleToggleButton": {
+             "toggleButtonRenderer": {
+              "defaultIcon": {
+               "iconType": "MUSIC_SHUFFLE"
+              },
+              "defaultServiceEndpoint": {
+               "watchPlaylistEndpoint": {
+                "playlistId": "RDEMww6ZEHgLhQ-8eu_x7Z-FJw",
+                "params": "wAEB8gECGAE%3D"
+               }
+              },
+              "toggledIcon": {
+               "iconType": "MUSIC_SHUFFLE"
+              },
+              "toggledServiceEndpoint": {
+               "watchPlaylistEndpoint": {
+                "playlistId": "RDEMww6ZEHgLhQ-8eu_x7Z-FJw",
+                "params": "wAEB"
+               }
+              }
+             }
+            }
+           }
+          },
+          "hack": true,
+          "musicQueueConfig": {},
+          "subHeaderChipCloud": {}
+         }
+        }
+       }
+      },
+      {
+       "tabRenderer": {
+        "endpoint": {
+         "browseEndpoint": {
+          "browseId": "MPLYt_qMlbe7gLeuH-6",
+          "browseEndpointContextSupportedConfigs": {
+           "browseEndpointContextMusicConfig": {
+            "pageType": "MUSIC_PAGE_TYPE_TRACK_LYRICS"
+           }
+          }
+         }
+        },
+        "title": "Lyrics"
+       }
+      },
+      {
+       "tabRenderer": {
+        "title": "Comments",
+        "content": {
+         "sectionListRenderer": {
+          "continuations": [
+           {
+            "reloadContinuationData": {
+             "continuation": "Eg0SC00zbmx2QWI4S2M4GAYyHCINIgtNM25sdkFiOEtjOEILTTNubHZBYjhLYzhqC00zbmx2QWI4S2M4"
+            }
+           }
+          ]
+         }
+        }
+       }
+      },
+      {
+       "tabRenderer": {
+        "endpoint": {
+         "browseEndpoint": {
+          "browseId": "MPTRt_qMlbe7gLeuH-6",
+          "browseEndpointContextSupportedConfigs": {
+           "browseEndpointContextMusicConfig": {
+            "pageType": "MUSIC_PAGE_TYPE_TRACK_RELATED"
+           }
+          }
+         }
+        },
+        "title": "Related"
+       }
+      }
+     ]
+    }
+   }
+  }
+ },
+ "videoReporting": {
+  "reportFormModalRenderer": {
+   "optionsSupportedRenderers": {
+    "optionsRenderer": {
+     "items": [
+      {
+       "optionSelectableItemRenderer": {
+        "text": {
+         "runs": [
+          {
+           "text": "Sexual content"
+          }
+         ]
+        },
+        "submitEndpoint": {
+         "flagEndpoint": {
+          "flagAction": "EAciDwoLTTNubHZBYjhLYzhQBTILTTNubHZBYjhLYziQASyYAQGoAQM%3D"
+         }
+        }
+       }
+      },
+      {
+       "optionSelectableItemRenderer": {
+        "text": {
+         "runs": [
+          {
+           "text": "Violent or repulsive content"
+          }
+         ]
+        },
+        "submitEndpoint": {
+         "flagEndpoint": {
+          "flagAction": "EAciDwoLTTNubHZBYjhLYzhQBTILTTNubHZBYjhLYziQATaYAQGoAQM%3D"
+         }
+        }
+       }
+      },
+      {
+       "optionSelectableItemRenderer": {
+        "text": {
+         "runs": [
+          {
+           "text": "Hateful or abusive content"
+          }
+         ]
+        },
+        "submitEndpoint": {
+         "flagEndpoint": {
+          "flagAction": "EAciDwoLTTNubHZBYjhLYzhQBTILTTNubHZBYjhLYziQARSYAQGoAQM%3D"
+         }
+        }
+       }
+      },
+      {
+       "optionSelectableItemRenderer": {
+        "text": {
+         "runs": [
+          {
+           "text": "Harassment or bullying"
+          }
+         ]
+        },
+        "submitEndpoint": {
+         "flagEndpoint": {
+          "flagAction": "EAciDwoLTTNubHZBYjhLYzhQBTILTTNubHZBYjhLYziQARGYAQGoAQM%3D"
+         }
+        }
+       }
+      },
+      {
+       "optionSelectableItemRenderer": {
+        "text": {
+         "runs": [
+          {
+           "text": "Harmful or dangerous acts"
+          }
+         ]
+        },
+        "submitEndpoint": {
+         "flagEndpoint": {
+          "flagAction": "EAciDwoLTTNubHZBYjhLYzhQBTILTTNubHZBYjhLYziQAQ2YAQGoAQM%3D"
+         }
+        }
+       }
+      },
+      {
+       "optionSelectableItemRenderer": {
+        "text": {
+         "runs": [
+          {
+           "text": "Misinformation"
+          }
+         ]
+        },
+        "submitEndpoint": {
+         "flagEndpoint": {
+          "flagAction": "EAciDwoLTTNubHZBYjhLYzhQBTILTTNubHZBYjhLYziQAUGYAQGoAQM%3D"
+         }
+        }
+       }
+      },
+      {
+       "optionSelectableItemRenderer": {
+        "text": {
+         "runs": [
+          {
+           "text": "Child abuse"
+          }
+         ]
+        },
+        "submitEndpoint": {
+         "flagEndpoint": {
+          "flagAction": "EAciDwoLTTNubHZBYjhLYzhQBTILTTNubHZBYjhLYziQAQyYAQGoAQM%3D"
+         }
+        }
+       }
+      },
+      {
+       "optionSelectableItemRenderer": {
+        "text": {
+         "runs": [
+          {
+           "text": "Legal issue"
+          }
+         ]
+        },
+        "submitEndpoint": {
+         "flagEndpoint": {
+          "flagAction": "EAciDwoLTTNubHZBYjhLYzhQBTILTTNubHZBYjhLYziQAUWYAQGoAQM%3D"
+         }
+        }
+       }
+      },
+      {
+       "optionSelectableItemRenderer": {
+        "text": {
+         "runs": [
+          {
+           "text": "Promotes terrorism"
+          }
+         ]
+        },
+        "submitEndpoint": {
+         "flagEndpoint": {
+          "flagAction": "EAciDwoLTTNubHZBYjhLYzhQBTILTTNubHZBYjhLYziQATWYAQGoAQM%3D"
+         }
+        }
+       }
+      },
+      {
+       "optionSelectableItemRenderer": {
+        "text": {
+         "runs": [
+          {
+           "text": "Spam or misleading"
+          }
+         ]
+        },
+        "submitEndpoint": {
+         "flagEndpoint": {
+          "flagAction": "EAciDwoLTTNubHZBYjhLYzhQBTILTTNubHZBYjhLYziQATGYAQGoAQM%3D"
+         }
+        }
+       }
+      }
+     ]
+    }
+   },
+   "title": {
+    "runs": [
+     {
+      "text": "Report video"
+     }
+    ]
+   },
+   "submitButton": {
+    "buttonRenderer": {
+     "style": "STYLE_BRAND",
+     "isDisabled": true,
+     "text": {
+      "runs": [
+       {
+        "text": "Report"
+       }
+      ]
+     }
+    }
+   },
+   "cancelButton": {
+    "buttonRenderer": {
+     "style": "STYLE_TEXT",
+     "isDisabled": false,
+     "text": {
+      "runs": [
+       {
+        "text": "Cancel"
+       }
+      ]
+     }
+    }
+   }
+  }
+ }
+}

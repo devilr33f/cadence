@@ -1,0 +1,97 @@
+{
+ "version": 1,
+ "id": "call-f416ae85905e2e7663",
+ "revision": 1,
+ "fallbackText": "Результаты поиска: 4",
+ "root": {
+  "card": {
+   "title": "Нашлась музыка",
+   "subtitle": "System of a Down",
+   "icon": "music",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "pagedList": {
+      "items": [
+       {
+        "mediaTile": {
+         "image": {
+          "ref": "img:fakeart1-640-272________",
+          "aspect": "ASPECT_SQUARE"
+         },
+         "title": "System of a Down",
+         "subtitle": "Исполнитель",
+         "action": {
+          "id": "a:1"
+         }
+        }
+       },
+       {
+        "mediaTile": {
+         "image": {
+          "ref": "img:fakeart2-400-400________",
+          "aspect": "ASPECT_SQUARE"
+         },
+         "title": "Toxicity",
+         "subtitle": "System of a Down · 3:39",
+         "badges": [
+          {
+           "kind": "BADGE_KIND_PROVIDER",
+           "text": "Трек"
+          }
+         ],
+         "action": {
+          "id": "a:2"
+         }
+        }
+       },
+       {
+        "mediaTile": {
+         "image": {
+          "ref": "img:fakeart3-400-400________",
+          "aspect": "ASPECT_SQUARE"
+         },
+         "title": "Mezmerize",
+         "subtitle": "System of a Down · 11 треков",
+         "badges": [
+          {
+           "kind": "BADGE_KIND_PROVIDER",
+           "text": "Альбом"
+          }
+         ],
+         "action": {
+          "id": "a:3"
+         }
+        }
+       },
+       {
+        "mediaTile": {
+         "image": {
+          "ref": "img:fakeart4-300-450________",
+          "aspect": "ASPECT_SQUARE"
+         },
+         "title": "System of a Down: лучшее",
+         "subtitle": "YouTube Music · 49 треков",
+         "badges": [
+          {
+           "kind": "BADGE_KIND_PROVIDER",
+           "text": "Плейлист"
+          }
+         ],
+         "action": {
+          "id": "a:4"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "media_tile",
+  "paged_list"
+ ]
+}

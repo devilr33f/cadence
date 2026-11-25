@@ -1,0 +1,1 @@
+session_start { session_id: "s-2" trigger: TRIGGER_EVENT }

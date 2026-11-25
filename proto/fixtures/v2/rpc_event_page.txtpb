@@ -1,0 +1,1 @@
+rpc_event { id: "r-5" seq: 3 page { version: 1 cards { version: 1 id: "p-1" revision: 1 fallback_text: "Описание" root { card { title: "Описание" children { long_text { text: "Опенинг второго сезона." } } } } features: "card" features: "long_text" } next { id: "a:p:2" } } }

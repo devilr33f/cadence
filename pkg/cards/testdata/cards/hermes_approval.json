@@ -1,0 +1,60 @@
+{
+ "version": 1,
+ "id": "task.9f2a",
+ "revision": 7,
+ "fallbackText": "Задача ждёт разрешения: удалить временные файлы сборки",
+ "root": {
+  "card": {
+   "title": "Почистить диск на сервере",
+   "subtitle": "Ждёт ответа · 3 мин",
+   "icon": "hand",
+   "tone": "TONE_WARNING",
+   "children": [
+    {
+     "state": {
+      "kind": "STATE_KIND_UNKNOWN",
+      "label": "Ждёт ответа",
+      "tone": "TONE_WARNING"
+     }
+    },
+    {
+     "text": {
+      "style": "TEXT_STYLE_BODY",
+      "text": "Хочет удалить временные файлы сборки старше 7 дней."
+     }
+    },
+    {
+     "code": {
+      "label": "Команда",
+      "text": "find /var/tmp/build -type f -mtime +7 -delete"
+     }
+    }
+   ],
+   "actions": [
+    {
+     "label": "Запретить",
+     "icon": "cross",
+     "action": {
+      "id": "a:k:deny",
+      "confirm": "Запретить эту команду?"
+     }
+    },
+    {
+     "label": "Разрешить один раз",
+     "icon": "check",
+     "action": {
+      "id": "a:k:allow",
+      "confirm": "Разрешить выполнить команду один раз?"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "button",
+  "card",
+  "code",
+  "state",
+  "text"
+ ]
+}

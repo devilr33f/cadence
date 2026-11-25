@@ -1,0 +1,6 @@
+# a version is installed only once it is three days old (npm's unpublish window), so a hijacked release has time to be
+# pulled before it lands in the lockfile
+minimumReleaseAge: 4320
+minimumReleaseAgeExcludePrune: true
+trustPolicy: no-downgrade
+shellEmulator: true

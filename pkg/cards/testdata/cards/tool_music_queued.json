@@ -1,0 +1,25 @@
+{
+ "version": 1,
+ "id": "music-play-d480d6205179385e52",
+ "revision": 1,
+ "fallbackText": "Музыка: В очереди",
+ "root": {
+  "card": {
+   "title": "Музыка",
+   "icon": "music",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "В очереди",
+      "kind": "STATE_KIND_UNKNOWN"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state"
+ ]
+}

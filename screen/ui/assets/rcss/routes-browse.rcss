@@ -1,0 +1,974 @@
+/* i1's screens (design r2 sections 11, 18): home, search, title, episodes, picker, resolving, and the right sheet.
+   a template: tokens-gen expands every $token; a literal colour fails the build */
+
+/* ---------- home: the top bar, the hero, the preview of the focused item ---------- */
+.topbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 64dp;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s5;
+  z-index: 3;
+}
+.topbar .wordmark {
+  font-family: $font.display;
+  font-weight: 700;
+  font-size: 34dp;
+  line-height: 40dp;
+  letter-spacing: -0.5dp;
+}
+.topbar .clock {
+  margin-left: $space.s5;
+}
+/* the header's pills sit over the hero's picture: a dark fill of their own, so an icon over a bright face (the
+   assistant's mic) never washes out; focus still fills ember */
+.topbar .btn {
+  background-color: $scrim.control;
+  border-color: $color.hairline;
+}
+.topbar .btn:focus {
+  background-color: $color.ember;
+  border-color: $color.ember;
+}
+.topbar .clock .date, .topbar .clock .weather {
+  display: none;
+}
+/* background audio: the same compact cover-and-type shape as the «now playing» notice, but focusable and persistent */
+.home-now {
+  display: flex;
+  flex-direction: row;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.hnp {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s3;
+  width: 620dp;
+  height: 64dp;
+  padding: 6dp $space.s4 6dp 6dp;
+  flex: 0 1 auto;
+  min-width: 0;
+  border-radius: 32dp;
+  border: 2dp $color.line;
+  background-color: $scrim.control;
+  color: $color.paper;
+  transition: background-color $motion.quick, color $motion.quick;
+}
+.hnp-art {
+  flex: 0 0 auto;
+  width: 48dp;
+  height: 48dp;
+  border-radius: $radius.s;
+  background-color: $color.ink-raised;
+  text-align: center;
+}
+.hnp-art > .icon {
+  font-size: 28dp;
+  line-height: 48dp;
+}
+.hnp-img {
+  width: 100%;
+  height: 100%;
+  border-radius: $radius.s;
+}
+.hnp-copy {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  flex-direction: column;
+}
+.hnp-label {
+  font-size: 18dp;
+  font-weight: 600;
+  line-height: 20dp;
+  color: $color.paper-2;
+  white-space: nowrap;
+}
+.hnp-title {
+  font-size: 24dp;
+  line-height: 30dp;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hnp-state {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s2;
+  $type.label;
+  font-size: 20dp;
+  white-space: nowrap;
+}
+.hnp-state .icon {
+  font-size: 28dp;
+}
+.hnp .ring {
+  border-radius: 40dp;
+}
+.hnp .glow {
+  decorator: ninepatch(glow-pill-outer, glow-pill-inner, 1);
+}
+.hnp:focus {
+  background-color: $color.ember;
+  border-color: $color.ember;
+  color: $color.ink;
+}
+.hnp:focus .hnp-label {
+  color: $color.ink;
+}
+/* what plays in this room on other devices: a row of the now-playing chip's shape under the hero, gone with it while
+   focus is in the feed (↑ from the first row brings both back) */
+.nearby {
+  display: flex;
+  flex-direction: column;
+  gap: $space.s3;
+  opacity: 1;
+  transition: opacity $motion.enter;
+}
+.home.rows .nearby {
+  opacity: 0;
+}
+.nearby-label {
+  $type.label;
+  color: $color.paper-2;
+}
+.nearby-track {
+  display: flex;
+  flex-direction: row;
+  gap: $space.s4;
+}
+.hnp.nbi {
+  width: 520dp;
+}
+.nbi .hnp-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nbi.paused .hnp-state {
+  color: $color.paper-2;
+}
+.hnp.nbi:focus .hnp-state {
+  color: $color.ink;
+}
+/* the top bar's devices indicator sits over the hero's picture as its pills do */
+.home-ind {
+  display: flex;
+  flex-direction: row;
+}
+.topbar .tind {
+  height: $size.button-h;
+  line-height: 60dp;
+  padding: 0 $space.s5;
+  border-radius: 32dp;
+  background-color: $scrim.control;
+  border-color: $color.hairline;
+}
+.topbar .tind:focus {
+  background-color: $color.ember;
+  border-color: $color.ember;
+}
+.hero .hbadge {
+  margin-bottom: $space.s3;
+}
+.hero-gap {
+  height: $space.s7;
+}
+/* the backdrop under the whole page: two art layers (home.cpp's backdrop()), the newer fading in on top of the older
+   until it covers it, then the scrims: text on the left, the feed at the bottom, the top bar */
+.home-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  /* its own stack: its layers' z-indexes order them among themselves, all under the page's content */
+  z-index: 0;
+}
+.home-bg .bgl {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  z-index: 0;
+  /* a layer not shown is not drawn at all (an element at opacity 0 still costs its fill on the stick) */
+  visibility: hidden;
+}
+.home-bg .bgl.empty {
+  background-color: $color.ink;
+}
+.home-bg .bgl.top {
+  z-index: 1;
+}
+.home-bg .bgl.on {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity $motion.backdrop;
+}
+.home-bg .bgl.now {
+  transition: none;
+}
+.home-bg .bgart {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+/* the scrims: text on the left (its gradient ends at 84 %: no wider than it needs), the feed and the bar */
+.home-bg .bgscrim-x {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 84%;
+  bottom: 0;
+  z-index: 2;
+  decorator: $scrim.home-x;
+}
+.home-bg .bgscrim-y {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  decorator: $scrim.home-y;
+}
+.page.home-page {
+  background-color: $color.transparent;
+}
+/* a film playing on behind the page: its picture in place of the art, under the same scrims */
+.over-video .home-bg .bgl {
+  display: none;
+}
+/* the feed scrolls under the top bar: a fade keeps the bar readable over the row above */
+.home .topfade {
+  visibility: hidden;
+  position: absolute;
+  left: -$size.safe-x;
+  right: -$size.safe-x;
+  top: -$size.safe-y;
+  height: 420dp;
+  z-index: 2;
+  decorator: $scrim.home-top;
+  opacity: 0;
+  transition: opacity $motion.enter;
+}
+.home.rows .topfade {
+  visibility: visible;
+  opacity: 1;
+}
+/* the bottom edge: whatever the next row shows of itself fades out there, never a sliver cut by the screen's edge */
+.home .bottomfade {
+  position: absolute;
+  left: -$size.safe-x;
+  right: -$size.safe-x;
+  bottom: -$size.safe-y;
+  height: 110dp;
+  z-index: 2;
+  decorator: $scrim.home-bottom;
+}
+.home .vscroll {
+  z-index: 1;
+}
+/* the feed around the focused row: the one above dimmed, those further up gone (feed.h) */
+.home .row {
+  opacity: 1;
+  transition: opacity $motion.enter;
+}
+/* rows above the focused one step aside (the hero's details hold that space; feed.h); still focusable, so ↑ reaches
+   the row above */
+.home .row.above {
+  opacity: 0;
+}
+/* the hero while a card holds focus: its name at once, its details fading in when they came (home.cpp's preview) */
+.preview {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 430dp;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity $motion.enter;
+  /* over the top fade (2), beside the top bar (3): the fade never dims the hero's text */
+  z-index: 3;
+}
+.preview.shown {
+  visibility: visible;
+  opacity: 1;
+}
+.preview .hptext {
+  position: absolute;
+  left: 0;
+  top: 110dp;
+  width: 1100dp;
+}
+.preview .hptitle {
+  $type.title-l;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.preview .hpmeta {
+  $type.body;
+  color: $color.paper-2;
+  margin-top: $space.s3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.preview .hpdetail {
+  opacity: 0;
+}
+.preview .hpdetail.in {
+  opacity: 1;
+  transition: opacity $motion.enter;
+}
+.preview .hpdetail.now {
+  transition: none;
+}
+.preview .hpgenres {
+  $type.body;
+  color: $color.paper-2;
+  margin-top: $space.s1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* three lines of the description at most */
+.preview .hpdesc {
+  $type.body;
+  color: $color.paper;
+  margin-top: $space.s3;
+  max-height: 108dp;
+  overflow: hidden;
+}
+.home-empty {
+  margin-top: $space.s7;
+}
+
+/* ---------- search: the keyboard column, the status strip, rows by kind ---------- */
+.search {
+  display: flex;
+  flex-direction: row;
+  gap: $space.s7;
+}
+.search .kbcol {
+  flex: 0 0 auto;
+  width: $size.keyboard-w;
+  opacity: 1;
+  transition: opacity $motion.enter;
+}
+.search .kbcol .stitle {
+  margin-bottom: $space.s5;
+}
+.search.collapsed .kbcol {
+  display: none;
+}
+.search .results {
+  position: relative;
+  flex: 1 1 0;
+  overflow: hidden;
+  /* room for the focused card's scale and ring at the left edge, the content where it was */
+  margin-left: -24dp;
+  padding-left: 24dp;
+}
+.search .qbar {
+  position: relative;
+  display: none;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+  height: $size.button-h;
+  padding: 0 $space.s5;
+  border-radius: 32dp;
+  border: 2dp $color.line;
+  $type.title-s;
+  line-height: 60dp;
+  white-space: nowrap;
+  margin-bottom: $space.s4;
+}
+.search.collapsed .qbar {
+  display: flex;
+}
+.search .qbar:focus {
+  background-color: $color.ember;
+  border-color: $color.ember;
+  color: $color.ink;
+}
+.search .qbar .ring, .search .qbar .glow, .ssum .ring, .ssum .glow {
+  display: none;
+}
+.strip {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: $space.s3;
+  height: 48dp;
+  margin-bottom: $space.s5;
+  overflow: hidden;
+}
+.schip {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s2;
+  height: 44dp;
+  padding: 0 $space.s4;
+  border-radius: 22dp;
+  border: 1dp $color.line;
+  $type.label;
+  line-height: 40dp;
+  white-space: nowrap;
+  color: $color.paper-2;
+  flex: 0 0 auto;
+}
+.schip .icon {
+  font-size: 24dp;
+}
+.schip .sword {
+  color: $color.paper-3;
+}
+.spinner.small {
+  width: 24dp;
+  height: 24dp;
+}
+.ssum {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s3;
+  height: 44dp;
+  padding: 0 $space.s4;
+  border-radius: 22dp;
+  $type.label;
+  line-height: 40dp;
+  white-space: nowrap;
+  color: $color.paper-2;
+}
+.ssum:focus {
+  background-color: $color.ember;
+  color: $color.ink;
+}
+.ssum .icon {
+  font-size: 26dp;
+}
+.row-note {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s2;
+  $type.label;
+  color: $color.paper-2;
+  margin-top: -$space.s3;
+  margin-bottom: $space.s3;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.row-note .icon {
+  font-size: 26dp;
+}
+.sempty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space.s4;
+  margin-top: $space.s7;
+}
+.sempty > .icon {
+  font-size: 72dp;
+  line-height: 80dp;
+  color: $color.paper-2;
+}
+.sempty .stitle {
+  $type.title-m;
+}
+
+/* ---------- the title page: the poster left, names, meta, genres, buttons, description ---------- */
+.thead {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: $space.s7;
+  margin-bottom: $space.s7;
+}
+.tposter {
+  position: relative;
+  flex: 0 0 auto;
+  width: 360dp;
+  height: 509dp;
+  border-radius: $radius.m;
+  background-color: $color.ink-raised;
+}
+.tinfo {
+  flex: 1 1 0;
+  padding-top: $space.s4;
+}
+.ttitle {
+  $type.title-l;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ten {
+  $type.body;
+  color: $color.paper-2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tmeta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+  $type.body;
+  color: $color.paper-2;
+  margin-top: $space.s4;
+  white-space: nowrap;
+}
+.tgenres {
+  $type.body;
+  color: $color.paper-2;
+  margin-top: $space.s2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* the title's facts (studio, dates, popularity), the owner's own list entry, its related titles */
+.tfacts {
+  $type.body;
+  color: $color.paper-2;
+  margin-top: $space.s2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tmine {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s3;
+  $type.body;
+  color: $color.paper;
+  margin-top: $space.s2;
+}
+.tmine .icon {
+  font-size: 28dp;
+  color: $color.ember;
+}
+.trelated {
+  margin-top: $space.s5;
+}
+.tsub {
+  $type.label;
+  color: $color.paper-2;
+  margin-bottom: $space.s2;
+}
+.trel {
+  display: flex;
+  flex-direction: row;
+  gap: $space.s4;
+  $type.body;
+  color: $color.paper;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.trelk {
+  color: $color.paper-2;
+  width: 220dp;
+  flex: 0 0 auto;
+}
+.tbuttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: $space.s5;
+  margin-top: $space.s6;
+  margin-bottom: $space.s6;
+}
+/* a button keeps its whole label: one that does not fit goes to the next line (play, the switcher, other sources
+   and the list status are four at most) */
+.tbuttons > .btn {
+  flex: 0 0 auto;
+}
+.tdesc {
+  position: relative;
+  $type.body;
+  color: $color.paper-2;
+  max-height: 108dp;
+  overflow: hidden;
+  border-radius: $radius.s;
+  padding: $space.s2;
+}
+.tdesc:focus {
+  color: $color.paper;
+}
+.tdesc .ring {
+  position: absolute;
+  left: -$space.s2;
+  top: -$space.s2;
+  right: -$space.s2;
+  bottom: -$space.s2;
+}
+.tdesc:focus .ring {
+  opacity: 1;
+}
+/* the title page's skeleton: the blocks where the name (title-l), the lines of body text, the buttons and the
+   episodes row's header will sit (title.cpp's headRml while loading) */
+.skel.tsk-title {
+  width: 58%;
+  height: 44dp;
+  margin-top: 6dp;
+  margin-bottom: 6dp;
+  border-radius: $radius.s;
+}
+.skel.tsk-line {
+  height: 20dp;
+  margin-top: 16dp;
+  border-radius: 10dp;
+}
+.skel.tsk-meta {
+  margin-top: 24dp;
+}
+.skel.tsk-desc {
+  margin-top: 46dp;
+}
+.skel.tsk-btn {
+  height: $size.button-h;
+  border-radius: 32dp;
+}
+.skel.tsk-head {
+  width: 220dp;
+  height: 30dp;
+  border-radius: $radius.s;
+}
+.rcount {
+  $type.label;
+  color: $color.paper-2;
+}
+
+/* ---------- the right sheet (the source switcher): 720 dp from the right edge ---------- */
+.bsheet.right {
+  left: auto;
+  right: 0dp;
+  top: 0dp;
+  bottom: 0dp;
+  width: 720dp;
+  padding: $size.safe-y $space.s6 $size.safe-y $space.s6;
+  border-top: 0dp;
+  border-top-right-radius: 0dp;
+  border-bottom-left-radius: $radius.l;
+}
+.entering .bsheet.right, .leaving .bsheet.right {
+  transform: translateX(48dp);
+}
+.sources .item.unavailable {
+  opacity: 0.5;
+}
+
+/* ---------- episodes: numbered tiles, 4 a row, range chips ---------- */
+.ehead {
+  margin-bottom: $space.s5;
+}
+.esub {
+  $type.body;
+  color: $color.paper-2;
+}
+.ranges {
+  display: flex;
+  flex-direction: row;
+  gap: $space.s3;
+  margin-bottom: $space.s6;
+}
+.epgrid-row {
+  display: flex;
+  flex-direction: row;
+  gap: $size.gutter;
+  margin-bottom: $space.s6;
+}
+.eptile .stripe {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 8dp;
+  border-top-left-radius: $radius.m;
+  border-top-right-radius: $radius.m;
+  background-color: $color.line;
+}
+.eptile .num {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 56dp;
+  font-family: $font.display;
+  font-weight: 700;
+  font-size: 96dp;
+  line-height: 112dp;
+  text-align: center;
+  color: $color.paper-2;
+}
+.card:focus .eptile .num {
+  color: $color.paper;
+}
+.card.watched {
+  opacity: 0.6;
+}
+.card .badges .bmeta {
+  $type.label;
+  color: $color.paper-2;
+  white-space: nowrap;
+}
+.epmore {
+  height: 64dp;
+}
+
+/* ---------- the picker: rows by translator, quality chips, torrents ---------- */
+.pkhead {
+  margin-bottom: $space.s6;
+}
+.pktitle {
+  $type.title-l;
+}
+.pksub {
+  $type.body;
+  color: $color.paper-2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.prow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s6;
+  height: $size.list-item-h;
+  padding: 0 $space.s5;
+  margin-bottom: $space.s2;
+  border-radius: $radius.m;
+  background-color: $color.ink-raised;
+}
+.prow.unavailable {
+  opacity: 0.5;
+}
+.plabel {
+  flex: 0 0 auto;
+  width: 760dp;
+  overflow: hidden;
+}
+.pname {
+  $type.title-s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pmeta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+  $type.label;
+  color: $color.paper-2;
+  white-space: nowrap;
+}
+.ptag {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s1;
+  height: 28dp;
+  padding: 0 $space.s2;
+  border-radius: $radius.s;
+  background-color: $color.line;
+  $type.badge-code;
+  line-height: 28dp;
+}
+.ptag .icon {
+  font-size: 20dp;
+}
+.pnote .icon {
+  font-size: 24dp;
+}
+.pchips {
+  display: flex;
+  flex-direction: row;
+  gap: $space.s3;
+}
+.pdivider {
+  $type.title-s;
+  color: $color.paper-2;
+  border-top: 1dp $color.line;
+  padding-top: $space.s5;
+  margin-top: $space.s5;
+  margin-bottom: $space.s4;
+}
+.picker .list .item.unavailable {
+  opacity: 0.5;
+}
+.phidden {
+  margin-top: $space.s5;
+}
+
+/* ---------- resolving: over the backdrop at ink 85 %, the steps ticking ---------- */
+.resolving {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+/* the page is over the video (the film draws under it once it starts): .rbase is its ink, and the hand-over
+   (.leaving) eases every layer out by opacity and transform alone, the backdrop growing as it fades, the card lifting
+   a little sooner, so the film shows through with no frame of nothing between */
+.resolving .rbase {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: $color.ink;
+  opacity: 1;
+  transition: opacity $motion.handover;
+}
+.resolving .rback {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity $motion.handover, transform $motion.handover;
+}
+.resolving .rshade {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  /* home's scrims over the blurred backdrop: a soft dim for the centred card, the edges darker */
+  background-color: $scrim.duck;
+  decorator: $scrim.home-y;
+  opacity: 1;
+  transition: opacity $motion.handover;
+}
+.rbox {
+  position: absolute;
+  left: 240dp;
+  top: 260dp;
+  display: flex;
+  flex-direction: row;
+  gap: $space.s7;
+  opacity: 1;
+  transform: translateY(0dp);
+  transition: opacity $motion.handover-card, transform $motion.handover-card;
+}
+.resolving.leaving .rbase, .resolving.leaving .rshade {
+  opacity: 0;
+}
+.resolving.leaving .rback {
+  opacity: 0;
+  transform: scale(1.08);
+}
+.resolving.leaving .rbox {
+  opacity: 0;
+  transform: translateY(-40dp) scale(0.98);
+}
+.rposter {
+  position: relative;
+  flex: 0 0 auto;
+  width: 200dp;
+  height: 283dp;
+  border-radius: $radius.m;
+  background-color: $color.ink-raised;
+}
+.rinfo {
+  width: 900dp;
+}
+.rtitle {
+  $type.title-l;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rsub {
+  $type.body;
+  color: $color.paper-2;
+  margin-bottom: $space.s6;
+}
+.rsteps {
+  display: flex;
+  flex-direction: column;
+  gap: $space.s4;
+  margin-bottom: $space.s5;
+}
+.rstep {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+  $type.body-l;
+  color: $color.paper;
+}
+/* a new step eases up into place under the last (transform alone: rmlui inherits opacity, and a step that set its
+   own would stay up while the card fades) */
+.rstep {
+  transform: translateY(0dp);
+  transition: transform $motion.step, color $motion.step;
+}
+.rstep.fresh {
+  transform: translateY(16dp);
+  transition: none;
+}
+.rstep.done {
+  color: $color.paper-2;
+}
+.rstep .icon {
+  font-size: 40dp;
+  width: 48dp;
+  text-align: center;
+}
+.relapsed {
+  $type.figures;
+  color: $color.paper-2;
+  margin-top: $space.s4;
+  height: 32dp;
+}
+.rfail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space.s4;
+}
+.rfail > .icon {
+  font-size: 72dp;
+  line-height: 80dp;
+  color: $tone.warning;
+}
+.rreason {
+  $type.title-m;
+}
+.rbuttons {
+  display: flex;
+  flex-direction: row;
+  gap: $space.s5;
+  margin-top: $space.s5;
+}
+
+/* a failed source in the search's summary: as the server named it */
+.ssum .sfail {
+  color: $color.paper;
+}

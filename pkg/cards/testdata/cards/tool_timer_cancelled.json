@@ -1,0 +1,32 @@
+{
+ "version": 1,
+ "id": "timer-gone-ef5ee4edf18612d5b7",
+ "revision": 1,
+ "fallbackText": "Отменён",
+ "root": {
+  "card": {
+   "title": "Таймер",
+   "icon": "timer",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Отменён",
+      "kind": "STATE_KIND_OFF"
+     }
+    },
+    {
+     "text": {
+      "text": "10 мин",
+      "style": "TEXT_STYLE_BODY"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state",
+  "text"
+ ]
+}

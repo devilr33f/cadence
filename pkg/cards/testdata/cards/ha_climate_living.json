@@ -1,0 +1,56 @@
+{
+ "version": 1,
+ "id": "ha-c34539e0f5adf881cc",
+ "revision": 1,
+ "fallbackText": "Living room: Обогрев",
+ "root": {
+  "card": {
+   "title": "Living room",
+   "icon": "thermostat",
+   "tone": "TONE_SUCCESS",
+   "children": [
+    {
+     "row": {
+      "children": [
+       {
+        "value": {
+         "value": "20,5",
+         "unit": "°C",
+         "label": "Сейчас"
+        }
+       },
+       {
+        "state": {
+         "label": "Обогрев",
+         "kind": "STATE_KIND_ON"
+        }
+       }
+      ],
+      "gap": "GAP_L"
+     }
+    },
+    {
+     "slider": {
+      "value": 21,
+      "min": 15,
+      "max": 28,
+      "step": 0.5,
+      "unit": "°C",
+      "label": "Поддерживать",
+      "valueLabel": "21 °C",
+      "action": {
+       "id": "a:1"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "row",
+  "slider",
+  "state",
+  "value"
+ ]
+}

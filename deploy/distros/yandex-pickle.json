@@ -1,0 +1,140 @@
+{
+  "$schema": "./schema.json",
+  "name": "yandex-pickle",
+  "board": "yandex-pickle",
+  "kind": "speaker",
+  "status": "shipping",
+  "os": "linux",
+  "arch": [
+    "arm64"
+  ],
+  "package": {
+    "format": "tarball",
+    "output": "build/device/cadence-{version}-yandex-pickle-arm64.tar"
+  },
+  "builder": {
+    "dockerfile": "deploy/builder/device.Dockerfile",
+    "image": "debian:bookworm-slim@sha256:734a72b3d6142a71993b4bc580ca01d8ca687f77a2c422d96a961d3376b179bc",
+    "platform": "linux/arm64",
+    "command": "make device-build BOARD=yandex-pickle"
+  },
+  "runtime": {
+    "libc": "glibc",
+    "glibcMax": "2.36",
+    "openssl": "3.0",
+    "loader": "/lib/ld-linux-aarch64.so.1"
+  },
+  "serverUrl": null,
+  "components": [
+    "cadenced",
+    "cadence-audiod",
+    "soloist-runtime",
+    "airplay-runtime",
+    "ca-bundle",
+    "cadence-run",
+    "board-hook"
+  ],
+  "media": {
+    "url": true,
+    "airplay": "shairport",
+    "audioBackend": "alsa",
+    "soloistJail": true,
+    "staticLink": true,
+    "screen": false,
+    "video": "off"
+  },
+  "dependencies": [
+    {
+      "name": "audiod-libs",
+      "source": "system",
+      "use": "build",
+      "distro": "debian-bookworm",
+      "packages": [
+        "libasound2-dev",
+        "libopus-dev",
+        "libspeexdsp-dev",
+        "libssl-dev"
+      ],
+      "snapshot": "20261104T212339Z",
+      "note": "opus and speexdsp linked statically; libasound and openssl 3.0 from the device"
+    },
+    {
+      "name": "ffmpeg",
+      "source": "tarball",
+      "use": "build",
+      "version": "9.0.2",
+      "license": "LGPL-3.0-or-later",
+      "url": "https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz",
+      "sha256": "8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e",
+      "script": "deploy/builder/build-ffmpeg.sh",
+      "note": "audio-only build, linked statically into cadence-audiod"
+    },
+    {
+      "name": "soloist-runtime",
+      "source": "system",
+      "use": "runtime",
+      "distro": "debian-trixie",
+      "packages": [
+        "libc6",
+        "libgcc-s1",
+        "libatomic1",
+        "gcc-14-base"
+      ],
+      "pinsFile": "deploy/builder/assemble-soloist-runtime.sh",
+      "note": "the jail's loader and libc for Soloist (arm64), beside the clean-room libpulse shim"
+    },
+    {
+      "name": "shairport-sync",
+      "source": "tarball",
+      "use": "runtime",
+      "version": "5.6.2",
+      "license": "MIT",
+      "pinsFile": "deploy/builder/airplay-runtime.pins"
+    },
+    {
+      "name": "nqptp",
+      "source": "tarball",
+      "use": "runtime",
+      "version": "1.2.9",
+      "license": "GPL-2.0-only",
+      "pinsFile": "deploy/builder/airplay-runtime.pins",
+      "note": "run as its own program, unmodified"
+    },
+    {
+      "name": "avahi",
+      "source": "system",
+      "use": "runtime",
+      "distro": "debian-trixie",
+      "packages": [
+        "avahi"
+      ],
+      "pinsFile": "deploy/builder/airplay-runtime.pins",
+      "note": "built from debian's source package"
+    },
+    {
+      "name": "airplay-runtime-debs",
+      "source": "system",
+      "use": "runtime",
+      "distro": "debian-trixie",
+      "packages": [
+        "dbus-daemon",
+        "libapparmor1",
+        "libatomic1",
+        "gcc-14-base",
+        "base-files"
+      ],
+      "pinsFile": "deploy/builder/airplay-runtime.pins"
+    },
+    {
+      "name": "ca-certificates",
+      "source": "system",
+      "use": "runtime",
+      "distro": "debian-bookworm",
+      "packages": [
+        "ca-certificates"
+      ],
+      "snapshot": "20261104T212339Z",
+      "note": "the CA bundle the tarball ships"
+    }
+  ]
+}

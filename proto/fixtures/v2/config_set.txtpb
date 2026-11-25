@@ -1,0 +1,6 @@
+config_set {
+  capability: "audio.output"
+  generation: 7
+  json: "{\"level\":40}"
+  secrets { key: "api_key" value: "s3cret" }
+}

@@ -1,0 +1,51 @@
+# the showcase: content cards the agent's tools return slide in on the left while the drawer talks on the right.
+# one card, then a burst of five (the reel speeds up and never lags more than two behind), then the reply cites a
+# source (its card comes to the front, the number lights). `build/screen-sim/sim run screen/sim/examples/showcase.txt`
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+hold BACK 800
+wait-for drawer
+send {"assistant_turn": {"turnId": "t-1", "state": "thinking", "transcript": "Что нового про Anthropic", "steps": [{"id": "s1", "label": "Ищу в интернете", "status": "running"}]}}
+wait 300
+send {"cards": {"contextId": "t-1", "cards": ["card_tool_web_search_images.binpb"]}}
+wait 60
+screenshot sim-out/showcase/01-first-rising.png
+wait 500
+screenshot sim-out/showcase/02-first.png
+send {"assistant_turn": {"turnId": "t-1", "revision": 2, "state": "thinking", "transcript": "Что нового про Anthropic", "steps": [{"id": "s1", "label": "Ищу в интернете", "status": "done"}, {"id": "s2", "label": "Ищу в X", "status": "running"}]}}
+send {"cards": {"contextId": "t-1", "cards": ["card_tool_x_search.binpb"]}}
+wait 150
+send {"cards": {"contextId": "t-1", "cards": ["card_x_post.binpb"]}}
+wait 150
+send {"cards": {"contextId": "t-1", "cards": ["card_tool_video_search.binpb"]}}
+wait 150
+send {"cards": {"contextId": "t-1", "cards": ["card_tool_music_search.binpb"]}}
+wait 150
+send {"cards": {"contextId": "t-1", "cards": ["card_tool_catalog_item.binpb", "card_ha_light_kitchen.binpb"]}}
+screenshot sim-out/showcase/03-burst-0.png
+wait 500
+screenshot sim-out/showcase/04-burst-500.png
+wait 1000
+screenshot sim-out/showcase/05-burst-1500.png
+wait 1000
+screenshot sim-out/showcase/06-burst-2500.png
+wait 1500
+screenshot sim-out/showcase/07-burst-4000.png
+send {"assistant_turn": {"turnId": "t-1", "revision": 3, "state": "speaking", "transcript": "Что нового про Anthropic", "steps": [{"id": "s1", "label": "Ищу в интернете", "status": "done"}, {"id": "s2", "label": "Ищу в X", "status": "done"}], "reply": "Anthropic обсуждает IPO [1], а в X пишут про новые навыки Claude Code.", "citations": [{"n": 1, "cardId": "web-65272d1deb825764e7"}]}}
+wait 2500
+screenshot sim-out/showcase/08-speaking.png
+send {"assistant_turn": {"turnId": "t-1", "revision": 4, "state": "resting", "transcript": "Что нового про Anthropic", "steps": [{"id": "s1", "label": "Ищу в интернете", "status": "done"}, {"id": "s2", "label": "Ищу в X", "status": "done"}], "reply": "Anthropic обсуждает IPO [1], а в X пишут про новые навыки Claude Code.", "citations": [{"n": 1, "cardId": "web-65272d1deb825764e7"}]}}
+wait 600
+screenshot sim-out/showcase/09-cited.png
+# a wake-word turn opens the drawer without focus: ↓ takes it in, ← past the drawer's edge into the deck's front card
+press DOWN
+wait 300
+focus
+press LEFT
+wait 400
+focus
+screenshot sim-out/showcase/10-in-showcase.png
+press BACK
+wait 400
+focus
+quit

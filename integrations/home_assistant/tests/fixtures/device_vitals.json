@@ -1,0 +1,24 @@
+{
+  "type": "device_vitals",
+  "deviceId": "0b6f3c52-7d1e-4a8b-9f2c-5e4d3a2b1c0d",
+  "at": "2026-11-12T10:00:00Z",
+  "data": {
+    "cpu": 0.125,
+    "memoryUsedBytes": 412000000,
+    "memoryLimitBytes": 1024000000,
+    "disk": [
+      {
+        "mountpoint": "/data",
+        "freeBytes": 6000000000,
+        "limitBytes": 8000000000
+      },
+      {
+        "mountpoint": "/tmp",
+        "freeBytes": 200000000,
+        "limitBytes": 256000000
+      }
+    ],
+    "temperatureC": 48.5,
+    "at": "2026-11-12T10:00:00Z"
+  }
+}

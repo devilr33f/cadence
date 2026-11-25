@@ -1,0 +1,176 @@
+# shellcheck shell=sh
+# board-hook: yandex-midi's part of cadence-run, which sources it from beside itself. a midi keeps its stock assistant
+# installed (M2m-R2), so before every start of cadenced board_prestart suspends it: every process whose executable, as
+# the kernel resolved it in /proc/<pid>/exe, lies under /system/vendor/quasar/ (never a command line, which any process
+# may fake). the launcher, quasar_launcher2, gets TERM first, so it restarts none of the others, then every other one
+# does; those still there after 5 polls of a second get KILL, and any left a second later fail the suspend
+# (stock_still_running), so cadenced does not start. each pid's executable is read again right before its signal: one
+# that has exited or become another program meanwhile is skipped. while cadenced runs, board_watch looks at every poll
+# of the wrapper and suspends stock that started since (a late init script, a watchdog) the same way, cadenced left
+# running (M2m-R5), then has the wrapper set the persisted level again (M2m-R7). the platform's own daemons (wifi,
+# time, alsa, the led driver, recovery access) run nothing of the vendor's directory and stay. the CADENCE_* variables
+# are for tests: init passes none
+DEV=${CADENCE_DEV:-/dev}
+FB_SYS=${CADENCE_FB_SYS:-/sys/class/graphics/fb0}
+PROC=${CADENCE_PROC:-/proc}
+KILL=${CADENCE_KILL:-kill}
+SLEEP=${CADENCE_SLEEP:-sleep}
+LS=${CADENCE_LS:-ls}
+VENDOR=/system/vendor/quasar
+# the platform's bluetooth player and pairing agent: bluealsa-aplay plays any phone straight into alsa, past audiod's
+# gate (rule 7), and just-works-bluez-agent accepts any pairing. cadenced runs the adapter with its own agent and hands
+# a phone's pcm to audiod, so both are stopped by their executables, as the stock is, before every start and at every
+# poll: runtime only, their init scripts and files untouched. cadence-install's restore paths start them again
+BT_PLAYER=/usr/bin/bluealsa-aplay
+BT_AGENT=/usr/bin/just-works-bluez-agent
+# set while stock that board_watch found would not stop
+held=
+
+# the ring: one whole frame of 89 pixels, 4 bytes each, on fb0, written only on the geometry the board's sink checks
+# too; any other framebuffer is left alone, and without the node there is nothing to blank
+board_blank() {
+    if [ "$(cat "$FB_SYS/virtual_size" 2> /dev/null)" != 89,1 ] ||
+        [ "$(cat "$FB_SYS/bits_per_pixel" 2> /dev/null)" != 32 ] ||
+        [ "$(cat "$FB_SYS/stride" 2> /dev/null)" != 356 ]; then
+        note "event=blank_skipped"
+        return 0
+    fi
+    [ ! -e "$DEV/fb0" ] || head -c 356 /dev/zero > "$DEV/fb0"
+}
+
+# vendor_exe PID: pid's executable, left in exe, lies under the vendor's directory (" (deleted)" once replaced)
+vendor_exe() {
+    exe=$(readlink "$PROC/$1/exe" 2> /dev/null) || return 1
+    case $exe in
+        "$VENDOR/"*) return 0 ;;
+    esac
+    return 1
+}
+
+# launcher PID: pid runs the vendor's launcher
+launcher() {
+    vendor_exe "$1" || return 1
+    case ${exe##*/} in
+        quasar_launcher2 | 'quasar_launcher2 (deleted)') return 0 ;;
+    esac
+    return 1
+}
+
+# vendor_pids: the pids whose executable lies under the vendor's directory, from one listing of every executable link,
+# so a scan costs a few processes, not a readlink per pid. a listing that shows no link target at all says nothing
+# about what runs (an ls that prints none), so then every link is read instead
+vendor_pids() {
+    links=$("$LS" -l "$PROC"/[0-9]*/exe 2> /dev/null)
+    case $links in
+        *" -> "*)
+            printf '%s\n' "$links" | sed -n "s|.* $PROC/\([0-9][0-9]*\)/exe -> $VENDOR/.*|\1|p"
+            return 0
+            ;;
+    esac
+    for dir in "$PROC"/[0-9]*; do
+        if vendor_exe "${dir##*/}"; then echo "${dir##*/}"; fi
+    done
+}
+
+# signal_vendor SIG PID: signals pid only if it still runs the vendor's code
+signal_vendor() {
+    vendor_exe "$2" || return 0
+    "$KILL" "-$1" "$2" 2> /dev/null || true
+}
+
+# stop_stock: the suspend; count is how many vendor processes ran when it began. fails while one is left
+stop_stock() {
+    count=0
+    for pid in $(vendor_pids); do
+        count=$((count + 1))
+        if launcher "$pid"; then signal_vendor TERM "$pid"; fi
+    done
+    for pid in $(vendor_pids); do
+        launcher "$pid" || signal_vendor TERM "$pid"
+    done
+    polls=0
+    while [ -n "$(vendor_pids)" ] && [ "$polls" -lt 5 ]; do
+        "$SLEEP" 1
+        polls=$((polls + 1))
+    done
+    for pid in $(vendor_pids); do
+        signal_vendor KILL "$pid"
+    done
+    [ -z "$(vendor_pids)" ] || "$SLEEP" 1
+    [ -z "$(vendor_pids)" ]
+}
+
+# bt_exe PID: pid runs the bluetooth player or agent
+bt_exe() {
+    exe=$(readlink "$PROC/$1/exe" 2> /dev/null) || return 1
+    [ "$exe" = "$BT_PLAYER" ] || [ "$exe" = "$BT_AGENT" ]
+}
+
+# bt_pids: the pids of the player and the agent, from one listing as vendor_pids, else every link read
+bt_pids() {
+    links=$("$LS" -l "$PROC"/[0-9]*/exe 2> /dev/null)
+    case $links in
+        *" -> "*)
+            printf '%s\n' "$links" | sed -n -e "s|.* $PROC/\([0-9][0-9]*\)/exe -> $BT_PLAYER\$|\1|p" \
+                -e "s|.* $PROC/\([0-9][0-9]*\)/exe -> $BT_AGENT\$|\1|p"
+            return 0
+            ;;
+    esac
+    for dir in "$PROC"/[0-9]*; do
+        if bt_exe "${dir##*/}"; then echo "${dir##*/}"; fi
+    done
+}
+
+# stop_bt: TERM to each, KILL a second later to any left; nothing at all when none runs. one that will not stop is
+# noted and met again at the next poll, cadenced started all the same
+stop_bt() {
+    bt=0
+    for pid in $(bt_pids); do
+        bt_exe "$pid" || continue
+        bt=$((bt + 1))
+        "$KILL" -TERM "$pid" 2> /dev/null || true
+    done
+    [ "$bt" -gt 0 ] || return 0
+    "$SLEEP" 1
+    for pid in $(bt_pids); do
+        if bt_exe "$pid"; then "$KILL" -KILL "$pid" 2> /dev/null || true; fi
+    done
+    if [ -n "$(bt_pids)" ]; then
+        note "event=board_control_failed code=bluetooth reason=still_running"
+        return 0
+    fi
+    note "event=bluetooth_stock_stopped count=$bt"
+}
+
+board_prestart() {
+    if ! stop_stock; then
+        note "event=board_control_failed code=suspend reason=stock_still_running"
+        return 1
+    fi
+    note "event=stock_suspended count=$count"
+    stop_bt
+    return 0
+}
+
+# a poll that finds nothing of the vendor's costs one listing; what it finds is suspended by the same exe-checked
+# routine (one gone meanwhile is not counted), and a failure is tried again at the next poll. once the stock it found is
+# gone, at once or after failed polls, it sets reapply, and the wrapper sets the persisted level again: the stock may
+# have set its own volume before it went (M2m-R7)
+# shellcheck disable=SC2034 # cadence-run, which sources this, reads reapply
+board_watch() {
+    stop_bt
+    if [ -z "$(vendor_pids)" ]; then
+        [ -z "$held" ] || reapply=1
+        held=
+        return 0
+    fi
+    if ! stop_stock; then
+        held=1
+        note "event=board_control_failed code=suspend reason=stock_still_running"
+        return 1
+    fi
+    held=
+    reapply=1
+    [ "$count" -eq 0 ] || note "event=stock_resuspended count=$count"
+    return 0
+}

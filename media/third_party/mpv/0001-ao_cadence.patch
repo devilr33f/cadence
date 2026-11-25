@@ -1,0 +1,394 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Cadence <cadence@localhost>
+Date: Sat, 14 Nov 2026 00:00:00 +0000
+Subject: [PATCH] ao_cadence: pull AO into the cadence mixer ring
+
+---
+ audio/out/ao.c           |   4 +
+ audio/out/ao_cadence.c   | 230 +++++++++++++++++++++++++++++++++++++++
+ audio/out/cadence_ring.h |  83 ++++++++++++++
+ meson.build              |   6 +
+ meson.options            |   1 +
+ 5 files changed, 324 insertions(+)
+ create mode 100644 audio/out/ao_cadence.c
+ create mode 100644 audio/out/cadence_ring.h
+
+diff --git a/audio/out/ao.c b/audio/out/ao.c
+index 4e5e9e3..4f26e90 100644
+--- a/audio/out/ao.c
++++ b/audio/out/ao.c
+@@ -49,6 +49,7 @@ extern const struct ao_driver audio_out_jack;
+ extern const struct ao_driver audio_out_openal;
+ extern const struct ao_driver audio_out_opensles;
+ extern const struct ao_driver audio_out_null;
++extern const struct ao_driver audio_out_cadence;
+ extern const struct ao_driver audio_out_alsa;
+ extern const struct ao_driver audio_out_wasapi;
+ extern const struct ao_driver audio_out_pcm;
+@@ -105,6 +106,9 @@ static const struct ao_driver * const audio_out_drivers[] = {
+     &audio_out_sndio,
+ #endif
+     &audio_out_null,
++#if HAVE_CADENCE
++    &audio_out_cadence,
++#endif
+ #if HAVE_COREAUDIO
+     &audio_out_coreaudio_exclusive,
+ #endif
+diff --git a/audio/out/ao_cadence.c b/audio/out/ao_cadence.c
+new file mode 100644
+index 0000000..a1283aa
+--- /dev/null
++++ b/audio/out/ao_cadence.c
+@@ -0,0 +1,230 @@
++/*
++ * cadence pull AO: f32 48 kHz stereo into audiod's shared ring (audio/out/cadence_ring.h).
++ *
++ * the app creates the memfd ring and its eventfd and passes their numbers (--ao-cadence-ring-fd,
++ * --ao-cadence-event-fd); the AO never closes them. a thread of ours pulls with ao_read_data() whenever the ring
++ * holds less than --ao-cadence-buffer, and stamps each chunk with the time its last frame will be heard, from the
++ * reader's (read_pos, heard_ns) timestamp, so A/V sync uses the reader's real latency. reset bumps the ring's
++ * generation (the reader drops what was queued), pause stops the pull.
++ *
++ * This file is part of mpv. mpv is free software; you can redistribute it and/or modify it under the terms of the
++ * GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the
++ * License, or (at your option) any later version.
++ */
++
++#include <errno.h>
++#include <poll.h>
++#include <string.h>
++#include <sys/mman.h>
++#include <time.h>
++#include <unistd.h>
++
++#include "audio/format.h"
++#include "cadence_ring.h"
++#include "common/msg.h"
++#include "internal.h"
++#include "options/m_option.h"
++#include "osdep/threads.h"
++#include "osdep/timer.h"
++#include "ao.h"
++
++#define CHUNK 256 /* frames per ao_read_data call */
++
++struct priv {
++    int ring_fd, event_fd;
++    float buffer_ms;
++
++    struct cadence_ring_header *h;
++    size_t map_bytes;
++    float *data;
++    uint32_t mask;
++    uint32_t target;
++
++    mp_thread thread;
++    mp_mutex lock; /* held across a pull and its commit, so a reset lands between chunks */
++    bool running, quit, thread_started;
++    float scratch[CHUNK * CADENCE_RING_CHANNELS];
++};
++
++static int64_t mono_ns(void)
++{
++    struct timespec ts;
++    clock_gettime(CLOCK_MONOTONIC, &ts);
++    return ts.tv_sec * INT64_C(1000000000) + ts.tv_nsec;
++}
++
++static void wake(struct priv *p)
++{
++    uint64_t one = 1;
++    (void)!write(p->event_fd, &one, sizeof(one));
++}
++
++/* one chunk while the ring holds less than the target; false when there is nothing to pull or no room */
++static bool pull_chunk(struct ao *ao)
++{
++    struct priv *p = ao->priv;
++    struct cadence_ring_header *h = p->h;
++    uint64_t w = h->write_pos; /* ours */
++    uint64_t r = CADENCE_RING_LOAD(&h->read_pos);
++    uint64_t live = MPMAX(r, CADENCE_RING_RELAXED(&h->flush_pos));
++    uint64_t fill = w - live;
++    uint64_t room = h->capacity - (w - r);
++    if (fill >= p->target || room == 0)
++        return false;
++    int n = MPMIN(MPMIN(CHUNK, p->target - fill), room);
++
++    /* when the chunk's last frame is heard: the reader's stamp plus the frames ahead of it */
++    uint64_t sp;
++    int64_t heard;
++    int64_t now = mono_ns();
++    if (!cadence_ring_timestamp(h, &sp, &heard)) {
++        sp = live;
++        heard = now;
++    }
++    int64_t ahead = (int64_t)(w + n - sp);
++    int64_t at = heard + MP_TIME_S_TO_NS(ahead) / CADENCE_RING_RATE;
++    if (at < now)
++        at = now + MP_TIME_S_TO_NS(n) / CADENCE_RING_RATE;
++
++    void *planes[1] = {p->scratch};
++    int got = ao_read_data(ao, planes, n, mp_time_ns() + (at - now), NULL, false, true);
++    if (got <= 0)
++        return false;
++    uint32_t slot = w & p->mask;
++    uint32_t first = MPMIN((uint32_t)got, h->capacity - slot);
++    memcpy(p->data + slot * 2, p->scratch, first * 2 * sizeof(float));
++    memcpy(p->data, p->scratch + first * 2, (got - first) * 2 * sizeof(float));
++    CADENCE_RING_STORE(&h->write_pos, w + got);
++    return got == n;
++}
++
++static MP_THREAD_VOID writer_thread(void *arg)
++{
++    struct ao *ao = arg;
++    struct priv *p = ao->priv;
++    mp_thread_set_name("ao/cadence");
++    struct pollfd pfd = {.fd = p->event_fd, .events = POLLIN};
++    for (;;) {
++        mp_mutex_lock(&p->lock);
++        if (p->quit) {
++            mp_mutex_unlock(&p->lock);
++            break;
++        }
++        bool more = p->running;
++        while (more && p->running)
++            more = pull_chunk(ao);
++        bool run = p->running;
++        mp_mutex_unlock(&p->lock);
++        /* the reader's period wakes us; poll again after 5 ms while streaming, for underruns and eof */
++        if (poll(&pfd, 1, run ? 5 : -1) > 0) {
++            uint64_t v;
++            (void)!read(p->event_fd, &v, sizeof(v));
++        }
++    }
++    MP_THREAD_RETURN();
++}
++
++static void set_running(struct ao *ao, bool run, bool flush)
++{
++    struct priv *p = ao->priv;
++    mp_mutex_lock(&p->lock);
++    p->running = run;
++    if (flush) {
++        CADENCE_RING_STORE(&p->h->flush_pos, p->h->write_pos);
++        __atomic_add_fetch(&p->h->generation, 1, __ATOMIC_RELEASE);
++    }
++    CADENCE_RING_STORE(&p->h->writer_state,
++                       run ? CADENCE_RING_STREAMING : flush ? CADENCE_RING_STOPPED : CADENCE_RING_PAUSED);
++    mp_mutex_unlock(&p->lock);
++    wake(p);
++}
++
++static void uninit(struct ao *ao)
++{
++    struct priv *p = ao->priv;
++    if (p->thread_started) {
++        mp_mutex_lock(&p->lock);
++        p->quit = true;
++        mp_mutex_unlock(&p->lock);
++        wake(p);
++        mp_thread_join(p->thread);
++        set_running(ao, false, true);
++    }
++    mp_mutex_destroy(&p->lock);
++    if (p->h)
++        munmap(p->h, p->map_bytes);
++}
++
++static int init(struct ao *ao)
++{
++    struct priv *p = ao->priv;
++    mp_mutex_init(&p->lock);
++    if (p->ring_fd < 0 || p->event_fd < 0) {
++        MP_ERR(ao, "--ao-cadence-ring-fd and --ao-cadence-event-fd are required\n");
++        return -1;
++    }
++    struct cadence_ring_header hdr;
++    if (pread(p->ring_fd, &hdr, sizeof(hdr), 0) != sizeof(hdr) || hdr.magic != CADENCE_RING_MAGIC ||
++        hdr.version != CADENCE_RING_VERSION || hdr.rate != CADENCE_RING_RATE ||
++        hdr.channels != CADENCE_RING_CHANNELS || !hdr.capacity || (hdr.capacity & (hdr.capacity - 1)) ||
++        hdr.data_offset != CADENCE_RING_DATA_OFFSET) {
++        MP_ERR(ao, "fd %d is not a cadence ring\n", p->ring_fd);
++        return -1;
++    }
++    p->map_bytes = cadence_ring_bytes(hdr.capacity);
++    p->h = mmap(NULL, p->map_bytes, PROT_READ | PROT_WRITE, MAP_SHARED, p->ring_fd, 0);
++    if (p->h == MAP_FAILED) {
++        p->h = NULL;
++        MP_ERR(ao, "mmap: %s\n", mp_strerror(errno));
++        return -1;
++    }
++    p->data = cadence_ring_data(p->h);
++    p->mask = hdr.capacity - 1;
++    p->target = MPCLAMP(p->buffer_ms * CADENCE_RING_RATE / 1000, CHUNK, hdr.capacity);
++
++    ao->format = AF_FORMAT_FLOAT;
++    ao->samplerate = CADENCE_RING_RATE;
++    struct mp_chmap_sel sel = {0};
++    mp_chmap_sel_add_map(&sel, &(struct mp_chmap)MP_CHMAP_INIT_STEREO);
++    if (!ao_chmap_sel_adjust(ao, &sel, &ao->channels))
++        return -1;
++    ao->device_buffer = p->target;
++
++    set_running(ao, false, true);
++    if (mp_thread_create(&p->thread, writer_thread, ao)) {
++        MP_ERR(ao, "cannot start the writer thread\n");
++        return -1;
++    }
++    p->thread_started = true;
++    MP_VERBOSE(ao, "ring of %u frames, target %u\n", hdr.capacity, p->target);
++    return 1;
++}
++
++static void start(struct ao *ao) { set_running(ao, true, false); }
++static void reset(struct ao *ao) { set_running(ao, false, true); }
++
++static bool set_pause(struct ao *ao, bool paused)
++{
++    set_running(ao, !paused, false);
++    return true;
++}
++
++#define OPT_BASE_STRUCT struct priv
++
++const struct ao_driver audio_out_cadence = {
++    .description = "Cadence mixer ring (memfd)",
++    .name = "cadence",
++    .init = init,
++    .uninit = uninit,
++    .start = start,
++    .reset = reset,
++    .set_pause = set_pause,
++    .priv_size = sizeof(struct priv),
++    .priv_defaults = &(const struct priv){.ring_fd = -1, .event_fd = -1, .buffer_ms = 40},
++    .options_prefix = "ao-cadence",
++    .options = (const struct m_option[]){
++        {"ring-fd", OPT_INT(ring_fd), M_RANGE(-1, INT32_MAX)},
++        {"event-fd", OPT_INT(event_fd), M_RANGE(-1, INT32_MAX)},
++        {"buffer", OPT_FLOAT(buffer_ms), M_RANGE(5, 1000)},
++        {0}},
++};
+diff --git a/audio/out/cadence_ring.h b/audio/out/cadence_ring.h
+new file mode 100644
+index 0000000..4ed4ce3
+--- /dev/null
++++ b/audio/out/cadence_ring.h
+@@ -0,0 +1,83 @@
++/* cadence pcm ring: mpv's ao_cadence (writer) -> audiod's mixer (reader). spike s5, shared by c and c++.
++ *
++ * one memfd: this header, then `capacity` frames of interleaved f32 stereo 48 kHz. one eventfd: the reader adds 1
++ * after every period it consumes, so the writer wakes when there is room (the writer also uses it to wake itself).
++ * positions are frame counters that never wrap in practice (u64); slot = pos & (capacity - 1).
++ *
++ * flush (mpv's reset on seek): the writer stores flush_pos = write_pos, then bumps generation (release). a reader
++ * that sees a new generation moves read_pos to max(read_pos, flush_pos), so audio queued before the flush is never
++ * handed out after it (at most the period being read while the flush happened).
++ *
++ * latency: after each period the reader publishes, under a seqlock, the pair (read_pos, heard_ns): the
++ * CLOCK_MONOTONIC time at which the frame at read_pos will be heard (its period + the mixer's limiter + the
++ * device's latency from AAudio getTimestamp or snd_pcm_delay). the writer then knows when any frame it queues will
++ * be heard: heard_ns + (pos - read_pos) / rate. latency_ns = heard_ns - stamp_ns is kept for logs. */
++#pragma once
++#include <stdint.h>
++
++#define CADENCE_RING_MAGIC 0x47524443u /* "CDRG" */
++#define CADENCE_RING_VERSION 1u
++#define CADENCE_RING_RATE 48000u
++#define CADENCE_RING_CHANNELS 2u
++
++enum { CADENCE_RING_STOPPED = 0, CADENCE_RING_STREAMING = 1, CADENCE_RING_PAUSED = 2 };
++
++struct cadence_ring_header {
++    /* set once by whoever creates the memfd, before either side runs */
++    uint32_t magic, version, rate, channels;
++    uint32_t capacity;    /* frames, a power of two */
++    uint32_t data_offset; /* bytes from the start of the header to frame 0 */
++    uint8_t pad0[40];
++
++    /* the writer's line */
++    uint64_t write_pos;    /* frames ever committed */
++    uint64_t flush_pos;    /* write_pos at the last flush */
++    uint32_t generation;   /* bumped (release) after flush_pos is stored */
++    uint32_t writer_state; /* CADENCE_RING_*: the reader may log it, never acts on it */
++    uint8_t pad1[40];
++
++    /* the reader's line */
++    uint64_t read_pos;        /* frames ever consumed or skipped by a flush */
++    uint32_t seen_generation; /* the reader's own */
++    uint32_t seq;             /* seqlock over read_pos_stamped, heard_ns, stamp_ns, latency_ns */
++    uint64_t read_pos_stamped;
++    int64_t heard_ns;   /* CLOCK_MONOTONIC: when the frame at read_pos_stamped is heard */
++    int64_t stamp_ns;   /* CLOCK_MONOTONIC: when the reader published it */
++    int64_t latency_ns; /* heard_ns - stamp_ns */
++    uint32_t underruns; /* reads that found less than a period while the writer streamed */
++    uint8_t pad2[12];
++};
++
++#define CADENCE_RING_DATA_OFFSET 256u
++#define CADENCE_RING_LOAD(p) __atomic_load_n((p), __ATOMIC_ACQUIRE)
++#define CADENCE_RING_STORE(p, v) __atomic_store_n((p), (v), __ATOMIC_RELEASE)
++#define CADENCE_RING_RELAXED(p) __atomic_load_n((p), __ATOMIC_RELAXED)
++
++static inline uint64_t cadence_ring_bytes(uint32_t capacity)
++{
++    return CADENCE_RING_DATA_OFFSET + (uint64_t)capacity * CADENCE_RING_CHANNELS * sizeof(float);
++}
++
++static inline float *cadence_ring_data(struct cadence_ring_header *h)
++{
++    return (float *)((uint8_t *)h + h->data_offset);
++}
++
++/* the writer's consistent read of the reader's timestamp; false until the reader published one */
++static inline int cadence_ring_timestamp(struct cadence_ring_header *h, uint64_t *pos, int64_t *heard_ns)
++{
++    for (int tries = 0; tries < 64; tries++) {
++        uint32_t s0 = CADENCE_RING_LOAD(&h->seq);
++        if (s0 & 1)
++            continue;
++        uint64_t p = CADENCE_RING_RELAXED(&h->read_pos_stamped);
++        int64_t t = CADENCE_RING_RELAXED(&h->heard_ns);
++        __atomic_thread_fence(__ATOMIC_ACQUIRE);
++        if (CADENCE_RING_RELAXED(&h->seq) == s0) {
++            *pos = p;
++            *heard_ns = t;
++            return t != 0;
++        }
++    }
++    return 0;
++}
+diff --git a/meson.build b/meson.build
+index fb10be5..06d6963 100644
+--- a/meson.build
++++ b/meson.build
+@@ -873,6 +873,12 @@ if features['aaudio']
+     sources += files('audio/out/ao_aaudio.c')
+ endif
+ 
++features += {'cadence': get_option('cadence').require(
++    host_machine.system() in ['linux', 'android']).allowed()}
++if features['cadence']
++    sources += files('audio/out/ao_cadence.c')
++endif
++
+ opensles = cc.find_library('OpenSLES', required: get_option('opensles'))
+ features += {'opensles': opensles.found()}
+ if features['opensles']
+diff --git a/meson.options b/meson.options
+index 52782f7..cf107ef 100644
+--- a/meson.options
++++ b/meson.options
+@@ -48,6 +48,7 @@ option('openal', type: 'feature', value: 'disabled', description: 'OpenAL audio
+ option('audiotrack', type: 'feature', value: 'auto', description: 'Android AudioTrack audio output')
+ option('aaudio', type: 'feature', value: 'auto', description: 'Android AAudio audio output')
+ option('opensles', type: 'feature', value: 'auto', description: 'OpenSL ES audio output')
++option('cadence', type: 'feature', value: 'auto', description: 'Cadence mixer ring audio output')
+ option('oss-audio', type: 'feature', value: 'auto', description: 'OSSv4 audio output')
+ option('pipewire', type: 'feature', value: 'auto', description: 'PipeWire audio output')
+ option('pulse', type: 'feature', value: 'auto', description: 'PulseAudio audio output')
+-- 
+2.56.0
+

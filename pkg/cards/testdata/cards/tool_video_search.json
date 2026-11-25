@@ -1,0 +1,65 @@
+{
+ "version": 1,
+ "id": "video-ac8380be91a16219c2",
+ "revision": 1,
+ "fallbackText": "Результаты поиска: 2",
+ "root": {
+  "card": {
+   "title": "Нашлись видео",
+   "icon": "film",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "column": {
+      "children": [
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "Лекция о космосе",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "Наука · 1:02:05",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       },
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "Запуск ракеты",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "Роскосмос · Прямой эфир",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       }
+      ],
+      "gap": "GAP_M"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "column",
+  "text"
+ ]
+}

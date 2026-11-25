@@ -1,0 +1,22 @@
+{
+  "json": {
+    "items": [
+      {"id": "session-kitchen-speaker", "deviceId": "kitchen-speaker", "name": "Кухня", "room": "Гостиная", "sameRoom": true,
+       "source": "url", "state": "playing", "title": "Северное сияние", "artist": "Полярные огни",
+       "art": "img:fakeart00000000000000042", "positionMs": 61000, "durationMs": 215000, "here": false},
+      {"id": "session-living-pickle", "deviceId": "living-pickle", "name": "Колонка в гостиной", "room": "Гостиная",
+       "sameRoom": true, "source": "spotify", "state": "paused", "title": "Тёплый ветер", "artist": "Лесное эхо",
+       "art": "img:fakeart00000000000000057", "here": true},
+      {"id": "session-bedroom-midi", "deviceId": "bedroom-midi", "name": "Спальня", "room": "Спальня", "sameRoom": false,
+       "source": "url", "state": "playing", "title": "Колыбельная для города", "artist": "Ночные огни",
+       "art": "img:fakeart00000000000000063", "here": false}
+    ]
+  },
+  "events": [
+    {"atMs": 9000, "json": {"items": [
+      {"id": "session-kitchen-speaker", "deviceId": "kitchen-speaker", "name": "Кухня", "room": "Гостиная", "sameRoom": true,
+       "source": "url", "state": "paused", "title": "Северное сияние", "artist": "Полярные огни",
+       "art": "img:fakeart00000000000000042", "here": false}
+    ]}}
+  ]
+}

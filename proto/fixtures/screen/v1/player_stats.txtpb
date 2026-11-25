@@ -1,0 +1,18 @@
+player_stats {
+  session_id: "sess-v1"
+  cache_speed_bps: 2500000
+  input_rate_bps: 2400000
+  cache_ahead_bytes: 52428800
+  cache_total_bytes: 73400320
+  buffered_ms: 42000
+  low_level_seeks: 2
+  byte_level_seeks: 5
+  underrun: true
+  frame_drops: 4
+  decoder_drops: 1
+  vo_delayed_frames: 3
+  estimated_vf_fps: 23.5
+  display_fps: 60
+  avsync_ms: -12.5
+  hwdec: "mediacodec"
+}

@@ -1,0 +1,16 @@
+capability_command {
+  request_id: "req-4"
+  capability: "audio.output"
+  name: "set_level"
+  json: "{\"level\":60,\"sessionId\":\"sess-a\"}"
+  grant {
+    id: "grant-1"
+    caller_device_id: "dev-a"
+    caller_session_id: "sess-a"
+    caller_trigger: TRIGGER_WAKE
+    target_device_id: "dev-b"
+    capability: "audio.output"
+    command: "set_level"
+    expires_at_unix_ms: 1794700000000
+  }
+}

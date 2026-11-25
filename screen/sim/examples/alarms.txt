@@ -1,0 +1,61 @@
+# alarms on the screen: home's strip (the next alarm in this room, the running timers ticking), a ring of another
+# device's in this room over everything (BACK leaves it, «Стоп» ends it: alarms.act, then the fake's summary without
+# it), the alarms page by cadenced's Route (a timer cancelled behind its confirm), and the display rule: another
+# device's ring never wakes a sleeping screen but shows once it is on, this screen's own wakes it.
+# `make screen-sim-run SCRIPT=screen/sim/examples/alarms.txt`; shots in sim-out/alarms/
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+send-json screen/sim/examples/alarms.json
+wait 1500
+screenshot sim-out/alarms/01-home-strip.png
+
+# another device's ring while the screen is awake: the overlay, «Стоп» focused
+send-json screen/sim/examples/alarms-ring.json
+wait 800
+focus
+screenshot sim-out/alarms/02-ring.png
+press BACK
+wait 400
+screenshot sim-out/alarms/03-ring-after-back.png
+press OK
+wait 800
+rpc-calls alarms.act
+screenshot sim-out/alarms/04-ring-stopped.png
+
+# the page, focused on the kitchen's items; OK on its timer asks first, → then OK cancels it
+send {"route": {"route": "alarms", "ref": "kitchen-midi"}}
+wait-for route:alarms 3000
+wait 800
+focus
+screenshot sim-out/alarms/05-page.png
+press OK
+wait 500
+screenshot sim-out/alarms/06-cancel-confirm.png
+press RIGHT
+wait 200
+press OK
+wait 800
+rpc-calls alarms.act
+screenshot sim-out/alarms/07-page-cancelled.png
+press BACK
+wait-for route:home 3000
+
+# the display off: another device's ring shows nothing; on again, it shows while it still rings
+send {"display_power": {"on": false}}
+wait 300
+send-json screen/sim/examples/alarms-ring-asleep.json
+wait 800
+screenshot sim-out/alarms/08-asleep.png
+send {"display_power": {"on": true}}
+wait 800
+screenshot sim-out/alarms/09-woke-still-ringing.png
+press OK
+wait 800
+
+# this screen's own ring wakes it
+send {"display_power": {"on": false}}
+wait 300
+send-json screen/sim/examples/alarms-ring-own.json
+wait 800
+screenshot sim-out/alarms/10-own-wakes.png
+quit

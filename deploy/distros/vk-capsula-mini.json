@@ -1,0 +1,125 @@
+{
+  "$schema": "./schema.json",
+  "name": "vk-capsula-mini",
+  "board": "vk-capsula-mini",
+  "kind": "speaker",
+  "status": "shipping",
+  "os": "linux",
+  "arch": ["arm64"],
+  "package": {
+    "format": "tarball",
+    "output": "build/device/cadence-{version}-vk-capsula-mini-arm64.tar"
+  },
+  "builder": {
+    "dockerfile": "deploy/builder/device.Dockerfile",
+    "image": "debian:bookworm-slim@sha256:734a72b3d6142a71993b4bc580ca01d8ca687f77a2c422d96a961d3376b179bc",
+    "platform": "linux/arm64",
+    "command": "make device-build BOARD=vk-capsula-mini"
+  },
+  "runtime": {
+    "libc": "glibc",
+    "glibcMax": "2.28",
+    "openssl": "3.0",
+    "loader": "/lib/ld-linux-aarch64.so.1"
+  },
+  "serverUrl": null,
+  "components": ["cadenced", "cadence-audiod", "ca-bundle", "cadence-run", "board-hook"],
+  "media": {
+    "url": true,
+    "airplay": "off",
+    "audioBackend": "alsa",
+    "soloistJail": false,
+    "staticLink": true,
+    "screen": false,
+    "video": "off"
+  },
+  "dependencies": [
+    {
+      "name": "audiod-libs",
+      "source": "system",
+      "use": "build",
+      "distro": "debian-bookworm",
+      "packages": ["libasound2-dev", "libopus-dev", "libspeexdsp-dev"],
+      "snapshot": "20261104T212339Z",
+      "note": "arm64 packages: opus and speexdsp static, libasound as an unversioned stub of bookworm's"
+    },
+    {
+      "name": "zig",
+      "source": "prebuilt",
+      "use": "build",
+      "version": "0.15.2",
+      "license": "MIT",
+      "url": "https://ziglang.org/download/0.15.2/",
+      "sha256ByHost": {
+        "amd64": "02aa270f183da276e5b5920b1dac44a63f1a49e55050ebde3aecc9eb82f93239",
+        "arm64": "958ed7d1e00d0ea76590d27666efbf7a932281b3d7ba0c6b01b0ff26498f667f"
+      },
+      "script": "deploy/builder/device.Dockerfile",
+      "note": "cross-builds audiod, ffmpeg and openssl for aarch64 glibc 2.28"
+    },
+    {
+      "name": "openssl",
+      "source": "tarball",
+      "use": "runtime",
+      "version": "3.0.22",
+      "license": "Apache-2.0",
+      "url": "https://github.com/openssl/openssl/releases/download/openssl-3.0.22/openssl-3.0.22.tar.gz",
+      "sha256": "67ebca7e50d17383028045486653492195b83db95f8558709701bb47b5c1ef81",
+      "script": "deploy/builder/build-vk-audiod.sh",
+      "note": "shipped in bin/lib: the firmware's openssl is 1.1"
+    },
+    {
+      "name": "ffmpeg",
+      "source": "tarball",
+      "use": "both",
+      "version": "9.0.2",
+      "license": "LGPL-3.0-or-later",
+      "url": "https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz",
+      "sha256": "8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e",
+      "script": "deploy/builder/build-ffmpeg.sh",
+      "note": "audio-only build, cross-built with zig (the prebuilt cache's vk-deps), shipped in bin/lib"
+    },
+    {
+      "name": "tflite-micro",
+      "source": "tarball",
+      "use": "build",
+      "version": "9611ed2e1cfa75a58b8217baf024e14f656d7b37",
+      "license": "Apache-2.0",
+      "url": "https://github.com/tensorflow/tflite-micro/archive/9611ed2e1cfa75a58b8217baf024e14f656d7b37.tar.gz",
+      "sha256": "2efb3f604fa28c469fd98c36aebca708d732bfc1a79b3eed8d46a754a2a94d16",
+      "script": "media/cmake/tflm.cmake",
+      "note": "the keyword engine's interpreter (CADENCE_MEDIA_KWS): its framework and the kernels of the stock model's ops, linked into cadence-audiod"
+    },
+    {
+      "name": "flatbuffers",
+      "source": "tarball",
+      "use": "build",
+      "version": "25.9.23",
+      "license": "Apache-2.0",
+      "url": "https://github.com/google/flatbuffers/archive/refs/tags/v25.9.23.tar.gz",
+      "sha256": "9102253214dea6ae10c2ac966ea1ed2155d22202390b532d1dea64935c518ada",
+      "script": "media/cmake/tflm.cmake",
+      "note": "headers only, the version tflite-micro's schema requires"
+    },
+    {
+      "name": "cmsis-nn",
+      "source": "tarball",
+      "use": "build",
+      "version": "ece8aa0df4bee4fc928c294e18059071649c88bb",
+      "license": "Apache-2.0",
+      "url": "https://github.com/ARM-software/CMSIS-NN/archive/ece8aa0df4bee4fc928c294e18059071649c88bb.tar.gz",
+      "sha256": "87dc275472a2e10bbe0e5d79d8f89930b098de78328a7d1b044e48058431db9c",
+      "script": "media/cmake/tflm.cmake",
+      "note": "portable c kernels behind tflite-micro's cmsis_nn conv, mul, max pool, softmax and pad (an a53 has no dsp extension or helium), linked into cadence-audiod"
+    },
+    {
+      "name": "ca-certificates",
+      "source": "system",
+      "use": "runtime",
+      "distro": "debian-bookworm",
+      "packages": ["ca-certificates"],
+      "snapshot": "20261104T212339Z",
+      "note": "the CA bundle the tarball ships"
+    }
+  ]
+}

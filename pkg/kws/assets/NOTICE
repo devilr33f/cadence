@@ -1,0 +1,25 @@
+features.bin
+
+This file holds weights converted from openWakeWord v0.5.1's released feature models, melspectrogram.onnx
+(sha256 ba2b0e0f8b7b875369a2c89cb13360ff53bac436f2895cced9f479fa65eb176f) and embedding_model.onnx
+(sha256 70d164290c1d095d1d4ee149bc5e00543250a7316b59f31d056cff7bd3075c1f), from
+https://github.com/dscripka/openWakeWord/releases/tag/v0.5.1.
+
+openWakeWord is Copyright 2022 David Scripka and licensed under the Apache License, Version 2.0 (LICENSE-openwakeword
+beside this file). Its embedding model is Google's speech_embedding model (https://tfhub.dev/google/speech_embedding/1),
+released by Google under the Apache License, Version 2.0, as converted to ONNX by openWakeWord.
+
+Modifications: the ONNX graphs were not copied. tools/kws/export.py reads their initializers and writes them, unchanged
+in value, to Cadence's own tensor container: the STFT window (row 0 of the real STFT kernel), the 257x32 mel
+filterbank, and the 20 convolutions' weights and biases. pkg/kws reimplements the graphs' computation in Go.
+
+openWakeWord's precomputed negative features (huggingface.co/datasets/davidscripka/openwakeword_features) are licensed
+CC BY-NC-SA 4.0 and are NOT part of this repository: the Cadence server fetches a sample of them at runtime into the
+path the owner names (CADENCE_WAKEWORD_NEGATIVES), and never redistributes them.
+
+Licence note for the owner: openWakeWord's README says the code is Apache-2.0 and that "all of the included
+pre-trained models" are CC BY-NC-SA 4.0 because of their training data. The two feature models converted here are
+not wake-word models trained by openWakeWord: the mel model is a fixed transform (a Hann window and a mel filterbank,
+nothing learned), and the embedding model is Google's speech_embedding, which Google released under Apache-2.0 and
+openWakeWord re-implemented. Cadence ships them as Apache-2.0 on that reading; converting the embedding straight from
+Google's TFHub module would remove any doubt.

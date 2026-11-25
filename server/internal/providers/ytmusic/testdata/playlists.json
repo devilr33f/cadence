@@ -1,0 +1,303 @@
+{
+ "contents": {
+  "tabbedSearchResultsRenderer": {
+   "tabs": [
+    {
+     "tabRenderer": {
+      "title": "YT Music",
+      "selected": true,
+      "content": {
+       "sectionListRenderer": {
+        "contents": [
+         {},
+         {
+          "musicShelfRenderer": {
+           "title": {
+            "runs": [
+             {
+              "text": "Community playlists"
+             }
+            ]
+           },
+           "contents": [
+            {
+             "musicResponsiveListItemRenderer": {
+              "thumbnail": {
+               "musicThumbnailRenderer": {
+                "thumbnail": {
+                 "thumbnails": [
+                  {
+                   "url": "https://yt3.googleusercontent.com/C9OFyp4u1n3ijnxNPOEVhGdh1VwWq69NfutLvIvSX8WhiBaBO96k85G42unHydCutWWfiolWHw=s192",
+                   "width": 192,
+                   "height": 192
+                  },
+                  {
+                   "url": "https://yt3.googleusercontent.com/C9OFyp4u1n3ijnxNPOEVhGdh1VwWq69NfutLvIvSX8WhiBaBO96k85G42unHydCutWWfiolWHw=s576",
+                   "width": 576,
+                   "height": 576
+                  },
+                  {
+                   "url": "https://yt3.googleusercontent.com/C9OFyp4u1n3ijnxNPOEVhGdh1VwWq69NfutLvIvSX8WhiBaBO96k85G42unHydCutWWfiolWHw=s1200",
+                   "width": 1200,
+                   "height": 1200
+                  }
+                 ]
+                }
+               }
+              },
+              "flexColumns": [
+               {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Linkin Park best 50 songs"
+                   }
+                  ]
+                 }
+                }
+               },
+               {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "𝐂𝐫𝐨𝐰𝐳^",
+                    "navigationEndpoint": {
+                     "browseEndpoint": {
+                      "browseId": "UC2_35pEWkdr5RzhnmlVruVg",
+                      "browseEndpointContextSupportedConfigs": {
+                       "browseEndpointContextMusicConfig": {
+                        "pageType": "MUSIC_PAGE_TYPE_USER_CHANNEL"
+                       }
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "text": " • "
+                   },
+                   {
+                    "text": "88M views"
+                   }
+                  ]
+                 }
+                }
+               }
+              ],
+              "navigationEndpoint": {
+               "browseEndpoint": {
+                "browseId": "VLPL9LkJszkF_Z6bJ82689htd2wch-HVbzCO",
+                "browseEndpointContextSupportedConfigs": {
+                 "browseEndpointContextMusicConfig": {
+                  "pageType": "MUSIC_PAGE_TYPE_PLAYLIST"
+                 }
+                }
+               }
+              }
+             }
+            },
+            {
+             "musicResponsiveListItemRenderer": {
+              "thumbnail": {
+               "musicThumbnailRenderer": {
+                "thumbnail": {
+                 "thumbnails": [
+                  {
+                   "url": "https://yt3.googleusercontent.com/lf2bk6uRBSuXIBwmpB3wzkHskbkpNgsYVzCJkOfOzP9u0cx2ubzma9o0fPWLO8rjfzN5NNE6JRHd=s192",
+                   "width": 192,
+                   "height": 192
+                  },
+                  {
+                   "url": "https://yt3.googleusercontent.com/lf2bk6uRBSuXIBwmpB3wzkHskbkpNgsYVzCJkOfOzP9u0cx2ubzma9o0fPWLO8rjfzN5NNE6JRHd=s576",
+                   "width": 576,
+                   "height": 576
+                  },
+                  {
+                   "url": "https://yt3.googleusercontent.com/lf2bk6uRBSuXIBwmpB3wzkHskbkpNgsYVzCJkOfOzP9u0cx2ubzma9o0fPWLO8rjfzN5NNE6JRHd=s1200",
+                   "width": 1200,
+                   "height": 1200
+                  }
+                 ]
+                }
+               }
+              },
+              "flexColumns": [
+               {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Linkin Park Greatest Hits"
+                   }
+                  ]
+                 }
+                }
+               },
+               {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Daniel Ruiz (Link2k2)",
+                    "navigationEndpoint": {
+                     "browseEndpoint": {
+                      "browseId": "UCUcvA2vVrb_J5iMQbStKIow",
+                      "browseEndpointContextSupportedConfigs": {
+                       "browseEndpointContextMusicConfig": {
+                        "pageType": "MUSIC_PAGE_TYPE_USER_CHANNEL"
+                       }
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "text": " • "
+                   },
+                   {
+                    "text": "5.9M views"
+                   }
+                  ]
+                 }
+                }
+               }
+              ],
+              "navigationEndpoint": {
+               "browseEndpoint": {
+                "browseId": "VLPL3A_1s_Z8MQbYIvki-pbcerX8zrF4U8zQ",
+                "browseEndpointContextSupportedConfigs": {
+                 "browseEndpointContextMusicConfig": {
+                  "pageType": "MUSIC_PAGE_TYPE_PLAYLIST"
+                 }
+                }
+               }
+              }
+             }
+            },
+            {
+             "musicResponsiveListItemRenderer": {
+              "thumbnail": {
+               "musicThumbnailRenderer": {
+                "thumbnail": {
+                 "thumbnails": [
+                  {
+                   "url": "https://i.ytimg.com/pl_c/PLlqZM4covn1FcT5o-ieQJTWSlraCefqTw/studio_square_thumbnail.jpg?sqp=CJWT3NcG-oaymwEICEAQJCAASFqi85f_AwYIyfb3vQY&rs=AMzJL3lFye02duvysAEhuJ8aGr0kRGTkqA",
+                   "width": 64,
+                   "height": 36
+                  },
+                  {
+                   "url": "https://i.ytimg.com/pl_c/PLlqZM4covn1FcT5o-ieQJTWSlraCefqTw/studio_square_thumbnail.jpg?sqp=CJWT3NcG-oaymwEJCIABEEggAEhaovOX_wMGCMn2970G&rs=AMzJL3kIE1Qbln5bbSHCK5w52oQjQK1yyg",
+                   "width": 128,
+                   "height": 72
+                  },
+                  {
+                   "url": "https://i.ytimg.com/pl_c/PLlqZM4covn1FcT5o-ieQJTWSlraCefqTw/studio_square_thumbnail.jpg?sqp=CJWT3NcG-oaymwEKCPABEIcBIABIWqLzl_8DBgjJ9ve9Bg&rs=AMzJL3mSMUnyZLX4W5IGkt2AIwTIqi1m0Q",
+                   "width": 240,
+                   "height": 135
+                  },
+                  {
+                   "url": "https://i.ytimg.com/pl_c/PLlqZM4covn1FcT5o-ieQJTWSlraCefqTw/studio_square_thumbnail.jpg?sqp=CJWT3NcG-oaymwEKCKAEELICIABIWqLzl_8DBgjJ9ve9Bg&rs=AMzJL3lqFMawxs9JA92eld8LsN8kAS33PQ",
+                   "width": 544,
+                   "height": 306
+                  },
+                  {
+                   "url": "https://i.ytimg.com/pl_c/PLlqZM4covn1FcT5o-ieQJTWSlraCefqTw/studio_square_thumbnail.jpg?sqp=CJWT3NcG-oaymwEKCLAGEMsDIABIWqLzl_8DBgjJ9ve9Bg&rs=AMzJL3kZ8hpgWqfnnqJj8BROdX69mRFrjg",
+                   "width": 816,
+                   "height": 459
+                  },
+                  {
+                   "url": "https://i.ytimg.com/pl_c/PLlqZM4covn1FcT5o-ieQJTWSlraCefqTw/studio_square_thumbnail.jpg?sqp=CJWT3NcG-oaymwEKCKALEKoGIABIWqLzl_8DBgjJ9ve9Bg&rs=AMzJL3kIr1vV1gpOHmqQE6UT31r__r7FhQ",
+                   "width": 1440,
+                   "height": 810
+                  },
+                  {
+                   "url": "https://i.ytimg.com/pl_c/PLlqZM4covn1FcT5o-ieQJTWSlraCefqTw/studio_square_thumbnail.jpg?sqp=CJWT3NcG-oaymwEKCIAPELgIIABIWqLzl_8DBgjJ9ve9Bg&rs=AMzJL3mzZKakd5IxKBzFV5b1S8d-gDxmIQ",
+                   "width": 1920,
+                   "height": 1080
+                  },
+                  {
+                   "url": "https://i.ytimg.com/pl_c/PLlqZM4covn1FcT5o-ieQJTWSlraCefqTw/studio_square_thumbnail.jpg?sqp=CJWT3NcG-oaymwEKCMAWENQMIABIWqLzl_8DBgjJ9ve9Bg&rs=AMzJL3lPkmQIyUTvPRyrvFtJlnjsIenWQA",
+                   "width": 2880,
+                   "height": 1620
+                  }
+                 ]
+                }
+               }
+              },
+              "flexColumns": [
+               {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Live (From Zero World Tour) - Linkin Park"
+                   }
+                  ]
+                 }
+                }
+               },
+               {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Linkin Park",
+                    "navigationEndpoint": {
+                     "browseEndpoint": {
+                      "browseId": "UCZU9T1ceaOgwfLRq7OKFU4Q",
+                      "browseEndpointContextSupportedConfigs": {
+                       "browseEndpointContextMusicConfig": {
+                        "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                       }
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "text": " • "
+                   },
+                   {
+                    "text": "3M views"
+                   }
+                  ]
+                 }
+                }
+               }
+              ],
+              "navigationEndpoint": {
+               "browseEndpoint": {
+                "browseId": "VLPLlqZM4covn1FcT5o-ieQJTWSlraCefqTw",
+                "browseEndpointContextSupportedConfigs": {
+                 "browseEndpointContextMusicConfig": {
+                  "pageType": "MUSIC_PAGE_TYPE_PLAYLIST"
+                 }
+                }
+               }
+              }
+             }
+            }
+           ],
+           "continuations": [
+            {
+             "nextContinuationData": {
+              "continuation": "EpkIEhBsaW5raW4gcGFyayBiZXN0GoQIRWctS0FRd0lBQkFBR0FBZ0FDZ0JNQUJJRkdvS0VBUVFBeEFKRUFVUUNvSUJJbEJNT1V4clNuTjZhMFpmV2paaVNqZ3lOamc1YUhSa01uZGphQzFJVm1KNlEwLUNBU0pRVEROQlh6RnpYMW80VFZGaVdVbDJhMmt0Y0dKalpYSllPSHB5UmpSVk9IcFJnZ0VpVUV4c2NWcE5OR052ZG00eFJtTlVOVzh0YVdWUlNsUlhVMnh5WVVObFpuRlVkNElCSWxCTVozZFFPRzgzUm5NNWRXVnllVFJCU0hwc1ZUQjZSelJQVVMxeVdsTnVNa1NDQVNKUVRFZ3hOMU5qYmpoTU4yZG9RM0ZFUTFaUmEwcGxhbVJzWkZwMVpqRk1NRVkxZ2dFaVVFeDBaMnh0ZUhCU05VRkJkRzR3UXkxVlZVdzBVRWRZUVRWak5sSXRTbkUyTFlJQklsQk1RMDl1VVZKRE5uUXlNMmxQUzFrMlUyTkZOamxEWW1sSVVWOU5aMDFuVmttQ0FTSlFURVZwWmpWZk5VVnBaVzlGWWtKT1ZVcDJjRFV5UjJGS1VHTmxZemh0WjFSU2dnRWlVRXhTVTJkcFJVNXdVVmd0TVRacGEwbDNVMEZqTVMxWE1IaDRaVk5TTTI0eVRZSUJJbEJNZFc5dFFYQldiR05mVTFVdFZGSnRWMnRWZEU1WVoxOTJXa2xoYkV0dVQxLUNBU0pRVEhaMVZFcHFNV2hoWlVWaGFscHdZbm90YlRsQlZqbE1Xa3N4UnpFd2NqUmtnZ0VpVUV4RFFVMHRVRGxwU1ZObVJ6RnRUR3R0UVhsdVVrNTVNR1Y2WXkwdE1VSjBZb0lCSWxCTWIyeGljRmRDWm1weFQzRnhUM0ZxTFdvMU9GQmpjMHcxZG1wUllVczFkRm1DQVNKUVRFNHlWbEpuU0dvNVRUbERibEJOWkZseUxUTklNbTVWVURSR1UzQlhVMlZyZ2dFaVVFeGtVR0pmVEVRMGVuUXhSVmRzUTBwVWVVaFVXWFpoYkVrNWFFZFVNRUZCVElJQklsQk1URkpKV0VGNGRGWTRlbmMzWDNKSFpqVXdMVFIxVHpnMGNYTnRhV1J3U1hhQ0FTSlFUREpoTURCRmNHTktaalJIUzB4ak9UWkdZVnBtZFc0MVJIWkpORUZUZUhvNWdnRWlVRXcxZFc5a1pEWjNOak5HY25Kd0xVeElXVkpwTFdjNWREUnRUMjVxVGt0R1JvSUJJbEJNTUVaU2RWOXRkbmRxVjJVM1gwUnNTR3RNYkMxQlJEWnpVbGhZZUVoRFlqZUNBU0pRVEcwMVpETjVUa0ZDUVRFelpWUnplV3Q1TVRsVWRXcGFYemxpVkdSSFZITXgY8erQLg%3D%3D"
+             }
+            }
+           ],
+           "shelfDivider": {
+            "musicShelfDividerRenderer": {
+             "hidden": true
+            }
+           }
+          }
+         }
+        ]
+       }
+      },
+      "tabIdentifier": "music_search_catalog"
+     }
+    }
+   ]
+  }
+ }
+}

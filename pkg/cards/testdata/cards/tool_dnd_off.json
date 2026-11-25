@@ -1,0 +1,25 @@
+{
+ "version": 1,
+ "id": "dnd-ba7083f743ee47b3bd",
+ "revision": 1,
+ "fallbackText": "Не беспокоить: Выключено",
+ "root": {
+  "card": {
+   "title": "Не беспокоить",
+   "icon": "moon",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Выключено",
+      "kind": "STATE_KIND_OFF"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state"
+ ]
+}

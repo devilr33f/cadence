@@ -1,0 +1,78 @@
+say:
+  fields:
+    device_id:
+      selector:
+        device:
+          integration: cadence
+          multiple: true
+    entity_id:
+      selector:
+        entity:
+          integration: cadence
+          domain: media_player
+          multiple: true
+    text:
+      required: true
+      example: "Dinner is ready."
+      selector:
+        text:
+          multiline: true
+    language:
+      selector:
+        select:
+          translation_key: language
+          options:
+            - "en"
+            - "ru"
+set_timer:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: cadence
+          multiple: true
+    duration:
+      required: true
+      example: "00:10:00"
+      selector:
+        duration:
+set_reminder:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: cadence
+          multiple: true
+    text:
+      required: true
+      example: "Take the bins out"
+      selector:
+        text:
+    time:
+      example: "18:00"
+      selector:
+        time:
+    date:
+      selector:
+        date:
+    days:
+      selector:
+        select:
+          translation_key: day
+          multiple: true
+          options:
+            - "mon"
+            - "tue"
+            - "wed"
+            - "thu"
+            - "fri"
+            - "sat"
+            - "sun"
+    in_minutes:
+      selector:
+        number:
+          min: 1
+          max: 10080
+          unit_of_measurement: min

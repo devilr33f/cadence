@@ -1,0 +1,74 @@
+{
+ "version": 1,
+ "id": "call-b4babe1832c0a73aac",
+ "revision": 1,
+ "fallbackText": "Играет «System of a Down: лучшее · YouTube Music»",
+ "root": {
+  "card": {
+   "title": "Играет «System of a Down: лучшее · YouTube Music»",
+   "icon": "music",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "row": {
+      "children": [
+       {
+        "image": {
+         "ref": "img:fakeart5-480-360________",
+         "alt": "System of a Down: лучшее",
+         "aspect": "ASPECT_SQUARE"
+        }
+       },
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "System of a Down: лучшее",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "YouTube Music",
+            "style": "TEXT_STYLE_META"
+           }
+          },
+          {
+           "text": {
+            "text": "Плейлист · 49 треков",
+            "style": "TEXT_STYLE_META"
+           }
+          },
+          {
+           "text": {
+            "text": "Сейчас: Chop Suey! — System of a Down",
+            "style": "TEXT_STYLE_BODY"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       }
+      ],
+      "gap": "GAP_M"
+     }
+    },
+    {
+     "state": {
+      "label": "Играет",
+      "kind": "STATE_KIND_ON"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "column",
+  "image",
+  "row",
+  "state",
+  "text"
+ ]
+}

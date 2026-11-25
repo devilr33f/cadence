@@ -1,0 +1,20 @@
+[
+  {
+    "id": "0b6f3c52-7d1e-4a8b-9f2c-5e4d3a2b1c0d",
+    "name": "Kitchen",
+    "model": "sim",
+    "status": "enrolled",
+    "room": "",
+    "online": true,
+    "lastSeenAt": "2026-11-12T10:00:00Z"
+  },
+  {
+    "id": "5a9e7f10-2c3d-4e5f-8a6b-7c8d9e0f1a2b",
+    "name": "Hall",
+    "model": "sim",
+    "status": "enrolled",
+    "room": "",
+    "online": false,
+    "lastSeenAt": null
+  }
+]

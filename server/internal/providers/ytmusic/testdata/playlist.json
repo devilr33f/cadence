@@ -1,0 +1,684 @@
+{
+ "contents": {
+  "twoColumnBrowseResultsRenderer": {
+   "secondaryContents": {
+    "sectionListRenderer": {
+     "contents": [
+      {
+       "musicPlaylistShelfRenderer": {
+        "playlistId": "PL0GvsLQil0MmYC96KEs_7dTNsLm1PS6JX",
+        "contents": [
+         {
+          "musicResponsiveListItemRenderer": {
+           "thumbnail": {
+            "musicThumbnailRenderer": {
+             "thumbnail": {
+              "thumbnails": [
+               {
+                "url": "https://i.ytimg.com/vi/fJ9rUzIMcZQ/hqdefault.jpg?sqp=-oaymwEWCJADEOEBIAQqCggAEOADGC0guwJIWg&rs=AMzJL3lsQhmUoD8y1EjuRw739pQAHDsUjw",
+                "width": 400,
+                "height": 225
+               }
+              ]
+             }
+            }
+           },
+           "flexColumns": [
+            {
+             "musicResponsiveListItemFlexColumnRenderer": {
+              "text": {
+               "runs": [
+                {
+                 "text": "Bohemian Rhapsody",
+                 "navigationEndpoint": {
+                  "watchEndpoint": {
+                   "videoId": "fJ9rUzIMcZQ",
+                   "playlistId": "PL0GvsLQil0MmYC96KEs_7dTNsLm1PS6JX",
+                   "playerParams": "iAQB8AUB"
+                  }
+                 }
+                }
+               ]
+              }
+             }
+            },
+            {
+             "musicResponsiveListItemFlexColumnRenderer": {
+              "text": {
+               "runs": [
+                {
+                 "text": "Queen",
+                 "navigationEndpoint": {
+                  "browseEndpoint": {
+                   "browseId": "UCEPMVbUzImPl4p8k4LkGevA",
+                   "browseEndpointContextSupportedConfigs": {
+                    "browseEndpointContextMusicConfig": {
+                     "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                    }
+                   }
+                  }
+                 }
+                }
+               ]
+              }
+             }
+            },
+            {
+             "musicResponsiveListItemFlexColumnRenderer": {
+              "text": {}
+             }
+            }
+           ],
+           "fixedColumns": [
+            {
+             "musicResponsiveListItemFixedColumnRenderer": {
+              "text": {
+               "runs": [
+                {
+                 "text": "6:00"
+                }
+               ]
+              },
+              "size": "MUSIC_RESPONSIVE_LIST_ITEM_FIXED_COLUMN_SIZE_SMALL"
+             }
+            }
+           ],
+           "playlistItemData": {
+            "videoId": "fJ9rUzIMcZQ"
+           }
+          }
+         },
+         {
+          "musicResponsiveListItemRenderer": {
+           "thumbnail": {
+            "musicThumbnailRenderer": {
+             "thumbnail": {
+              "thumbnails": [
+               {
+                "url": "https://i.ytimg.com/vi/gEPmA3USJdI/hqdefault.jpg?sqp=-oaymwEWCJADEOEBIAQqCggAEOADGC0guwJIWg&rs=AMzJL3kYzyJNW-KRInIuulb0wxJTGu8Hnw",
+                "width": 400,
+                "height": 225
+               }
+              ]
+             }
+            }
+           },
+           "flexColumns": [
+            {
+             "musicResponsiveListItemFlexColumnRenderer": {
+              "text": {
+               "runs": [
+                {
+                 "text": "Highway to Hell (Live)",
+                 "navigationEndpoint": {
+                  "watchEndpoint": {
+                   "videoId": "gEPmA3USJdI",
+                   "playlistId": "PL0GvsLQil0MmYC96KEs_7dTNsLm1PS6JX",
+                   "playerParams": "iAQB8AUB"
+                  }
+                 }
+                }
+               ]
+              }
+             }
+            },
+            {
+             "musicResponsiveListItemFlexColumnRenderer": {
+              "text": {
+               "runs": [
+                {
+                 "text": "AC/DC",
+                 "navigationEndpoint": {
+                  "browseEndpoint": {
+                   "browseId": "UCVm4YdI3hobkwsHTTOMVJKg",
+                   "browseEndpointContextSupportedConfigs": {
+                    "browseEndpointContextMusicConfig": {
+                     "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                    }
+                   }
+                  }
+                 }
+                }
+               ]
+              }
+             }
+            },
+            {
+             "musicResponsiveListItemFlexColumnRenderer": {
+              "text": {}
+             }
+            }
+           ],
+           "fixedColumns": [
+            {
+             "musicResponsiveListItemFixedColumnRenderer": {
+              "text": {
+               "runs": [
+                {
+                 "text": "4:45"
+                }
+               ]
+              },
+              "size": "MUSIC_RESPONSIVE_LIST_ITEM_FIXED_COLUMN_SIZE_SMALL"
+             }
+            }
+           ],
+           "playlistItemData": {
+            "videoId": "gEPmA3USJdI"
+           }
+          }
+         },
+         {
+          "musicResponsiveListItemRenderer": {
+           "thumbnail": {
+            "musicThumbnailRenderer": {
+             "thumbnail": {
+              "thumbnails": [
+               {
+                "url": "https://i.ytimg.com/vi/CD-E-LDc384/hqdefault.jpg?sqp=-oaymwEWCJADEOEBIAQqCggAEOADGC0guwJIWg&rs=AMzJL3n0APo8fACPhpsOUenBIxiW-gySXQ",
+                "width": 400,
+                "height": 225
+               }
+              ]
+             }
+            }
+           },
+           "flexColumns": [
+            {
+             "musicResponsiveListItemFlexColumnRenderer": {
+              "text": {
+               "runs": [
+                {
+                 "text": "Enter Sandman (Live with the SFSO)",
+                 "navigationEndpoint": {
+                  "watchEndpoint": {
+                   "videoId": "CD-E-LDc384",
+                   "playlistId": "PL0GvsLQil0MmYC96KEs_7dTNsLm1PS6JX",
+                   "playerParams": "iAQB8AUB"
+                  }
+                 }
+                }
+               ]
+              }
+             }
+            },
+            {
+             "musicResponsiveListItemFlexColumnRenderer": {
+              "text": {
+               "runs": [
+                {
+                 "text": "Metallica",
+                 "navigationEndpoint": {
+                  "browseEndpoint": {
+                   "browseId": "UCGexNm_Kw4rdQjLxmpb2EKw",
+                   "browseEndpointContextSupportedConfigs": {
+                    "browseEndpointContextMusicConfig": {
+                     "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                    }
+                   }
+                  }
+                 }
+                }
+               ]
+              }
+             }
+            },
+            {
+             "musicResponsiveListItemFlexColumnRenderer": {
+              "text": {}
+             }
+            }
+           ],
+           "fixedColumns": [
+            {
+             "musicResponsiveListItemFixedColumnRenderer": {
+              "text": {
+               "runs": [
+                {
+                 "text": "5:31"
+                }
+               ]
+              },
+              "size": "MUSIC_RESPONSIVE_LIST_ITEM_FIXED_COLUMN_SIZE_SMALL"
+             }
+            }
+           ],
+           "playlistItemData": {
+            "videoId": "CD-E-LDc384"
+           }
+          }
+         },
+         {
+          "continuationItemRenderer": {
+           "continuationEndpoint": {
+            "continuationCommand": {
+             "token": "4qmFsgKHARIkVkxQTDBHdnNMUWlsME1tWUM5NktFc183ZFROc0xtMVBTNkpYGjplaDVRVkRwRFIxVnBSVVZLUkU1VVFrVlJhbU42VDFSR1EwNHdSWHBSVkZHU0FRTUl1Z1R3QVFBJTNEmgIiUEwwR3ZzTFFpbDBNbVlDOTZLRXNfN2RUTnNMbTFQUzZKWA%3D%3D",
+             "request": "CONTINUATION_REQUEST_TYPE_BROWSE"
+            }
+           }
+          }
+         }
+        ],
+        "collapsedItemCount": 100
+       }
+      }
+     ],
+     "continuations": [
+      {
+       "nextContinuationData": {
+        "continuation": "4qmFsgI0EiRWTFBMMEd2c0xRaWwwTW1ZQzk2S0VzXzdkVE5zTG0xUFM2SlgaDGtnRURDTTBHOEFFQQ%3D%3D"
+       }
+      }
+     ]
+    }
+   },
+   "tabs": [
+    {
+     "tabRenderer": {
+      "content": {
+       "sectionListRenderer": {
+        "contents": [
+         {
+          "musicResponsiveHeaderRenderer": {
+           "thumbnail": {
+            "musicThumbnailRenderer": {
+             "thumbnail": {
+              "thumbnails": [
+               {
+                "url": "https://yt3.ggpht.com/54C_i8lrLQ-E-XO8RRPKTn-BVYiFaSi8uowJn0JsSwVFV2li2zDcMkMra5dW9wZGllpAR-tOWEZZ=s192",
+                "width": 192,
+                "height": 192
+               },
+               {
+                "url": "https://yt3.ggpht.com/54C_i8lrLQ-E-XO8RRPKTn-BVYiFaSi8uowJn0JsSwVFV2li2zDcMkMra5dW9wZGllpAR-tOWEZZ=s576",
+                "width": 576,
+                "height": 576
+               },
+               {
+                "url": "https://yt3.ggpht.com/54C_i8lrLQ-E-XO8RRPKTn-BVYiFaSi8uowJn0JsSwVFV2li2zDcMkMra5dW9wZGllpAR-tOWEZZ=s1200",
+                "width": 1200,
+                "height": 1200
+               }
+              ]
+             }
+            }
+           },
+           "buttons": [
+            {
+             "toggleButtonRenderer": {
+              "isToggled": false,
+              "isDisabled": false,
+              "defaultIcon": {
+               "iconType": "BOOKMARK_BORDER"
+              },
+              "toggledIcon": {
+               "iconType": "BOOKMARK"
+              },
+              "defaultNavigationEndpoint": {
+               "modalEndpoint": {
+                "modal": {
+                 "modalWithTitleAndButtonRenderer": {
+                  "title": {
+                   "runs": [
+                    {
+                     "text": "Save this for later"
+                    }
+                   ]
+                  },
+                  "content": {
+                   "runs": [
+                    {
+                     "text": "Save favorites to your library after signing in"
+                    }
+                   ]
+                  },
+                  "button": {
+                   "buttonRenderer": {
+                    "style": "STYLE_BLUE_TEXT",
+                    "isDisabled": false,
+                    "text": {
+                     "runs": [
+                      {
+                       "text": "Sign in"
+                      }
+                     ]
+                    },
+                    "navigationEndpoint": {
+                     "signInEndpoint": {
+                      "hack": true
+                     }
+                    }
+                   }
+                  }
+                 }
+                }
+               }
+              },
+              "toggledAccessibilityData": {}
+             }
+            },
+            {
+             "musicPlayButtonRenderer": {
+              "playNavigationEndpoint": {
+               "watchEndpoint": {
+                "videoId": "fJ9rUzIMcZQ",
+                "playlistId": "PL0GvsLQil0MmYC96KEs_7dTNsLm1PS6JX",
+                "params": "wAEB",
+                "playerParams": "iAQB8AUB"
+               }
+              },
+              "playIcon": {
+               "iconType": "PLAY_ARROW"
+              },
+              "pauseIcon": {
+               "iconType": "PAUSE"
+              },
+              "iconColor": 4278387459,
+              "backgroundColor": 0,
+              "activeBackgroundColor": 0,
+              "loadingIndicatorColor": 14745645,
+              "playingIcon": {
+               "iconType": "PAUSE"
+              },
+              "iconLoadingColor": 0,
+              "activeScaleFactor": 1,
+              "accessibilityPlayData": {},
+              "accessibilityPauseData": {}
+             }
+            },
+            {
+             "menuRenderer": {
+              "items": [
+               {
+                "menuNavigationItemRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Shuffle play"
+                   }
+                  ]
+                 },
+                 "icon": {
+                  "iconType": "MUSIC_SHUFFLE"
+                 },
+                 "navigationEndpoint": {
+                  "watchPlaylistEndpoint": {
+                   "playlistId": "PL0GvsLQil0MmYC96KEs_7dTNsLm1PS6JX",
+                   "params": "wAEB8gECKAE%3D"
+                  }
+                 }
+                }
+               },
+               {
+                "menuServiceItemRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Find in playlist"
+                   }
+                  ]
+                 },
+                 "icon": {
+                  "iconType": "SEARCH"
+                 }
+                }
+               },
+               {
+                "menuNavigationItemRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Start mix"
+                   }
+                  ]
+                 },
+                 "icon": {
+                  "iconType": "MIX"
+                 },
+                 "navigationEndpoint": {
+                  "watchPlaylistEndpoint": {
+                   "playlistId": "RDAMPLPL0GvsLQil0MmYC96KEs_7dTNsLm1PS6JX",
+                   "params": "wAEB"
+                  }
+                 }
+                }
+               },
+               {
+                "menuServiceItemRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Play next"
+                   }
+                  ]
+                 },
+                 "icon": {
+                  "iconType": "QUEUE_PLAY_NEXT"
+                 }
+                }
+               },
+               {
+                "menuServiceItemRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Add to queue"
+                   }
+                  ]
+                 },
+                 "icon": {
+                  "iconType": "ADD_TO_REMOTE_QUEUE"
+                 }
+                }
+               },
+               {
+                "menuNavigationItemRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Save to playlist"
+                   }
+                  ]
+                 },
+                 "icon": {
+                  "iconType": "ADD_TO_PLAYLIST"
+                 },
+                 "navigationEndpoint": {
+                  "modalEndpoint": {
+                   "modal": {
+                    "modalWithTitleAndButtonRenderer": {
+                     "title": {
+                      "runs": [
+                       {
+                        "text": "Save this for later"
+                       }
+                      ]
+                     },
+                     "content": {
+                      "runs": [
+                       {
+                        "text": "Make playlists and share them after signing in"
+                       }
+                      ]
+                     },
+                     "button": {
+                      "buttonRenderer": {
+                       "style": "STYLE_BLUE_TEXT",
+                       "isDisabled": false,
+                       "text": {
+                        "runs": [
+                         {
+                          "text": "Sign in"
+                         }
+                        ]
+                       },
+                       "navigationEndpoint": {
+                        "signInEndpoint": {
+                         "hack": true
+                        }
+                       }
+                      }
+                     }
+                    }
+                   }
+                  }
+                 }
+                }
+               },
+               {
+                "menuNavigationItemRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Share"
+                   }
+                  ]
+                 },
+                 "icon": {
+                  "iconType": "SHARE"
+                 },
+                 "navigationEndpoint": {
+                  "shareEntityEndpoint": {
+                   "serializedShareEntity": "EiJQTDBHdnNMUWlsME1tWUM5NktFc183ZFROc0xtMVBTNkpY",
+                   "sharePanelType": "SHARE_PANEL_TYPE_UNIFIED_SHARE_PANEL"
+                  }
+                 }
+                }
+               }
+              ]
+             }
+            }
+           ],
+           "title": {
+            "runs": [
+             {
+              "text": "Top 500 Classic Rock songs"
+             }
+            ]
+           },
+           "subtitle": {
+            "runs": [
+             {
+              "text": "Playlist"
+             },
+             {
+              "text": " • "
+             },
+             {
+              "text": "2025"
+             }
+            ]
+           },
+           "description": {
+            "musicDescriptionShelfRenderer": {
+             "description": {
+              "runs": [
+               {
+                "text": "rock,rock music,classic rock,best rock songs,rock songs,rock ballads,classic rock music,slow rock,rock classic,classic rock songs,classic rock playlist,soft rock,slow rock songs,soft rock music,classic rock greatest hits,classic rock collection,rock ballads songs,best of classic rock,classic rock 80s,best classic rock,classic rock hits,best rock ballads,slow rock ballads,soft rock 80s,classic rock 80s 90s,80s rock songs,rock song"
+               }
+              ]
+             },
+             "moreButton": {
+              "toggleButtonRenderer": {
+               "isToggled": false,
+               "isDisabled": false,
+               "defaultIcon": {
+                "iconType": "EXPAND"
+               },
+               "defaultText": {
+                "runs": [
+                 {
+                  "text": "More"
+                 }
+                ]
+               },
+               "toggledIcon": {
+                "iconType": "COLLAPSE"
+               },
+               "toggledText": {
+                "runs": [
+                 {
+                  "text": "Less"
+                 }
+                ]
+               }
+              }
+             },
+             "shelfStyle": "MUSIC_SHELF_STYLE_OPEN_DIALOG_ON_CLICK"
+            }
+           },
+           "secondSubtitle": {
+            "runs": [
+             {
+              "text": "8.3M views"
+             },
+             {
+              "text": " • "
+             },
+             {
+              "text": "248 tracks"
+             },
+             {
+              "text": " • "
+             },
+             {
+              "text": "19 hours"
+             }
+            ]
+           },
+           "facepile": {
+            "avatarStackViewModel": {
+             "avatars": [
+              {
+               "avatarViewModel": {
+                "image": {
+                 "sources": [
+                  {
+                   "url": "https://yt3.ggpht.com/-H5Nf6AeGjl6eGqOjvqsMOpNyjpAtbT01x9UYAFZV8BFabAWrxYz1GDU73JN-ofATPoxV1Jf=s48-c-k-c0x00000000-no-cc-rj-rp"
+                  }
+                 ],
+                 "processor": {
+                  "borderImageProcessor": {
+                   "circular": true
+                  }
+                 }
+                },
+                "avatarImageSize": "AVATAR_SIZE_XS"
+               }
+              }
+             ],
+             "text": {
+              "content": "1503 Recording"
+             },
+             "rendererContext": {
+              "accessibilityContext": {
+               "label": "1503 Recording"
+              },
+              "commandContext": {
+               "onTap": {
+                "innertubeCommand": {
+                 "browseEndpoint": {
+                  "browseId": "UCHi_t3vzJxxVLwoD2Io4XzQ",
+                  "browseEndpointContextSupportedConfigs": {
+                   "browseEndpointContextMusicConfig": {
+                    "pageType": "MUSIC_PAGE_TYPE_USER_CHANNEL"
+                   }
+                  }
+                 }
+                }
+               }
+              }
+             }
+            }
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   ]
+  }
+ }
+}

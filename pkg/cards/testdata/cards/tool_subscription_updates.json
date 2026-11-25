@@ -1,0 +1,46 @@
+{
+ "version": 1,
+ "id": "sub-updates-fb160faec13da4089a",
+ "revision": 1,
+ "fallbackText": "Новости подписок: 1",
+ "root": {
+  "card": {
+   "title": "Новости подписок",
+   "icon": "bookmark",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "column": {
+      "children": [
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "Рефакторинг завершён",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "done",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       }
+      ],
+      "gap": "GAP_M"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "column",
+  "text"
+ ]
+}

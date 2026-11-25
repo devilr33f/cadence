@@ -1,0 +1,10 @@
+{
+  "type": "device_offline",
+  "deviceId": "0b6f3c52-7d1e-4a8b-9f2c-5e4d3a2b1c0d",
+  "at": "2026-11-12T10:00:00Z",
+  "data": {
+    "name": "Living room",
+    "model": "sim",
+    "online": false
+  }
+}

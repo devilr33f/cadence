@@ -1,0 +1,44 @@
+{
+ "version": 1,
+ "id": "ha-150af6ac48bf77934f",
+ "revision": 1,
+ "fallbackText": "Garage: Закрыто",
+ "root": {
+  "card": {
+   "title": "Garage",
+   "icon": "closed",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Закрыто",
+      "kind": "STATE_KIND_CLOSED"
+     }
+    }
+   ],
+   "actions": [
+    {
+     "label": "Открыть",
+     "icon": "arrow_up",
+     "action": {
+      "id": "a:1",
+      "confirm": "Открыть «Garage»?"
+     }
+    },
+    {
+     "label": "Закрыть",
+     "icon": "arrow_down",
+     "action": {
+      "id": "a:2",
+      "confirm": "Закрыть «Garage»?"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "button",
+  "card",
+  "state"
+ ]
+}

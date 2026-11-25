@@ -1,0 +1,602 @@
+{
+ "contents": {
+  "singleColumnMusicWatchNextResultsRenderer": {
+   "tabbedRenderer": {
+    "watchNextTabbedResultsRenderer": {
+     "tabs": [
+      {
+       "tabRenderer": {
+        "content": {
+         "musicQueueRenderer": {
+          "content": {
+           "playlistPanelRenderer": {
+            "contents": [
+             {
+              "playlistPanelVideoRenderer": {
+               "title": {
+                "runs": [
+                 {
+                  "text": "Numb"
+                 }
+                ]
+               },
+               "longBylineText": {
+                "runs": [
+                 {
+                  "text": "Linkin Park",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "Meteora (Bonus Edition)",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ALBUM"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "2003"
+                 }
+                ]
+               },
+               "thumbnail": {
+                "thumbnails": [
+                 {
+                  "url": "https://yt3.googleusercontent.com/Rqh2HDAD-Fj1-oHYqVklPGklMHIV3r6SMPMZmFE3FlLiWeBBnP3SCESfgeNdzQ-DmpCIvOGE4J0hzVxa=w60-h60-s-l90-rj",
+                  "width": 60,
+                  "height": 60
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/Rqh2HDAD-Fj1-oHYqVklPGklMHIV3r6SMPMZmFE3FlLiWeBBnP3SCESfgeNdzQ-DmpCIvOGE4J0hzVxa=w120-h120-s-l90-rj",
+                  "width": 120,
+                  "height": 120
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/Rqh2HDAD-Fj1-oHYqVklPGklMHIV3r6SMPMZmFE3FlLiWeBBnP3SCESfgeNdzQ-DmpCIvOGE4J0hzVxa=w180-h180-s-l90-rj",
+                  "width": 180,
+                  "height": 180
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/Rqh2HDAD-Fj1-oHYqVklPGklMHIV3r6SMPMZmFE3FlLiWeBBnP3SCESfgeNdzQ-DmpCIvOGE4J0hzVxa=w226-h226-s-l90-rj",
+                  "width": 226,
+                  "height": 226
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/Rqh2HDAD-Fj1-oHYqVklPGklMHIV3r6SMPMZmFE3FlLiWeBBnP3SCESfgeNdzQ-DmpCIvOGE4J0hzVxa=w302-h302-s-l90-rj",
+                  "width": 302,
+                  "height": 302
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/Rqh2HDAD-Fj1-oHYqVklPGklMHIV3r6SMPMZmFE3FlLiWeBBnP3SCESfgeNdzQ-DmpCIvOGE4J0hzVxa=w544-h544-s-l90-rj",
+                  "width": 544,
+                  "height": 544
+                 }
+                ]
+               },
+               "lengthText": {
+                "runs": [
+                 {
+                  "text": "3:08"
+                 }
+                ],
+                "accessibility": {
+                 "accessibilityData": {
+                  "label": "3 minutes, 8 seconds"
+                 }
+                }
+               },
+               "videoId": "5qZQEq_C3vc",
+               "playlistSetVideoId": "56B44F6D10557CC6"
+              }
+             },
+             {
+              "playlistPanelVideoRenderer": {
+               "title": {
+                "runs": [
+                 {
+                  "text": "In the End"
+                 }
+                ]
+               },
+               "longBylineText": {
+                "runs": [
+                 {
+                  "text": "Linkin Park",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "Hybrid Theory (Bonus Edition)",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ALBUM"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "2000"
+                 }
+                ]
+               },
+               "thumbnail": {
+                "thumbnails": [
+                 {
+                  "url": "https://yt3.googleusercontent.com/lkNJVMp3siDfSw_zVYj3tE6fQS7G6Gj2gzoxrIwS7K4TwqmL_uSBb9-PKACNLIP_7XLQib4tC5XwWbpD=w60-h60-l90-rj",
+                  "width": 60,
+                  "height": 60
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/lkNJVMp3siDfSw_zVYj3tE6fQS7G6Gj2gzoxrIwS7K4TwqmL_uSBb9-PKACNLIP_7XLQib4tC5XwWbpD=w120-h120-l90-rj",
+                  "width": 120,
+                  "height": 120
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/lkNJVMp3siDfSw_zVYj3tE6fQS7G6Gj2gzoxrIwS7K4TwqmL_uSBb9-PKACNLIP_7XLQib4tC5XwWbpD=w180-h180-l90-rj",
+                  "width": 180,
+                  "height": 180
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/lkNJVMp3siDfSw_zVYj3tE6fQS7G6Gj2gzoxrIwS7K4TwqmL_uSBb9-PKACNLIP_7XLQib4tC5XwWbpD=w226-h226-l90-rj",
+                  "width": 226,
+                  "height": 226
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/lkNJVMp3siDfSw_zVYj3tE6fQS7G6Gj2gzoxrIwS7K4TwqmL_uSBb9-PKACNLIP_7XLQib4tC5XwWbpD=w302-h302-l90-rj",
+                  "width": 302,
+                  "height": 302
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/lkNJVMp3siDfSw_zVYj3tE6fQS7G6Gj2gzoxrIwS7K4TwqmL_uSBb9-PKACNLIP_7XLQib4tC5XwWbpD=w544-h544-l90-rj",
+                  "width": 544,
+                  "height": 544
+                 }
+                ]
+               },
+               "lengthText": {
+                "runs": [
+                 {
+                  "text": "3:37"
+                 }
+                ],
+                "accessibility": {
+                 "accessibilityData": {
+                  "label": "3 minutes, 37 seconds"
+                 }
+                }
+               },
+               "videoId": "BLZWkjBXfN8",
+               "playlistSetVideoId": "289F4A46DF0A30D2"
+              }
+             },
+             {
+              "playlistPanelVideoRenderer": {
+               "title": {
+                "runs": [
+                 {
+                  "text": "Bring Me To Life"
+                 }
+                ]
+               },
+               "longBylineText": {
+                "runs": [
+                 {
+                  "text": "Evanescence",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "Fallen",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ALBUM"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "2003"
+                 }
+                ]
+               },
+               "thumbnail": {
+                "thumbnails": [
+                 {
+                  "url": "https://yt3.googleusercontent.com/DMgrzZ84TP0DawBf7NwNbqzQg2-TY_prMUPh7WvjTOOPLxyiTryNgzxBFCkyZhKG0H8agCdcwitxSm8=w60-h60-l90-rj",
+                  "width": 60,
+                  "height": 60
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/DMgrzZ84TP0DawBf7NwNbqzQg2-TY_prMUPh7WvjTOOPLxyiTryNgzxBFCkyZhKG0H8agCdcwitxSm8=w120-h120-l90-rj",
+                  "width": 120,
+                  "height": 120
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/DMgrzZ84TP0DawBf7NwNbqzQg2-TY_prMUPh7WvjTOOPLxyiTryNgzxBFCkyZhKG0H8agCdcwitxSm8=w180-h180-l90-rj",
+                  "width": 180,
+                  "height": 180
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/DMgrzZ84TP0DawBf7NwNbqzQg2-TY_prMUPh7WvjTOOPLxyiTryNgzxBFCkyZhKG0H8agCdcwitxSm8=w226-h226-l90-rj",
+                  "width": 226,
+                  "height": 226
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/DMgrzZ84TP0DawBf7NwNbqzQg2-TY_prMUPh7WvjTOOPLxyiTryNgzxBFCkyZhKG0H8agCdcwitxSm8=w302-h302-l90-rj",
+                  "width": 302,
+                  "height": 302
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/DMgrzZ84TP0DawBf7NwNbqzQg2-TY_prMUPh7WvjTOOPLxyiTryNgzxBFCkyZhKG0H8agCdcwitxSm8=w544-h544-l90-rj",
+                  "width": 544,
+                  "height": 544
+                 }
+                ]
+               },
+               "lengthText": {
+                "runs": [
+                 {
+                  "text": "3:56"
+                 }
+                ],
+                "accessibility": {
+                 "accessibilityData": {
+                  "label": "3 minutes, 56 seconds"
+                 }
+                }
+               },
+               "videoId": "-eGM0IJc70Y",
+               "playlistSetVideoId": "017208FAA85233F9"
+              }
+             },
+             {
+              "playlistPanelVideoRenderer": {
+               "title": {
+                "runs": [
+                 {
+                  "text": "Zombie"
+                 }
+                ]
+               },
+               "longBylineText": {
+                "runs": [
+                 {
+                  "text": "The Cranberries",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "No Need to Argue",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ALBUM"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "1994"
+                 }
+                ]
+               },
+               "thumbnail": {
+                "thumbnails": [
+                 {
+                  "url": "https://yt3.googleusercontent.com/81cXwXuv1aOxCikSYqw5WET4FkiaNg5uKhTnDB4h0PL37adgl-1B3DBbvlopWpamwTQbt_ge9rm8pdQ-oA=w60-h60-l90-rj",
+                  "width": 60,
+                  "height": 60
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/81cXwXuv1aOxCikSYqw5WET4FkiaNg5uKhTnDB4h0PL37adgl-1B3DBbvlopWpamwTQbt_ge9rm8pdQ-oA=w120-h120-l90-rj",
+                  "width": 120,
+                  "height": 120
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/81cXwXuv1aOxCikSYqw5WET4FkiaNg5uKhTnDB4h0PL37adgl-1B3DBbvlopWpamwTQbt_ge9rm8pdQ-oA=w180-h180-l90-rj",
+                  "width": 180,
+                  "height": 180
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/81cXwXuv1aOxCikSYqw5WET4FkiaNg5uKhTnDB4h0PL37adgl-1B3DBbvlopWpamwTQbt_ge9rm8pdQ-oA=w226-h226-l90-rj",
+                  "width": 226,
+                  "height": 226
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/81cXwXuv1aOxCikSYqw5WET4FkiaNg5uKhTnDB4h0PL37adgl-1B3DBbvlopWpamwTQbt_ge9rm8pdQ-oA=w302-h302-l90-rj",
+                  "width": 302,
+                  "height": 302
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/81cXwXuv1aOxCikSYqw5WET4FkiaNg5uKhTnDB4h0PL37adgl-1B3DBbvlopWpamwTQbt_ge9rm8pdQ-oA=w544-h544-l90-rj",
+                  "width": 544,
+                  "height": 544
+                 }
+                ]
+               },
+               "lengthText": {
+                "runs": [
+                 {
+                  "text": "5:08"
+                 }
+                ],
+                "accessibility": {
+                 "accessibilityData": {
+                  "label": "5 minutes, 8 seconds"
+                 }
+                }
+               },
+               "videoId": "lSDfCdycdvk",
+               "playlistSetVideoId": "52152B4946C2F73F"
+              }
+             },
+             {
+              "playlistPanelVideoRenderer": {
+               "title": {
+                "runs": [
+                 {
+                  "text": "How You Remind Me"
+                 }
+                ]
+               },
+               "longBylineText": {
+                "runs": [
+                 {
+                  "text": "Nickelback",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "Silver Side Up",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ALBUM"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "2001"
+                 }
+                ]
+               },
+               "thumbnail": {
+                "thumbnails": [
+                 {
+                  "url": "https://yt3.googleusercontent.com/KC2tDiFdec41kaIEy0hD0BGaNbcFX6dqmz-bJKs9miDv0zGaEtbTc0x5TRStshVO8Ep_6T8mmyyJaXGbFg=w60-h60-l90-rj",
+                  "width": 60,
+                  "height": 60
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/KC2tDiFdec41kaIEy0hD0BGaNbcFX6dqmz-bJKs9miDv0zGaEtbTc0x5TRStshVO8Ep_6T8mmyyJaXGbFg=w120-h120-l90-rj",
+                  "width": 120,
+                  "height": 120
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/KC2tDiFdec41kaIEy0hD0BGaNbcFX6dqmz-bJKs9miDv0zGaEtbTc0x5TRStshVO8Ep_6T8mmyyJaXGbFg=w180-h180-l90-rj",
+                  "width": 180,
+                  "height": 180
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/KC2tDiFdec41kaIEy0hD0BGaNbcFX6dqmz-bJKs9miDv0zGaEtbTc0x5TRStshVO8Ep_6T8mmyyJaXGbFg=w226-h226-l90-rj",
+                  "width": 226,
+                  "height": 226
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/KC2tDiFdec41kaIEy0hD0BGaNbcFX6dqmz-bJKs9miDv0zGaEtbTc0x5TRStshVO8Ep_6T8mmyyJaXGbFg=w302-h302-l90-rj",
+                  "width": 302,
+                  "height": 302
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/KC2tDiFdec41kaIEy0hD0BGaNbcFX6dqmz-bJKs9miDv0zGaEtbTc0x5TRStshVO8Ep_6T8mmyyJaXGbFg=w544-h544-l90-rj",
+                  "width": 544,
+                  "height": 544
+                 }
+                ]
+               },
+               "lengthText": {
+                "runs": [
+                 {
+                  "text": "3:44"
+                 }
+                ],
+                "accessibility": {
+                 "accessibilityData": {
+                  "label": "3 minutes, 44 seconds"
+                 }
+                }
+               },
+               "videoId": "vkvrbbtnp6s",
+               "playlistSetVideoId": "090796A75D153932"
+              }
+             },
+             {
+              "playlistPanelVideoRenderer": {
+               "title": {
+                "runs": [
+                 {
+                  "text": "What I've Done"
+                 }
+                ]
+               },
+               "longBylineText": {
+                "runs": [
+                 {
+                  "text": "Linkin Park",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "Minutes to Midnight (Deluxe Edition)",
+                  "navigationEndpoint": {
+                   "browseEndpoint": {
+                    "browseEndpointContextSupportedConfigs": {
+                     "browseEndpointContextMusicConfig": {
+                      "pageType": "MUSIC_PAGE_TYPE_ALBUM"
+                     }
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "text": " • "
+                 },
+                 {
+                  "text": "2007"
+                 }
+                ]
+               },
+               "thumbnail": {
+                "thumbnails": [
+                 {
+                  "url": "https://yt3.googleusercontent.com/VM2kbbO-o8q0JXbq0xMsuXAX82VdAFjgRCYFyEWXVHjVy-Tu_t0mUNtJFbcdSpTLHFqIk0mKtUMIndQ=w60-h60-l90-rj",
+                  "width": 60,
+                  "height": 60
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/VM2kbbO-o8q0JXbq0xMsuXAX82VdAFjgRCYFyEWXVHjVy-Tu_t0mUNtJFbcdSpTLHFqIk0mKtUMIndQ=w120-h120-l90-rj",
+                  "width": 120,
+                  "height": 120
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/VM2kbbO-o8q0JXbq0xMsuXAX82VdAFjgRCYFyEWXVHjVy-Tu_t0mUNtJFbcdSpTLHFqIk0mKtUMIndQ=w180-h180-l90-rj",
+                  "width": 180,
+                  "height": 180
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/VM2kbbO-o8q0JXbq0xMsuXAX82VdAFjgRCYFyEWXVHjVy-Tu_t0mUNtJFbcdSpTLHFqIk0mKtUMIndQ=w226-h226-l90-rj",
+                  "width": 226,
+                  "height": 226
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/VM2kbbO-o8q0JXbq0xMsuXAX82VdAFjgRCYFyEWXVHjVy-Tu_t0mUNtJFbcdSpTLHFqIk0mKtUMIndQ=w302-h302-l90-rj",
+                  "width": 302,
+                  "height": 302
+                 },
+                 {
+                  "url": "https://yt3.googleusercontent.com/VM2kbbO-o8q0JXbq0xMsuXAX82VdAFjgRCYFyEWXVHjVy-Tu_t0mUNtJFbcdSpTLHFqIk0mKtUMIndQ=w544-h544-l90-rj",
+                  "width": 544,
+                  "height": 544
+                 }
+                ]
+               },
+               "lengthText": {
+                "runs": [
+                 {
+                  "text": "3:26"
+                 }
+                ],
+                "accessibility": {
+                 "accessibilityData": {
+                  "label": "3 minutes, 26 seconds"
+                 }
+                }
+               },
+               "videoId": "Jrprk5dNboI",
+               "playlistSetVideoId": "12EFB3B1C57DE4E1"
+              }
+             }
+            ]
+           }
+          }
+         }
+        }
+       }
+      }
+     ]
+    }
+   }
+  }
+ }
+}

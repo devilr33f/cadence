@@ -1,0 +1,37 @@
+{
+ "version": 1,
+ "id": "tasks-c0908d70793cfff2b4",
+ "revision": 1,
+ "fallbackText": "Задачи: 3",
+ "root": {
+  "card": {
+   "title": "Задачи",
+   "icon": "task",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "keyvalue": {
+      "items": [
+       {
+        "key": "Собрать отчёт",
+        "value": "Выполняется"
+       },
+       {
+        "key": "cd34",
+        "value": "Ждёт вас"
+       },
+       {
+        "key": "Обновить сервер",
+        "value": "Готово"
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "keyvalue"
+ ]
+}

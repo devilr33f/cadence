@@ -1,0 +1,19 @@
+version: v2
+modules:
+  - path: proto
+    excludes:
+      - proto/third_party
+  # vendored upstream tree: generated, never linted or breaking-checked
+  - path: proto/third_party/opentelemetry
+    lint:
+      ignore:
+        - proto/third_party/opentelemetry
+    breaking:
+      ignore:
+        - proto/third_party/opentelemetry
+lint:
+  use:
+    - STANDARD
+breaking:
+  use:
+    - FILE

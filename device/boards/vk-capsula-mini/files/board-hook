@@ -1,0 +1,352 @@
+# shellcheck shell=sh
+# board-hook: the vk capsula mini's part of cadence-run, which sources it from beside itself. the capsula keeps its
+# stock assistant installed, and the stock's voice-agent holds the hardware watchdog (/dev/watchdog: single-open, a
+# 10 s timeout, inherited by its btctl and tgclient), so stopping it without a new feeder resets the board.
+#
+# before every start of cadenced, board_prestart stops the platform's daemons that would fight cadence (okcall,
+# stereoctl, sysmon, and the volume syncer, which rewrites TV-Set) by their own init scripts, TERM to any left. under
+# cadence-run's supervision, and never for the installer's prestart, it then stops the stock assistant: voice-agent's
+# master first, as it would start the rest again, then its app, btctl and tgclient, KILL to any left after 3 s. only
+# then does it take the watchdog over from the feeder of an earlier cadence-run that is still in its grace, so that
+# feeder is never stopped before the stock is out of the way, and it starts a feeder of its own once no process holds
+# the watchdog. the feeder outlives cadenced's restarts and backoffs, and stops feeding once cadence-run is gone, so a
+# dead supervisor resets the board; only cadence-run's own stop grants it a grace, for an upgrade's next cadence-run to
+# take over, and a stop that finds no feeder (one that came while the prestart stopped the stock or let an earlier
+# feeder go) starts one for that grace. it is never sent KILL. board_watch, at every poll while cadenced runs, stops
+# again whatever of the stock or the platform came back (rcS starts sysmon after the launcher returns), starts the
+# feeder again should it have died, and has the wrapper set the level again after either, or once cadenced persisted
+# a new one. timings run on the time since boot, which no clock step moves. the CADENCE_* variables are for tests:
+# init passes none
+PROC=${CADENCE_PROC:-/proc}
+WATCHDOG=${CADENCE_WATCHDOG:-/dev/watchdog}
+SYS=${CADENCE_SYS:-/sys}
+INITD=${CADENCE_INITD:-/etc/init.d}
+KILL=${CADENCE_KILL:-kill}
+SLEEP=${CADENCE_SLEEP:-sleep}
+RUN_DIR=${CADENCE_RUN_DIR:-/run/cadence}
+# the feeder's pid and the cadence-run it feeds for
+FEEDER_PID=$RUN_DIR/watchdog.pid
+# the second since boot until which a feeder whose cadence-run is gone keeps feeding
+GRACE=$RUN_DIR/watchdog.grace
+GRACE_SECONDS=120
+# the platform's daemons' init scripts, stopped in this order
+PLATFORM="S97okcall.sh S96stereoctl.sh S99sysmon.sh S51ntp-ibb-volume-syncer"
+# the level board_volume last set TV-Set to
+tvset=
+fpid=
+fowner=
+# the feeder let_go TERMed last, which no longer counts as running while it goes
+gone=
+count=0
+
+# now: the time since boot in now_s (seconds) and now_cs (centiseconds), read by a builtin, so no fork
+now() {
+    up=0.00
+    read -r up rest < /proc/uptime
+    now_s=${up%.*}
+    frac=${up#*.}
+    now_cs=$((now_s * 100 + ${frac#0}))
+}
+
+# scan: the pids of the stock assistant, voice-agent's master in masters and the rest in others, and of the platform's
+# daemons in platform, by their comms (the kernel cuts them to 15 bytes) read by builtins alone. a master's command
+# line, its NULs dropped by read, holds -mode=master
+scan() {
+    masters='' others='' platform=''
+    for f in "$PROC"/[0-9]*/comm; do
+        c=
+        read -r c < "$f" || continue
+        p=${f%/comm}
+        p=${p##*/}
+        case $c in
+            voice-agent)
+                cl=
+                read -r cl < "$PROC/$p/cmdline"
+                case $cl in
+                    *-mode=master*) masters="$masters $p" ;;
+                    *) others="$others $p" ;;
+                esac
+                ;;
+            btctl | tgclient) others="$others $p" ;;
+            okcall | stereoctl | sysmon | ntp-ibb-volume-*) platform="$platform $p" ;;
+        esac
+    done 2> /dev/null
+}
+
+# stop_pid SIG PID: signals pid only if its comm, read again right before, is still one the hook stops
+stop_pid() {
+    c=
+    read -r c 2> /dev/null < "$PROC/$2/comm" || return 0
+    case $c in
+        voice-agent | btctl | tgclient | okcall | stereoctl | sysmon | ntp-ibb-volume-*)
+            "$KILL" "-$1" "$2" 2> /dev/null || :
+            ;;
+    esac
+}
+
+# stop_platform: the platform's daemons stopped by their init scripts, TERM to any left, and okcall's 13 MB copy in
+# /tmp freed (its start unpacks it again). pcount is how many ran before
+stop_platform() {
+    scan
+    # shellcheck disable=SC2086 # the pids, one word each
+    set -- $platform
+    pcount=$#
+    for s in $PLATFORM; do
+        [ ! -f "$INITD/$s" ] || sh "$INITD/$s" stop < /dev/null > /dev/null 2>&1
+    done
+    scan
+    for p in $platform; do stop_pid TERM "$p"; done
+    rm -f /tmp/okcall
+    [ "$pcount" -eq 0 ] || note "event=platform_stopped count=$pcount"
+}
+
+# stock_left: something of the stock assistant still runs, its pids in left
+stock_left() {
+    scan
+    left="$masters$others"
+    [ -n "$left" ]
+}
+
+# stop_stock: the stock assistant stopped by TERM, voice-agent's master before the rest, then KILL to whatever is left
+# after 3 s (15 polls of 0.2 s) and up to 2 s more for it to go; count is how many ran when it began. it fails while
+# one is left
+stop_stock() {
+    scan
+    # shellcheck disable=SC2086 # the pids, one word each
+    set -- $masters $others
+    count=$#
+    [ "$count" -gt 0 ] || return 0
+    for p in $masters; do stop_pid TERM "$p"; done
+    scan
+    for p in $others; do stop_pid TERM "$p"; done
+    polls=0
+    while stock_left && [ "$polls" -lt 15 ]; do
+        "$SLEEP" 0.2
+        polls=$((polls + 1))
+    done
+    for p in $left; do stop_pid KILL "$p"; done
+    polls=0
+    while stock_left && [ "$polls" -lt 10 ]; do
+        "$SLEEP" 0.2
+        polls=$((polls + 1))
+    done
+    ! stock_left
+}
+
+# held: a process holds the watchdog, or watchdog0 (the same timer's other node), as the fds in /proc show
+# shellcheck disable=SC2010 # one ls lists every fd's link, where a readlink per fd would fork thousands of times
+held() {
+    ls -l "$PROC"/[0-9]*/fd 2> /dev/null | grep -q -e " -> $WATCHDOG\$" -e " -> ${WATCHDOG}0\$"
+}
+
+# feeder_running: the feeder the pid file names still holds the watchdog on its fd 3, which tells it from a process
+# that got its pid since (that could be capsula-root's dropbear); its pid in fpid, its cadence-run's in fowner
+# shellcheck disable=SC3013 # busybox ash's test has -ef
+feeder_running() {
+    fpid='' fowner=''
+    fp='' fo=''
+    read -r fp fo 2> /dev/null < "$FEEDER_PID" || return 1
+    case $fp in '' | *[!0-9]*) return 1 ;; esac
+    [ "/proc/$fp/fd/3" -ef "$WATCHDOG" ] || return 1
+    fpid=$fp fowner=$fo
+}
+
+# in_grace: the grace cadence-run's stop left still lasts
+in_grace() {
+    g=
+    read -r g 2> /dev/null < "$GRACE" || return 1
+    case $g in '' | *[!0-9]*) return 1 ;; esac
+    now
+    [ "$now_s" -lt "$g" ]
+}
+
+# starve REASON: the feeder ends with no magic close, so the watchdog runs on and resets the board unless another
+# feeder opens it in time
+starve() {
+    [ -z "$nap" ] || kill "$nap" 2> /dev/null
+    note "event=watchdog_feeder_stopped pid=$self reason=$1"
+    exit 0
+}
+
+# feed: the feeder's work once the watchdog is open on fd 3: a byte that is never V (the magic close) at once and every
+# 2 s while cadence-run lives or its grace lasts. it names itself in the pid file only after its first feed and its
+# log line, so whoever waits for that file sees both
+feed() {
+    fed=1
+    nap=
+    trap 'starve term' TERM
+    printf 1 >&3
+    note "event=watchdog_opened pid=$self"
+    echo "$self $owner" > "$FEEDER_PID.new" && mv -f "$FEEDER_PID.new" "$FEEDER_PID"
+    while :; do
+        # the nap leaves fd 3 behind: one a TERM orphaned before nap was set must not keep the watchdog open
+        sleep 2 3>&- &
+        nap=$!
+        wait "$nap"
+        nap=
+        kill -0 "$owner" 2> /dev/null || in_grace || starve supervisor_gone
+        printf 1 >&3
+    done
+}
+
+# feeder: run in the background, a subshell of cadence-run ($$ is cadence-run's pid). it opens the watchdog once no
+# process holds it, trying every 0.2 s for 8 s, and feeds it; a TERM ends it at once
+feeder() {
+    trap 'exit 1' TERM
+    self=
+    while read -r k v; do
+        [ "$k" != Pid: ] || { self=$v; break; }
+    done < /proc/self/status
+    owner=$$
+    now
+    deadline=$((now_cs + 800))
+    while :; do
+        fed=
+        if [ -e "$WATCHDOG" ] && ! held; then
+            { feed; } 3>> "$WATCHDOG"
+            [ -z "$fed" ] || exit 0
+        fi
+        now
+        [ "$now_cs" -lt "$deadline" ] || exit 1
+        sleep 0.2
+    done
+}
+
+# take_watchdog: a feeder started, and waited for until it names itself in the pid file (at most 9 s: it gives up
+# after 8, and is gone by then)
+take_watchdog() {
+    if [ ! -e "$WATCHDOG" ]; then
+        note "event=board_control_failed code=watchdog reason=missing"
+        return 1
+    fi
+    mkdir -p "$RUN_DIR" && rm -f "$FEEDER_PID"
+    feeder < /dev/null > /dev/null 2>&1 &
+    newfeeder=$!
+    now
+    deadline=$((now_cs + 900))
+    while kill -0 "$newfeeder" 2> /dev/null; do
+        fp='' fo=''
+        read -r fp fo 2> /dev/null < "$FEEDER_PID"
+        if [ "$fp" = "$newfeeder" ]; then
+            rm -f "$GRACE"
+            return 0
+        fi
+        now
+        if [ "$now_cs" -ge "$deadline" ]; then
+            kill -TERM "$newfeeder" 2> /dev/null
+            break
+        fi
+        sleep 0.1
+    done
+    note "event=board_control_failed code=watchdog reason=busy"
+    return 1
+}
+
+# let_go: TERM to the feeder feeder_running found, and up to 2 s for its fd to close
+# shellcheck disable=SC3013 # busybox ash's test has -ef
+let_go() {
+    gone=$fpid
+    kill -TERM "$fpid" 2> /dev/null
+    now
+    deadline=$((now_cs + 200))
+    while [ "/proc/$fpid/fd/3" -ef "$WATCHDOG" ]; do
+        now
+        [ "$now_cs" -lt "$deadline" ] || return 1
+        sleep 0.1
+    done
+}
+
+# the ring's 36 sysfs channels and the clock's 30 off; fails if one is missing, the rest turned off all the same
+board_blank() {
+    dark=0
+    for led in top-led:36 clock-led:30; do
+        i=1
+        while [ "$i" -le "${led#*:}" ]; do
+            f=$SYS/class/leds/${led%:*}$i/brightness
+            { [ -e "$f" ] && echo 0 > "$f"; } 2> /dev/null || dark=1
+            i=$((i + 1))
+        done
+    done
+    return "$dark"
+}
+
+# the installer's prestart (cadence-run prestart, while the stock still holds the watchdog) stops the platform alone
+board_prestart() {
+    stop_platform
+    [ -z "$mode" ] || return 0
+    if ! stop_stock; then
+        note "event=board_control_failed code=stock reason=still_running"
+        return 1
+    fi
+    rm -f /tmp/tgclient
+    note "event=stock_suspended count=$count"
+    if feeder_running; then
+        [ "$fowner" != "$$" ] || return 0
+        if ! let_go; then
+            note "event=board_control_failed code=watchdog reason=feeder_still_running"
+            return 1
+        fi
+        note "event=watchdog_taken_over pid=$fpid"
+    fi
+    take_watchdog && gone=
+}
+
+# a poll that finds nothing costs builtin reads of the comms and the pid file, and the persisted level
+# shellcheck disable=SC2034 # cadence-run, which sources this, reads reapply
+board_watch() {
+    scan
+    if [ -n "$masters$others" ]; then
+        reapply=1
+        if stop_stock; then
+            rm -f /tmp/tgclient
+            [ "$count" -eq 0 ] || note "event=stock_resuspended count=$count"
+        else
+            note "event=board_control_failed code=stock reason=still_running"
+        fi
+    fi
+    if [ -n "$platform" ]; then
+        reapply=1
+        stop_platform
+    fi
+    if ! feeder_running && kill -0 "$$" 2> /dev/null && take_watchdog; then
+        note "event=watchdog_feeder_restarted pid=$newfeeder"
+    fi
+    [ "$(level)" = "$tvset" ] || reapply=1
+    return 0
+}
+
+# the amp's Master at 255, its stock value, and TV-Set at the level (raw 0 to 100), as the stock's volume syncer sets
+# it; audiod's software gain attenuates
+board_volume() {
+    vol=0
+    "$AMIXER" -q sset 'Master' 255 || vol=1
+    "$AMIXER" -q sset 'TV-Set' "$1" || vol=1
+    [ "$vol" -eq 0 ] || return 1
+    tvset=$1
+}
+
+# the feeder feeds on for the grace after cadence-run is gone. a stop that came while the prestart stopped the stock
+# (it may hold the watchdog without feeding it yet) or let an earlier feeder go, before its own was open, finds none
+# but that dying one, and starts one for the grace, not waited for: it opens once nothing holds the watchdog, and gives
+# up after 8 s if a stock that never stopped feeds it still. a feeder of the prestart's that opens too is harmless,
+# the watchdog being single-open
+board_stop() {
+    now
+    mkdir -p "$RUN_DIR" && echo $((now_s + GRACE_SECONDS)) > "$GRACE.new" && mv -f "$GRACE.new" "$GRACE"
+    if ! feeder_running || [ "$fpid" = "$gone" ]; then
+        feeder < /dev/null > /dev/null 2>&1 &
+    fi
+}
+
+# cadence-install's restore runs this right before the stock's start, which must find the watchdog free: the feeder
+# is gone when it returns
+board_release() {
+    if feeder_running; then
+        if ! let_go; then
+            note "event=board_control_failed code=watchdog reason=feeder_still_running"
+            return 1
+        fi
+        note "event=watchdog_released pid=$fpid"
+    fi
+    rm -f "$GRACE" "$FEEDER_PID"
+}

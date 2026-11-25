@@ -1,0 +1,32 @@
+{
+ "version": 1,
+ "id": "media-switch-43566ca7dc15b60164",
+ "revision": 1,
+ "fallbackText": "Переключено",
+ "root": {
+  "card": {
+   "title": "Воспроизведение",
+   "icon": "settings",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Переключено",
+      "kind": "STATE_KIND_ON"
+     }
+    },
+    {
+     "text": {
+      "text": "озвучка, качество",
+      "style": "TEXT_STYLE_BODY"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state",
+  "text"
+ ]
+}

@@ -1,0 +1,25 @@
+{
+ "version": 1,
+ "id": "ha-3db0650031050a6a0f",
+ "revision": 1,
+ "fallbackText": "Balcony door: Открыто",
+ "root": {
+  "card": {
+   "title": "Balcony door",
+   "icon": "closed",
+   "tone": "TONE_WARNING",
+   "children": [
+    {
+     "state": {
+      "label": "Открыто",
+      "kind": "STATE_KIND_OPEN"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state"
+ ]
+}

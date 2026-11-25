@@ -1,0 +1,300 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to a Cadence server",
+        "description": "Home Assistant follows every device of this server: devices added, renamed or deleted there show up here.",
+        "data": {
+          "url": "Server URL",
+          "token": "API token"
+        },
+        "data_description": {
+          "url": "The server's https address, e.g. https://cadence.example.com.",
+          "token": "A token with the ha scope: cadence-server admin token create --name home-assistant --scope ha."
+        }
+      },
+      "reauth_confirm": {
+        "title": "New token for {server}",
+        "description": "The server refused the token: it was deleted. Create a new one with the ha scope.",
+        "data": {
+          "token": "API token"
+        }
+      },
+      "reconfigure": {
+        "title": "Change the Cadence server",
+        "description": "Leave the token empty to keep the one you gave before, while the host stays the same.",
+        "data": {
+          "url": "Server URL",
+          "token": "API token"
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "Enter the server's https URL, without a login, query or fragment.",
+      "invalid_auth": "The server refused the token.",
+      "insufficient_scope": "The token has no ha scope.",
+      "token_too_broad": "The token can do more than Home Assistant needs: create one with the ha scope alone.",
+      "token_required": "Give the token again: the stored one is never sent to another host.",
+      "cannot_connect": "Cannot reach the server, or its certificate is not trusted.",
+      "unknown": "Unexpected answer from the server."
+    },
+    "abort": {
+      "already_configured": "This server is already set up.",
+      "reauth_successful": "The new token works.",
+      "reconfigure_successful": "The server's settings are saved."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "online": {
+        "name": "Online"
+      },
+      "ringing": {
+        "name": "Ringing"
+      }
+    },
+    "sensor": {
+      "cpu": {
+        "name": "CPU usage"
+      },
+      "memory": {
+        "name": "Memory usage"
+      },
+      "disk": {
+        "name": "Disk usage"
+      },
+      "temperature": {
+        "name": "Temperature"
+      },
+      "next_alarm": {
+        "name": "Next alarm"
+      },
+      "next_timer": {
+        "name": "Next timer"
+      },
+      "next_reminder": {
+        "name": "Next reminder"
+      }
+    },
+    "button": {
+      "stop_ring": {
+        "name": "Stop ringing"
+      },
+      "snooze": {
+        "name": "Snooze"
+      }
+    },
+    "event": {
+      "alarm": {
+        "name": "Alarm",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ring_started": "Ring started",
+              "stopped": "Stopped",
+              "snoozed": "Snoozed",
+              "missed": "Missed"
+            }
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "say": {
+      "name": "Say",
+      "description": "Speaks a text on Cadence speakers with the server's text-to-speech.",
+      "fields": {
+        "device_id": {
+          "name": "Speakers",
+          "description": "The Cadence devices that speak."
+        },
+        "entity_id": {
+          "name": "Media players",
+          "description": "Or their media players."
+        },
+        "text": {
+          "name": "Text",
+          "description": "What to say, 1 to 500 characters."
+        },
+        "language": {
+          "name": "Language",
+          "description": "The language to speak in; without one, the server's default."
+        }
+      }
+    },
+    "set_timer": {
+      "name": "Set timer",
+      "description": "Starts a timer on Cadence speakers. Alarms are never set from Home Assistant.",
+      "fields": {
+        "device_id": {
+          "name": "Speakers",
+          "description": "The Cadence devices that ring the timer."
+        },
+        "duration": {
+          "name": "Duration",
+          "description": "How long, from 1 second to 24 hours."
+        }
+      }
+    },
+    "set_reminder": {
+      "name": "Set reminder",
+      "description": "Sets a reminder on Cadence speakers, which say its text when it rings. Give a time (with a date or days) or a number of minutes.",
+      "fields": {
+        "device_id": {
+          "name": "Speakers",
+          "description": "The Cadence devices that ring the reminder."
+        },
+        "text": {
+          "name": "Label",
+          "description": "What to remind of, 1 to 80 characters."
+        },
+        "time": {
+          "name": "Time",
+          "description": "When it rings; without a date or days, at its next such time."
+        },
+        "date": {
+          "name": "Date",
+          "description": "The day it rings once."
+        },
+        "days": {
+          "name": "Days",
+          "description": "The weekdays it rings on, every week."
+        },
+        "in_minutes": {
+          "name": "In minutes",
+          "description": "Or rings once in this many minutes, instead of a time."
+        }
+      }
+    }
+  },
+  "selector": {
+    "language": {
+      "options": {
+        "en": "English",
+        "ru": "Russian"
+      }
+    },
+    "day": {
+      "options": {
+        "mon": "Monday",
+        "tue": "Tuesday",
+        "wed": "Wednesday",
+        "thu": "Thursday",
+        "fri": "Friday",
+        "sat": "Saturday",
+        "sun": "Sunday"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_auth": {
+      "message": "The Cadence server refused the token."
+    },
+    "cannot_connect": {
+      "message": "Cannot reach the Cadence server ({code})."
+    },
+    "no_target": {
+      "message": "Pick a Cadence speaker or its media player."
+    },
+    "unknown_target": {
+      "message": "{target} is not a Cadence speaker this server knows."
+    },
+    "not_loaded": {
+      "message": "The Cadence server of {target} is not set up right now."
+    },
+    "enqueue_unsupported": {
+      "message": "A Cadence speaker has no queue: it can only play the media now."
+    },
+    "media_unsupported": {
+      "message": "A Cadence speaker plays only http and https addresses up to 2047 characters."
+    },
+    "no_catalog": {
+      "message": "{target} has no screen to browse the catalog on."
+    },
+    "no_catalog_session": {
+      "message": "No catalog title is playing on {target}."
+    },
+    "not_a_group_member": {
+      "message": "{entity} is not a Cadence speaker of the same server as {target}, so it cannot join its group."
+    },
+    "stereo_pair": {
+      "message": "{target} is in a stereo pair: a pair takes no other speaker."
+    },
+    "unknown_device": {
+      "message": "A speaker to group with {target} is not known to the server."
+    },
+    "invalid_choice": {
+      "message": "The playing title on {target} does not offer that choice."
+    },
+    "unknown_ref": {
+      "message": "The item is no longer in the catalog."
+    },
+    "unplayable": {
+      "message": "No source of the catalog can play this item."
+    },
+    "sign_in_required": {
+      "message": "The catalog's source needs a sign-in again."
+    },
+    "unavailable": {
+      "message": "The catalog's source did not answer for {target}."
+    },
+    "device_offline": {
+      "message": "{target} is offline."
+    },
+    "busy": {
+      "message": "{target} is busy right now."
+    },
+    "forbidden": {
+      "message": "The token may not control {target}."
+    },
+    "not_found": {
+      "message": "The server no longer has {target}."
+    },
+    "command_failed": {
+      "message": "{target} refused ({detail})."
+    },
+    "invalid_arguments": {
+      "message": "{target} refused the command's values."
+    },
+    "timeout": {
+      "message": "{target} did not answer in time."
+    },
+    "unknown_capability": {
+      "message": "{target} cannot do this."
+    },
+    "unknown_command": {
+      "message": "{target} cannot do this."
+    },
+    "no_audio": {
+      "message": "{target} reports no sound output."
+    },
+    "tts_unconfigured": {
+      "message": "The Cadence server has no text-to-speech set up, so {target} cannot speak."
+    },
+    "superseded": {
+      "message": "A newer session or announcement replaced this one on {target}."
+    },
+    "tts_failed": {
+      "message": "Text-to-speech failed for {target}."
+    },
+    "tts_timeout": {
+      "message": "Text-to-speech for {target} took too long."
+    },
+    "announce_invalid": {
+      "message": "The server refused the text or its language for {target}."
+    },
+    "request_failed": {
+      "message": "The Cadence server refused for {target} ({code})."
+    },
+    "timer_duration": {
+      "message": "A Cadence timer runs whole seconds, from 1 second to 24 hours."
+    },
+    "reminder_when": {
+      "message": "Give a reminder either a time (with a date or days, not both) or a number of minutes."
+    },
+    "reminders_unsupported": {
+      "message": "{target} cannot set reminders."
+    }
+  }
+}

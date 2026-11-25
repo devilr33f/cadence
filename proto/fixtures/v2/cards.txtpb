@@ -1,0 +1,5 @@
+cards {
+  context_id: "turn-4"
+  cards { version: 1 id: "c-1" revision: 1 fallback_text: "Свет в гостиной выключен" root { card { title: "Свет в гостиной" children { state { label: "Выключен" kind: STATE_KIND_OFF } } } } features: "card" features: "state" }
+  cards { version: 1 id: "c-2" revision: 1 fallback_text: "Москва: +4 °C" root { card { title: "Погода" children { value { value: "+4" unit: "°C" } } } } features: "card" features: "value" }
+}

@@ -1,0 +1,1 @@
+claim_state { phase: CLAIM_PHASE_PENDING code: "K7M4QX" url: "https://cadence.example/claim/K7M4QX" expires_at_ms: 1762600600000 }

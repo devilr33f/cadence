@@ -1,0 +1,53 @@
+{
+ "version": 1,
+ "id": "ha.light.living",
+ "revision": 2,
+ "fallbackText": "Свет в гостиной выключен",
+ "root": {
+  "card": {
+   "title": "Свет в гостиной",
+   "icon": "light",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "row": {
+      "gap": "GAP_M",
+      "children": [
+       {
+        "state": {
+         "kind": "STATE_KIND_OFF",
+         "label": "Выключен"
+        }
+       },
+       {
+        "meter": {
+         "value": 0,
+         "min": 0,
+         "max": 100,
+         "label": "Яркость",
+         "valueLabel": "0 %"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "toggle": {
+      "label": "Свет",
+      "on": false,
+      "action": {
+       "id": "a:7f3e"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "meter",
+  "row",
+  "state",
+  "toggle"
+ ]
+}

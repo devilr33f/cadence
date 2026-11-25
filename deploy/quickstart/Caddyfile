@@ -1,0 +1,25 @@
+{
+	admin off
+	# the root stays in caddy's volume: setup.sh exports it to data/ca.crt
+	skip_install_trust
+	# a client dialling an ip sends no sni (go's and curl's tls alike): without it caddy looks for a certificate of
+	# the container's own address and the handshake fails
+	default_sni {$CADENCE_HOST}
+}
+
+{$CADENCE_HOST}:{$CADENCE_HTTPS_PORT} {
+	tls {$CADENCE_TLS}
+
+	# the server's own paths, as deploy/server/compose.yml's traefik rule (deploy/dev/dashboard-deploy.test.sh holds
+	# them equal): the admin api and its live feed, the device api (link, enroll, otlp) and its health
+	@server path /api/* /v2/* /healthz
+	handle @server {
+		reverse_proxy server:8080 {
+			# as traefik does: a stream relay or a log tail reaches the client while it is written
+			flush_interval 100ms
+		}
+	}
+	handle {
+		reverse_proxy dashboard:3000
+	}
+}

@@ -1,0 +1,1 @@
+log_line { source: "mpv" level: LOG_LEVEL_WARN text: "hwdec_fallback code=unsupported" truncated: true }

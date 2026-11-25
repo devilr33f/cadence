@@ -1,0 +1,75 @@
+/* alarms on the screen: the ring overlay (app/routes/system/alarm-ring.h), home's strip of the next alarm and the
+   running timers (home/alarms-strip.h) and the alarms page (system/alarms-page.h). a template (tokens-gen): every
+   colour, size and duration is a token */
+
+/* ---------- the ring: opaque ink over everything (a film too), the time in the pin's figures, two buttons ---------- */
+.arl {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $color.ink;
+}
+.arl.hidden {
+  display: none;
+}
+.arl-box {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 180dp;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space.s4;
+}
+.arl-icon {
+  color: $color.ember;
+}
+.arl-icon .icon {
+  font-size: 64dp;
+  line-height: 72dp;
+}
+.arl-time {
+  $type.pin;
+  white-space: nowrap;
+}
+.arl-title {
+  $type.title-m;
+  max-width: $size.dialog-w;
+  text-align: center;
+}
+.arl-where {
+  $type.body-l;
+  color: $color.paper-2;
+}
+.arl-btns {
+  display: flex;
+  flex-direction: row;
+  gap: $space.s5;
+  margin-top: $space.s6;
+}
+
+/* ---------- home's strip: the nearby strip's chips, narrower ---------- */
+.alarms-strip {
+  margin-top: $space.s4;
+}
+/* over the nearby chip's width (routes-browse loads after this sheet) */
+.hnp.nbi.alc {
+  width: 380dp;
+}
+
+/* ---------- the page: the settings list's rows, a ringing one in ember with its buttons under it ---------- */
+.al-ringing .ititle, .al-ringing .lead {
+  color: $color.ember;
+}
+.al-ringing:focus .ititle, .al-ringing:focus .lead {
+  color: $color.ink;
+}
+.al-acts {
+  display: flex;
+  flex-direction: row;
+  gap: $space.s4;
+  padding: $space.s2 0 $space.s4 $space.s5;
+}

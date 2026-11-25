@@ -1,0 +1,30 @@
+# every input of the mpv builds (deploy/builder/mpv.sh), each fetched by deploy/builder/mpv-fetch.sh and checked here:
+#   file <name> <version> <url> <sha256>
+#   git  <name> <version> <url> <full commit>   (fetched at that commit, with its submodules where marked +sub)
+# mpv 0.40.0-3+deb13u1 (trixie's own) is the screens' default on linux: its debs replace the distro's libmpv2 with the
+# same version line, so every package trixie built against libmpv2 still fits and a security update is a new pin;
+# mpv 0.41.0-2 (forky's) builds the same way, for an api equal to android's.
+# the pi's debs: debian's mpv source packages, from the snapshot the builders' apt uses (apt is not asked: these
+# hashes are the dsc's own, as apt-get source would check them against the signed Release)
+file mpv-deb-0.40-dsc 0.40.0-3+deb13u1 https://snapshot.debian.org/archive/debian/20261104T212339Z/pool/main/m/mpv/mpv_0.40.0-3%2Bdeb13u1.dsc 79ea7f38023e6070afb8003fd253be66087fdb471323fb55737157dfb575f1db
+file mpv-deb-0.40-orig 0.40.0 https://snapshot.debian.org/archive/debian/20261104T212339Z/pool/main/m/mpv/mpv_0.40.0.orig.tar.gz 10a0f4654f62140a6dd4d380dcf0bbdbdcf6e697556863dc499c296182f081a3
+file mpv-deb-0.40-debian 0.40.0-3+deb13u1 https://snapshot.debian.org/archive/debian/20261104T212339Z/pool/main/m/mpv/mpv_0.40.0-3%2Bdeb13u1.debian.tar.xz 0ff48f510c1db2a51f7a5d2894bef0984aabb81a95c6f84efc92ed206822a284
+file mpv-deb-0.41-dsc 0.41.0-2 https://snapshot.debian.org/archive/debian/20261104T212339Z/pool/main/m/mpv/mpv_0.41.0-2.dsc 0d384e502b7da70de50684ec66dc9129524f27de8f1811beb92cab4248e6659f
+file mpv-deb-0.41-orig 0.41.0 https://snapshot.debian.org/archive/debian/20261104T212339Z/pool/main/m/mpv/mpv_0.41.0.orig.tar.gz 4f900c91f9fdb36bc6442968775910aa8c0f67dade72a3d51a4b0c2b39af02da
+file mpv-deb-0.41-debian 0.41.0-2 https://snapshot.debian.org/archive/debian/20261104T212339Z/pool/main/m/mpv/mpv_0.41.0-2.debian.tar.xz c88dd2dffa75b94e5b3b6d42cd42d33bb3bfc33db6342b26f4eff8975f6467ce
+# android armeabi-v7a: mpv 0.41.0 and what the jdtech aar links into its libmpv.so, at the versions of its own build
+# scripts (libmpv-android v1.0.0 fcf67457, buildscripts/include/depinfo.sh), by peeled commit; ffmpeg's tree is
+# configured for its headers alone, the aar's .so files stand in for its libraries
+file libmpv-aar 1.0.0 https://repo1.maven.org/maven2/dev/jdtech/mpv/libmpv/1.0.0/libmpv-1.0.0.aar df146592480fc8418415a06b1f1a1d6318b0088e21f52254b0e9a82b61ca8fa2
+file meson 1.12.1 https://files.pythonhosted.org/packages/py3/m/meson/meson-1.12.1-py3-none-any.whl 930bc7542cbd9f57009e182fd014eba48cf1a0180a7b9006d2d32d8f168d8b02
+git mpv v0.41.0 https://github.com/mpv-player/mpv.git 41f6a645068483470267271e1d09966ca3b9f413
+git ffmpeg n8.1 https://github.com/FFmpeg/FFmpeg.git 9047fa1b084f76b1b4d065af2d743df1b40dfb56
+git freetype 2.14.3 https://gitlab.freedesktop.org/freetype/freetype.git 0a0221a1347e2f1e07c395263540026e9a0aa7c7
+git fribidi 1.0.16 https://github.com/fribidi/fribidi.git 68162babff4f39c4e2dc164a5e825af93bda9983
+git harfbuzz 14.1.0 https://github.com/harfbuzz/harfbuzz.git cfb70b0b91af933a08339c7c8eef459df1098d7b
+git libxml2 2.15.2 https://gitlab.gnome.org/GNOME/libxml2.git 3d840e17858de03a09fba8b202e3a89267d5795a
+git fontconfig 2.17.1 https://gitlab.freedesktop.org/fontconfig/fontconfig.git 6d0a98982ec351c165c9224c8b7dbdfca3010e47
+git libass 0.17.4 https://github.com/libass/libass.git bbb3c7f1570a4a021e52683f3fbdf74fe492ae84
+git+sub libplacebo 7.360.1 https://code.videolan.org/videolan/libplacebo.git cee9b076f2c63104ccfd497fa79c39a867293ec4
+file libunibreak 6.1 https://github.com/adah1972/libunibreak/releases/download/libunibreak_6_1/libunibreak-6.1.tar.gz cc4de0099cf7ff05005ceabff4afed4c582a736abc38033e70fdac86335ce93f
+file lua 5.2.4 https://www.lua.org/ftp/lua-5.2.4.tar.gz b9e2e4aad6789b3b63a056d442f7b39f0ecfca3ae0f1fc0ae4e9614401b69f4b

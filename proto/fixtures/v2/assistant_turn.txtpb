@@ -1,0 +1,28 @@
+assistant_turn {
+  turn_id: "turn-4"
+  revision: 3
+  origin_device_id: "0f8fad5b-d9cb-469f-a165-70867728950e"
+  trigger: TRIGGER_WAKE
+  state: ASSISTANT_STATE_SPEAKING
+  mic_source { kind: MIC_SOURCE_KIND_SPEAKER device_id: "0f8fad5b-d9cb-469f-a165-70867728950e" }
+  transcript { stable: "turn the" unstable: "light off" }
+  steps { id: "st-1" label: "Home Assistant" status: STEP_STATUS_DONE card_id: "c-1" }
+  reply {
+    text: "Done [1]."
+    words { text_start: 0 text_end: 4 start_ms: 0 end_ms: 320 }
+    citations { n: 1 card_id: "c-1" }
+  }
+  # a cadence.cards.v1.Card (pkg/cards)
+  cards { version: 1 id: "c-1" revision: 1 fallback_text: "Свет в гостиной выключен" root { card { title: "Свет в гостиной" children { state { label: "Выключен" kind: STATE_KIND_OFF } } } } features: "card" features: "state" }
+  follow_up_window_ms: 6000
+  error_code: "timeout"
+  failure {
+    code: "timeout"
+    stage: "llm"
+    step: 1
+    provider: "gateway-main"
+    model: "vendor/model-x"
+    waited_ms: 10001
+    limit_ms: 10000
+  }
+}

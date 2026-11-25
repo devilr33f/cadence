@@ -1,0 +1,37 @@
+{
+  "$schema": "./schema.json",
+  "name": "yandex-micro",
+  "board": "yandex-micro",
+  "kind": "speaker",
+  "status": "shipping",
+  "os": "linux",
+  "arch": ["armhf"],
+  "package": {
+    "format": "tarball",
+    "output": "build/device/cadence-{version}-yandex-micro-armhf.tar"
+  },
+  "builder": {
+    "dockerfile": "deploy/builder/device.Dockerfile",
+    "image": "debian:bookworm-slim@sha256:734a72b3d6142a71993b4bc580ca01d8ca687f77a2c422d96a961d3376b179bc",
+    "platform": "linux/arm/v7",
+    "command": "make device-build BOARD=yandex-micro"
+  },
+  "runtime": {
+    "libc": "glibc",
+    "glibcMax": "2.30",
+    "openssl": "3.0",
+    "loader": "/lib/ld-linux-armhf.so.3"
+  },
+  "serverUrl": null,
+  "components": ["cadenced", "cadence-audiod", "ca-bundle", "cadence-run", "board-hook"],
+  "media": {
+    "url": true,
+    "airplay": "off",
+    "audioBackend": "alsa",
+    "soloistJail": false,
+    "staticLink": true,
+    "screen": false,
+    "video": "off"
+  },
+  "dependencies": []
+}

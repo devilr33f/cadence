@@ -1,0 +1,67 @@
+{
+ "version": 1,
+ "id": "call-004943c2db48cb45cb",
+ "revision": 1,
+ "fallbackText": "Загружаю «Toxicity · System of a Down»",
+ "root": {
+  "card": {
+   "title": "Загружаю «Toxicity · System of a Down»",
+   "icon": "music",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "row": {
+      "children": [
+       {
+        "image": {
+         "ref": "img:fakeart2-400-400________",
+         "alt": "Toxicity",
+         "aspect": "ASPECT_SQUARE"
+        }
+       },
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "Toxicity",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "System of a Down",
+            "style": "TEXT_STYLE_META"
+           }
+          },
+          {
+           "text": {
+            "text": "Трек · Toxicity · 3:39",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       }
+      ],
+      "gap": "GAP_M"
+     }
+    },
+    {
+     "progress": {
+      "indeterminate": true
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "column",
+  "image",
+  "progress",
+  "row",
+  "text"
+ ]
+}

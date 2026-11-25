@@ -1,0 +1,77 @@
+# an airplay audio cast from a phone while a film plays: cadenced's NowPlaying (audiod's session, the sender's name,
+# the cover as a local file) displaces the film, whose player pauses, and the audio page shows the cast; BACK leaves
+# it playing behind home, which offers it back; its end takes its page away. then spotify connect with its skips.
+# `make screen-sim-run SCRIPT=screen/sim/examples/cast.txt` from the repo root (screenshots in ./sim-out; the cover
+# is screen/sim/examples/cover-dusk.jpg, a generated picture)
+
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+
+# a film plays: the title, its voiceover, resolving, then the placeholder player
+send {"route": {"route": "title", "ref": "ref-tg-1"}}
+wait-for route:title
+wait 1600
+press OK
+wait-for route:picker 10000
+press OK
+wait-for route:player 20000
+wait-for media:playing 10000
+wait 600
+screenshot sim-out/cast-01-film.png
+
+# the phone casts: its session before any track's metadata (only the sender), the film's player paused
+send {"now_playing": {"sessionId": "ms-1", "source": "airplay", "sender": "iPhone Маши", "positionMs": 0, "durationMs": 0}}
+wait-for route:audio 5000
+wait-for media:paused 5000
+wait 400
+screenshot sim-out/cast-02-untitled.png
+
+# the sender's track and its cover: lean-back (no controls)
+send {"now_playing": {"sessionId": "ms-1", "source": "airplay", "sender": "iPhone Маши", "title": "worms", "artist": "guardin", "album": "worms", "positionMs": 94000, "durationMs": 123000, "artworkPath": "screen/sim/examples/cover-dusk.jpg", "artworkSha256": "8c73c45694719f0b7718292a66db96f639dcde4a5122325ff24c39a16cb56637", "colorA": 9720415, "colorB": 6568524}}
+wait 1200
+screenshot sim-out/cast-03-lean.png
+
+# a key shows the controls (play/pause alone: airplay takes no skips); OK pauses the cast through cadenced
+press DOWN
+wait 600
+screenshot sim-out/cast-04-controls.png
+press OK
+wait-for cast:pause 3000
+send {"now_playing": {"sessionId": "ms-1", "source": "airplay", "state": "paused", "sender": "iPhone Маши", "title": "worms", "artist": "guardin", "album": "worms", "positionMs": 95000, "durationMs": 123000, "artworkPath": "screen/sim/examples/cover-dusk.jpg", "artworkSha256": "8c73c45694719f0b7718292a66db96f639dcde4a5122325ff24c39a16cb56637", "colorA": 9720415, "colorB": 6568524}}
+wait 600
+screenshot sim-out/cast-05-paused.png
+press OK
+wait-for cast:resume 3000
+send {"now_playing": {"sessionId": "ms-1", "source": "airplay", "sender": "iPhone Маши", "title": "worms", "artist": "guardin", "album": "worms", "positionMs": 95000, "durationMs": 123000, "artworkPath": "screen/sim/examples/cover-dusk.jpg", "artworkSha256": "8c73c45694719f0b7718292a66db96f639dcde4a5122325ff24c39a16cb56637", "colorA": 9720415, "colorB": 6568524}}
+wait 600
+screenshot sim-out/cast-05b-resumed.png
+
+# the next song in the same cast keeps the page, with its own title and cover
+send {"now_playing": {"sessionId": "ms-1", "source": "airplay", "sender": "iPhone Маши", "title": "next song", "artist": "guardin", "album": "worms", "positionMs": 0, "durationMs": 123000, "artworkPath": "screen/sim/examples/cover-dusk.jpg", "artworkSha256": "8c73c45694719f0b7718292a66db96f639dcde4a5122325ff24c39a16cb56637", "colorA": 9720415, "colorB": 6568524}}
+wait 600
+screenshot sim-out/cast-05c-next.png
+
+# BACK twice: the controls hide, then home with the cast playing on behind it
+press BACK
+wait 400
+press BACK
+wait-for route:home 5000
+wait 1500
+screenshot sim-out/cast-06-home.png
+
+# the sender ends the cast: no session, nothing comes back
+send {"now_playing": {}}
+wait 600
+screenshot sim-out/cast-07-ended.png
+
+# spotify connect (soloist): its skips, no sender's name
+send {"now_playing": {"sessionId": "ms-2", "source": "spotify", "title": "Ночной паром", "artist": "Северные огни", "album": "Причал", "positionMs": 97000, "durationMs": 231000, "actions": ["pause", "resume", "stop", "seek", "next", "previous"], "artworkPath": "screen/sim/examples/cover-dusk.jpg", "artworkSha256": "8c73c45694719f0b7718292a66db96f639dcde4a5122325ff24c39a16cb56637", "colorA": 9720415, "colorB": 6568524}}
+wait-for route:audio 5000
+wait 800
+press DOWN
+wait 600
+screenshot sim-out/cast-08-spotify-controls.png
+press RIGHT
+press OK
+wait-for cast:next 3000
+quit

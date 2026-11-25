@@ -1,0 +1,29 @@
+{
+ "version": 1,
+ "id": "timer-9ba774bb6c3938f912",
+ "revision": 1,
+ "ttlS": 660,
+ "dismissable": true,
+ "fallbackText": "Таймер на 10 мин",
+ "root": {
+  "card": {
+   "title": "Таймер",
+   "subtitle": "10 мин",
+   "icon": "timer",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "countdown": {
+      "endsAtMs": "1794658200000",
+      "label": "Осталось",
+      "format": "COUNTDOWN_FORMAT_MM_SS"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "countdown"
+ ]
+}

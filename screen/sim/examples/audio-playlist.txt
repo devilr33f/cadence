@@ -1,0 +1,22 @@
+# a server music queue on the audio page: its collection, the whole play order, the current song and remote jumps.
+# `make screen-sim-run SCRIPT=screen/sim/examples/audio-playlist.txt`; the screenshot lands in sim-out/.
+
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+rpc-answer media.queue screen/sim/examples/audio-playlist.json
+rpc-answer media.control screen/sim/examples/audio-playlist-control.json
+send {"media_session_state": {"sessionId": "audio-playlist", "actions": ["previous", "next"], "queuePosition": 5}}
+send {"media_play": {"url": "http://fake.invalid/audio-playlist", "sessionId": "audio-playlist", "metadata": {"title": "Северное сияние", "artist": "Полярные огни", "album": "Вечерний микс", "kind": "track", "provider": "youtube_music", "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042"}, "view": "audio"}}
+wait-for route:audio 5000
+wait 1200
+rpc-calls media.queue
+screenshot sim-out/audio-playlist.png
+
+# reveal the controls, move into the playlist, and select the focused song through the real activation path
+press OK
+press UP
+focus
+press OK
+rpc-calls media.control
+wait 300
+quit

@@ -1,0 +1,25 @@
+{
+ "version": 1,
+ "id": "sub-reply-f1876c47e5a08b4905",
+ "revision": 1,
+ "fallbackText": "Ответ отправлен",
+ "root": {
+  "card": {
+   "title": "Подписка",
+   "icon": "reply",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Ответ отправлен",
+      "kind": "STATE_KIND_ON"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state"
+ ]
+}

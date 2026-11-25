@@ -1,0 +1,7 @@
+media_state {
+  session_id: "video-7"
+  state: PLAYBACK_STATE_IDLE
+  error_code: "network"
+  purpose: MEDIA_PURPOSE_CONTENT
+  ended: true
+}

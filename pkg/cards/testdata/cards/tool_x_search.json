@@ -1,0 +1,74 @@
+{
+ "version": 1,
+ "id": "x-329bc74a00f9a30b36",
+ "revision": 1,
+ "fallbackText": "Результаты поиска: 3",
+ "root": {
+  "card": {
+   "title": "Посты в X",
+   "icon": "reply",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "pagedList": {
+      "items": [
+       {
+        "post": {
+         "author": "Alex Veliz",
+         "handle": "@spydxdte",
+         "time": "13.11.2026",
+         "text": "Статья в X",
+         "stats": [
+          {
+           "kind": "STAT_KIND_VIEW",
+           "label": "177"
+          }
+         ],
+         "action": {
+          "id": "a:1"
+         }
+        }
+       },
+       {
+        "post": {
+         "author": "Tech news",
+         "handle": "@technews",
+         "time": "14.11.2026",
+         "text": "Anthropic is said to weigh an IPO next year, sources say example.com/…",
+         "stats": [
+          {
+           "kind": "STAT_KIND_LIKE",
+           "label": "2,4 тыс."
+          },
+          {
+           "kind": "STAT_KIND_VIEW",
+           "label": "98 тыс."
+          }
+         ],
+         "action": {
+          "id": "a:2"
+         }
+        }
+       },
+       {
+        "post": {
+         "author": "Dev",
+         "handle": "@dev",
+         "text": "Claude Code 刚刚发布了团队技能 🎉 チーム向けのスキル",
+         "action": {
+          "id": "a:3"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "paged_list",
+  "post"
+ ]
+}

@@ -1,0 +1,2 @@
+# the second of a unit's fragments: bytes 4.. of its 8
+mirror_frame { session_id: "mir-1" pts_ns: 5016000000 keyframe: true data: "\x65\x88\x84\x00" seq: 2 offset: 4 total_size: 8 }

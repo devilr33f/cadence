@@ -1,0 +1,41 @@
+# cadenced on rpi (the cadence-rpi deb installs this unit). it runs as root for alsa, bluez, evdev and /dev/cec0,
+# and starts cadence-audiod as its child, and cadence-screen.service (systemctl) while an hdmi sink is plugged in
+# (CADENCE_RPI_SCREEN_UNIT names another unit, or none). no secret lives here: the device token is in /etc/cadence/config.json (600)
+[Unit]
+Description=Cadence device daemon (rpi)
+Documentation=https://git.shino.boo/devilreef/cadence
+Wants=network-online.target bluetooth.service bluealsa.service
+After=network-online.target bluetooth.service bluealsa.service dbus.service
+ConditionPathExists=/etc/cadence/config.json
+
+[Service]
+Type=simple
+Environment=CADENCE_RPI_ALSA_DEVICE=hdmi:CARD=vc4hdmi0
+ExecStart=/opt/cadence/bin/cadenced --config /etc/cadence/config.json
+Restart=always
+RestartSec=2
+KillMode=control-group
+TimeoutStopSec=10
+UMask=0077
+SupplementaryGroups=video input
+
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+StateDirectory=cadence
+StateDirectoryMode=0700
+ConfigurationDirectory=cadence
+ConfigurationDirectoryMode=0700
+ReadWritePaths=/etc/cadence /var/lib/cadence
+
+[Install]
+WantedBy=multi-user.target

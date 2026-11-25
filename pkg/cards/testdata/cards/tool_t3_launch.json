@@ -1,0 +1,25 @@
+{
+ "version": 1,
+ "id": "t3-done-61d00c54ba4a69848e",
+ "revision": 1,
+ "fallbackText": "T3 Code: Поток запущен",
+ "root": {
+  "card": {
+   "title": "T3 Code",
+   "icon": "code",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Поток запущен",
+      "kind": "STATE_KIND_ON"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state"
+ ]
+}

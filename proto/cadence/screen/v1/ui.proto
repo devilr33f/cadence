@@ -1,0 +1,154 @@
+syntax = "proto3";
+package cadence.screen.v1;
+
+import "cadence/v2/assistant.proto";
+import "cadence/v2/screen.proto";
+
+option go_package = "git.shino.boo/devilreef/cadence/pkg/gen/cadence/screen/v1;screenv1";
+
+// cadenced -> screen: open a page (display.screen/show, the agent's screen_navigate) with focus placed
+message Route {
+  string request_id = 1;
+  cadence.v2.ScreenRoute route = 2;
+  // the item the page shows (a title, a panel, a task); opaque and server-issued
+  string ref = 3;
+  string query = 4;
+  // the episode's label, to focus it
+  string episode = 5;
+  // go back one page; route and the rest are ignored
+  bool back = 6;
+}
+
+enum ToastKind {
+  TOAST_KIND_UNSPECIFIED = 0;
+  TOAST_KIND_INFO = 1;
+  TOAST_KIND_SUCCESS = 2;
+  TOAST_KIND_WARNING = 3;
+  TOAST_KIND_DANGER = 4;
+}
+
+enum ToastActionKind {
+  TOAST_ACTION_KIND_UNSPECIFIED = 0;
+  // the screen opens route (with ref) itself, over whatever plays: a task toast's «Открыть» opens the task's panel
+  TOAST_ACTION_KIND_OPEN = 1;
+  // the screen calls rpc toast.action {toastId, actionId} and shows its answer
+  TOAST_ACTION_KIND_RPC = 2;
+}
+
+// a toast's one button, typed: the screen never parses an id for what it does
+message ToastAction {
+  // opaque; echoed in toast.action
+  string id = 1;
+  // server-formatted in the screen's language
+  string label = 2;
+  ToastActionKind kind = 3;
+  // OPEN: the page and the item it shows (a task's short id for TASK, a server-issued ref otherwise)
+  cadence.v2.ScreenRoute route = 4;
+  string ref = 5;
+}
+
+// cadenced -> screen: a toast never takes focus (design §20); its action runs as action's kind says. action_id and
+// action_label are the untyped action of a screen before action (an RPC action), sent beside it for one release
+message Toast {
+  string id = 1;
+  ToastKind kind = 2;
+  // server-formatted in the screen's language
+  string text = 3;
+  // an icon token of the design's set
+  string icon = 4;
+  string action_id = 5;
+  string action_label = 6;
+  // 0 = the design's default
+  uint32 duration_ms = 7;
+  ToastAction action = 8;
+}
+
+// cadenced -> screen: the voice state of this device's own sessions (a local mic or a speaker-less press) with
+// levels; a room's speaker turns come as cadence.v2.AssistantTurn and VoiceLevel instead
+message VoiceState {
+  cadence.v2.AssistantState state = 1;
+  // 0-255
+  uint32 mic = 2;
+  uint32 output = 3;
+}
+
+// cadenced -> screen: display.screen/wake and sleep
+message DisplayPower {
+  string request_id = 1;
+  bool on = 2;
+}
+
+enum Key {
+  KEY_UNSPECIFIED = 0;
+  KEY_UP = 1;
+  KEY_DOWN = 2;
+  KEY_LEFT = 3;
+  KEY_RIGHT = 4;
+  KEY_OK = 5;
+  KEY_BACK = 6;
+  KEY_HOME = 7;
+  KEY_MENU = 8;
+  // g, the remote's mic button or long back: the assistant. with a microphone of the screen's own (MicChoice LOCAL,
+  // or a local mic attached and no choice) cadenced starts a pressed session on it, on DOWN or PRESS, or on
+  // KEY_ACTION_LONG when no DOWN of this key came first (a long BACK, which the screen sends as KEY_ASSISTANT LONG);
+  // otherwise the screen asks rpc assistant.invoke for the room speaker's microphone
+  KEY_ASSISTANT = 9;
+  KEY_PLAY_PAUSE = 10;
+  KEY_PLAY = 11;
+  KEY_PAUSE = 12;
+  KEY_STOP = 13;
+  KEY_NEXT = 14;
+  KEY_PREVIOUS = 15;
+  KEY_FAST_FORWARD = 16;
+  KEY_REWIND = 17;
+  KEY_VOLUME_UP = 18;
+  KEY_VOLUME_DOWN = 19;
+  KEY_VOLUME_MUTE = 20;
+  KEY_POWER = 21;
+}
+
+enum KeyAction {
+  KEY_ACTION_UNSPECIFIED = 0;
+  KEY_ACTION_DOWN = 1;
+  KEY_ACTION_UP = 2;
+  KEY_ACTION_REPEAT = 3;
+  // held past the long-press time (500 ms)
+  KEY_ACTION_LONG = 4;
+  // down and up, as input.remote/key sends by default
+  KEY_ACTION_PRESS = 5;
+}
+
+enum InputSource {
+  INPUT_SOURCE_UNSPECIFIED = 0;
+  INPUT_SOURCE_REMOTE = 1;
+  INPUT_SOURCE_CEC = 2;
+  INPUT_SOURCE_KEYBOARD = 3;
+  INPUT_SOURCE_GAMEPAD = 4;
+  // input.remote/key from the server (ha, the dashboard)
+  INPUT_SOURCE_API = 5;
+}
+
+// screen -> cadenced: a key the ui does not consume (volume, assistant, power) or every key when input.remote's state
+// wants the last source; cadenced -> screen: input.remote/key, injected as if pressed
+message InputEvent {
+  Key key = 1;
+  KeyAction action = 2;
+  InputSource source = 3;
+  // unix ms on the device clock
+  int64 at_ms = 4;
+}
+
+// cadenced -> screen: input.remote/text into the focused field; never logged
+message TextInput {
+  string text = 1;
+}
+
+// screen -> cadenced: the microphone the owner picked for this screen in its room page (design §21): the room's
+// speaker, the screen's own usb microphone, or none. sent after Hello and on change (the screen keeps the choice);
+// cadenced reports it in display.screen's state (mic), which the server reads for assistant.invoke and the turns'
+// MicSource. UNSPECIFIED: no choice, the local mic when Hello says one is attached, else the room's speaker
+message MicChoice {
+  cadence.v2.MicSourceKind kind = 1;
+  // SPEAKER: the speaker's device id, empty for the room's default one
+  string device_id = 2;
+}

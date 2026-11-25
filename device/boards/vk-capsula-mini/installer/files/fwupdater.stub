@@ -1,0 +1,5 @@
+#!/bin/sh
+# cadence's stand-in for the vendor's fwupdater (rule 1), which voice-agent runs to check for and fetch firmware:
+# status 1 is its "no update" in both, and nothing is printed, as voice-agent reads an update's output as progress
+logger -t cadence "vendor ota disabled: fwupdater"
+exit 1

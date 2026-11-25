@@ -1,0 +1,1 @@
+command_result { request_id: "req-2" ok: false code: "no_session" }

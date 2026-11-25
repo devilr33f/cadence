@@ -1,0 +1,39 @@
+# the catalog in the assistant's drawer: the pending reply's thinking dots, a catalog search's poster tiles in the
+# showcase, and a play's card that names what plays where and follows the screen (starting, then playing, in place).
+# `build/screen-sim/sim run screen/sim/examples/catalog.txt` (screenshots in ./sim-out/catalog)
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+hold BACK 800
+wait-for drawer
+# the transcript is in, the model has not answered yet: the pending reply's dots, in a wave
+send {"assistant_turn": {"turnId": "t-1", "state": "thinking", "transcript": "Найди аниме поднятие уровня в одиночку"}}
+wait 450
+screenshot sim-out/catalog/01-thinking.png
+wait 300
+screenshot sim-out/catalog/02-thinking-wave.png
+# a tool runs: its step shows, the dots leave; each step names its call's card, which stands for the step once it is in the chat (a play) and which the step points to once it went left (the titles)
+send {"assistant_turn": {"turnId": "t-1", "revision": 2, "state": "thinking", "transcript": "Найди аниме поднятие уровня в одиночку", "steps": [{"id": "s1", "label": "Ищу в каталоге", "status": "running"}]}}
+wait 400
+screenshot sim-out/catalog/03-searching.png
+# the search's titles go to the showcase; the model thinks again
+send {"assistant_turn": {"turnId": "t-1", "revision": 3, "state": "thinking", "transcript": "Найди аниме поднятие уровня в одиночку", "steps": [{"id": "s1", "label": "Ищу в каталоге · 4 результата", "status": "done", "cardId": "catalog-found-c7dcc54cd61ba91d14"}]}}
+send {"cards": {"contextId": "t-1", "cards": ["card_catalog_found.binpb"]}}
+wait 900
+screenshot sim-out/catalog/04-found.png
+send {"assistant_turn": {"turnId": "t-1", "revision": 4, "state": "speaking", "transcript": "Найди аниме поднятие уровня в одиночку", "steps": [{"id": "s1", "label": "Ищу в каталоге · 4 результата", "status": "done", "cardId": "catalog-found-c7dcc54cd61ba91d14"}], "reply": "Нашёл «Поднятие уровня в одиночку» и второй сезон. Какой включить?"}}
+wait 2500
+screenshot sim-out/catalog/05-reply.png
+# the play: its card names the title, the episode, the source, the voiceover, the quality and the screen
+send {"assistant_turn": {"turnId": "t-2", "state": "thinking", "transcript": "Включи первый сезон", "steps": [{"id": "s1", "label": "Играет на экране", "status": "done", "cardId": "catalog-play-e913bd616e8c219884"}], "cards": ["card_catalog_play_starting.binpb"]}}
+wait 900
+screenshot sim-out/catalog/06-play-starting.png
+send {"assistant_turn": {"turnId": "t-2", "revision": 2, "state": "resting", "transcript": "Включи первый сезон", "steps": [{"id": "s1", "label": "Играет на экране", "status": "done", "cardId": "catalog-play-e913bd616e8c219884"}]}}
+wait 300
+# the screen plays it: the card's next revision comes after the turn under the drawer's lease (context live), in place
+send {"cards": {"contextId": "live", "cards": ["card_catalog_play_playing.binpb"]}}
+wait 600
+screenshot sim-out/catalog/07-play-playing.png
+send {"assistant_turn": {"turnId": "t-3", "state": "resting", "transcript": "Включи «Тьму»", "steps": [{"id": "s1", "label": "Включаю на экране · не получилось", "status": "failed", "cardId": "catalog-play-4d0e0e834d517f65eb"}], "cards": ["card_catalog_play_failed.binpb"]}}
+wait 900
+screenshot sim-out/catalog/08-play-failed.png
+quit

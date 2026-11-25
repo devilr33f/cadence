@@ -1,0 +1,1 @@
+session_event { session_id: "s-1" kind: SESSION_EVENT_KIND_THINKING }

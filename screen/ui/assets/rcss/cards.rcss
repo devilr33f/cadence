@@ -1,0 +1,663 @@
+/* cadence cards (design r2 section 17): every primitive from afterglow's tokens; tones tint an icon and a 4 dp
+   leading stripe, never a whole card. a template (tokens-gen) */
+.cstack {
+  display: flex;
+  flex-direction: column;
+  gap: $space.s5;
+}
+.cslot {
+  display: block;
+}
+.ccard {
+  position: relative;
+  width: 760dp;
+  padding: $space.s5;
+  background-color: $color.sheet;
+  border-radius: $radius.l;
+}
+.ccard.panel {
+  width: 1000dp;
+}
+/* the tone is the icon tile's; the stripe stays in the markup (the tasks panel reads a card's tone from it) but is
+   not drawn */
+.cstripe {
+  display: none;
+}
+.chead {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+  margin-bottom: $space.s4;
+}
+/* the icon on a tile; the card's tone tints the icon. (no tinted layer under it: rmlui's opacity is inherited, not
+   multiplied, so a layer with an opacity of its own would show through a card faded in or out) */
+.ctile {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 56dp;
+  height: 56dp;
+  border-radius: $radius.m;
+  background-color: $color.line-half;
+}
+/* the glyph's own box, as wide as it is tall, centred by the tile on both axes */
+.chead .cicon {
+  position: relative;
+  display: block;
+  width: 32dp;
+  height: 32dp;
+  font-size: 32dp;
+  line-height: 32dp;
+  text-align: center;
+}
+.chtexts {
+  flex: 1 1 0;
+  overflow: hidden;
+}
+.ctitle {
+  $type.title-s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.csub, .cmeta {
+  $type.body;
+  font-size: 22dp;
+  line-height: 30dp;
+  color: $color.paper-2;
+}
+.cbody {
+  display: flex;
+  flex-direction: column;
+  gap: $space.s4;
+}
+.cactions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: $space.s4;
+  margin-top: $space.s5;
+}
+.crow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.crow > * {
+  flex: 1 1 0;
+}
+.crow > .btn, .crow > .badge, .crow > .icon, .crow > .toggle, .crow > .cimage {
+  flex: 0 0 auto;
+}
+.ccol {
+  display: flex;
+  flex-direction: column;
+}
+.cgrid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.cgrid.c2 > .cell { width: 48%; }
+.cgrid.c3 > .cell { width: 31%; }
+.cgrid.c4 > .cell { width: 22%; }
+.ctext {
+  display: block;
+}
+.ctext.t-body {
+  color: $color.paper;
+}
+.ctext.cmeta {
+  color: $color.paper-2;
+}
+/* a column of lines beside a row's cover (a track: title, artist, album, source): the title at most two lines (the
+   card host cuts it at a word with «…»), each other line one, cut with «…» */
+.crow > .ccol > .ctext.t-title-s {
+  max-height: 72dp;
+  overflow: hidden;
+}
+.crow > .ccol > .ctext.t-body {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cicon32 {
+  font-size: 32dp;
+  line-height: 40dp;
+}
+.cicon48 {
+  font-size: 48dp;
+  line-height: 56dp;
+}
+
+/* long text: collapsed to its lines, OK expands, ↓ scrolls */
+.clong {
+  position: relative;
+  overflow: hidden;
+  $type.body;
+  border-radius: $radius.s;
+}
+.clong.reading {
+  $type.body-l;
+}
+.clong.expanded {
+  max-height: 640dp;
+  overflow-y: hidden;
+}
+.newbelow {
+  $type.label;
+  color: $color.ink;
+  background-color: $color.paper;
+  border-radius: 16dp;
+  padding: 0 $space.s4;
+  display: inline-block;
+}
+
+/* images: decoded at display size; avatars round */
+.cimage {
+  position: relative;
+  border-radius: $radius.m;
+  background-color: $color.ink-raised;
+}
+.img-square { width: 160dp; height: 160dp; }
+.img-poster { width: 160dp; height: 240dp; }
+.img-wide { width: 284dp; height: 160dp; }
+.img-avatar { width: 64dp; height: 64dp; border-radius: 32dp; }
+/* a cover beside its lines (a play's card: title, artist, kind): square, the height of about three of them, the
+   picture cover-fit to its centre, never stretched to the row */
+.crow > .cimage.img-square { width: 136dp; height: 136dp; align-self: center; }
+
+/* state: a pill, a dot in its tone and a word, never colour alone */
+.cstate {
+  display: inline-flex;
+  align-self: flex-start;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s3;
+  padding: $space.s1 $space.s4;
+  border-radius: 20dp;
+  background-color: $color.line;
+  $type.label;
+  color: $color.paper;
+}
+.crow > .cstate {
+  flex: 0 0 auto;
+}
+.sdot {
+  width: 12dp;
+  height: 12dp;
+  border-radius: 6dp;
+  flex: 0 0 auto;
+}
+
+/* a card's toggle: the state's whole word on the left, the switch at the row's end; one row, one focus ring */
+.ccard .ctoggle {
+  display: flex;
+  align-self: stretch;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s3;
+  padding: $space.s3 $space.s4;
+  border-radius: $radius.m;
+  background-color: $color.line-half;
+  $type.label;
+  font-size: 26dp;
+  color: $color.paper;
+}
+.ctoggle .sdot {
+  background-color: $color.paper-3;
+}
+.ctoggle.on .sdot {
+  background-color: $tone.success;
+}
+.ctoggle .won, .ctoggle.on .woff {
+  display: none;
+}
+.ctoggle.on .won, .ctoggle .woff {
+  display: block;
+  flex: 1 1 0;
+}
+.ctoggle .switch {
+  flex: 0 0 auto;
+}
+.ccard .ctoggle.on .switch {
+  background-color: $tone.success;
+}
+.ccard .ctoggle.f:focus .switch {
+  background-color: $color.ember;
+}
+.ccard .ctoggle .ring {
+  border-radius: $radius.m;
+  left: -$space.s1;
+  top: -$space.s1;
+  right: -$space.s1;
+  bottom: -$space.s1;
+}
+/* a card's focus is the ring alone: the glow is the page's, too loud on a small control in a sheet */
+.ccard .glow {
+  display: none;
+}
+
+/* a card's slider: a thicker track, the fill paper at rest and ember with focus, its thumb always shown */
+.ccard .slider {
+  padding: $space.s2 0;
+}
+.ccard .slider .shead {
+  color: $color.paper-2;
+}
+.ccard .slider .svalue {
+  color: $color.paper;
+}
+.ccard .slider .strack {
+  height: 12dp;
+  border-radius: 6dp;
+}
+.ccard .slider .sfill {
+  border-radius: 6dp;
+  background-color: $color.paper-2;
+}
+.ccard .slider:focus .sfill {
+  background-color: $color.ember;
+}
+.ccard .slider .thumb {
+  top: -6dp;
+  opacity: 1;
+}
+/* a timeline (a playback position) as the player's scrubber: the thin track, the played part paper and ember with
+   focus, the thumb only with focus, the times in figures. it moves a step a second, so no transition */
+.ccard .slider.timeline .shead {
+  $type.label;
+  font-size: 22dp;
+  line-height: 30dp;
+}
+.ccard .slider.timeline .svalue {
+  font-family: $font.figures;
+  color: $color.paper-2;
+}
+.ccard .slider.timeline:focus .svalue {
+  color: $color.paper;
+}
+.ccard .slider.timeline .strack {
+  margin-top: $space.s2;
+  height: $size.slider-h;
+  border-radius: 4dp;
+}
+.ccard .slider.timeline .sfill {
+  border-radius: 4dp;
+  background-color: $color.paper;
+  transition: none;
+}
+.ccard .slider.timeline:focus .sfill {
+  background-color: $color.ember;
+}
+.ccard .slider.timeline .thumb {
+  top: -8dp;
+  opacity: 0;
+}
+.ccard .slider.timeline:focus .thumb {
+  opacity: 1;
+  background-color: $color.ember;
+}
+
+/* value: figures-l, unit, trend */
+.cvalue .vlabel {
+  $type.body;
+  font-size: 22dp;
+  line-height: 30dp;
+  color: $color.paper-2;
+}
+.cvalue .vline {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: $space.s2;
+}
+.cvalue .vnum {
+  $type.figures-l;
+}
+.cvalue .vunit {
+  $type.figures;
+  color: $color.paper-2;
+}
+.cvalue .vtrend {
+  font-size: 28dp;
+  line-height: 40dp;
+  color: $color.paper-2;
+}
+
+/* meter: read-only track and fill */
+.cmeter .shead {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  $type.label;
+}
+.cmeter .svalue {
+  font-family: $font.figures;
+}
+.cmeter .shead span {
+  color: $color.paper-2;
+}
+.cmeter .shead .svalue {
+  color: $color.paper;
+}
+.mtrack {
+  position: relative;
+  margin-top: $space.s3;
+  height: 12dp;
+  border-radius: 6dp;
+  background-color: $color.line;
+}
+.mfill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  border-radius: 6dp;
+  background-color: $color.paper-2;
+  transform-origin: 0% 50%;
+  transition: transform $motion.enter;
+}
+.cprogress .cmeta {
+  margin-bottom: $space.s2;
+}
+
+/* countdown: figures-l, ticking once a second without a transition */
+.ccountdown .cdtime {
+  $type.figures-l;
+}
+
+/* steps: spinner, check, triangle */
+.csteps {
+  display: flex;
+  flex-direction: column;
+  gap: $space.s3;
+}
+.cstep {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+  $type.body;
+}
+.cstep .icon {
+  font-size: 28dp;
+  line-height: 36dp;
+  width: 32dp;
+  text-align: center;
+}
+.cstep.pending {
+  color: $color.paper-2;
+}
+.spinner.small {
+  width: 32dp;
+  height: 32dp;
+}
+
+/* keyvalue: a two-column table */
+.ckv {
+  display: flex;
+  flex-direction: column;
+  gap: $space.s2;
+}
+.kvrow {
+  display: flex;
+  flex-direction: row;
+  gap: $space.s5;
+  $type.body;
+}
+.kvkey {
+  width: 45%;
+  color: $color.paper-2;
+  flex: 0 0 auto;
+}
+.kvval {
+  flex: 1 1 0;
+}
+
+/* the paged list and its "more" row */
+.clist {
+  display: flex;
+  flex-direction: column;
+  gap: $space.s3;
+}
+.cdivider {
+  height: 1dp;
+  background-color: $color.line;
+}
+.cspark .spark {
+  width: 240dp;
+  height: 48dp;
+  image-color: $color.paper;
+}
+
+/* link: a web result, its citation square (the reply's [n]) at its top left */
+.clink {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  gap: $space.s4;
+  padding: $space.s3 $space.s4;
+  border-radius: $radius.m;
+  background-color: $color.line-half;
+  transform: scale(1);
+  transition: transform $motion.focus;
+}
+.clink:focus {
+  transform: scale($focus.scale-row);
+}
+.clink .ltexts {
+  flex: 1 1 0;
+  overflow: hidden;
+}
+.clink .ldomain {
+  $type.label;
+  font-size: 20dp;
+  line-height: 28dp;
+  color: $color.paper-2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.clink .favicon {
+  display: inline-block;
+  width: 20dp;
+  height: 20dp;
+  border-radius: 4dp;
+  margin-right: $space.s2;
+}
+.clink .ltitle {
+  $type.label;
+  font-weight: 600;
+  font-size: 24dp;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.clink .lsnippet {
+  $type.body;
+  font-size: 22dp;
+  line-height: 30dp;
+  color: $color.paper-2;
+  max-height: 60dp;
+  overflow: hidden;
+}
+.clink .lthumb {
+  width: 128dp;
+  height: 72dp;
+  border-radius: $radius.s;
+  flex: 0 0 auto;
+}
+.cite {
+  width: $size.cite;
+  height: $size.cite;
+  margin-top: $space.s1;
+  border-radius: $radius.s;
+  background-color: $color.line;
+  $type.cite;
+  text-align: center;
+  flex: 0 0 auto;
+}
+.cite.on, .clink:focus .cite {
+  background-color: $color.ember;
+  color: $color.ink;
+}
+
+/* post: the author line (name, handle, date), up to three lines of text, the counts in one quiet row; a community
+   note as its own block, one quoted post inset */
+.cpost {
+  position: relative;
+  display: block;
+  padding: $space.s3 $space.s4;
+  border-radius: $radius.m;
+  background-color: $color.line-half;
+}
+.cpost.cquote {
+  margin-top: $space.s3;
+  padding: $space.s2 $space.s3;
+  background-color: $color.transparent;
+  border: 1dp $color.line;
+}
+.cpost .phead {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s3;
+}
+.cpost .avatar {
+  width: 40dp;
+  height: 40dp;
+  border-radius: 20dp;
+  flex: 0 0 auto;
+}
+.cpost .pwho {
+  flex: 1 1 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  $type.label;
+  font-size: 22dp;
+  line-height: 30dp;
+}
+.cpost .pauthor {
+  font-weight: 600;
+  color: $color.paper;
+}
+.cpost .phandle {
+  margin-left: $space.s1;
+  color: $color.paper-3;
+}
+.cpost .psource {
+  flex: 0 0 auto;
+  $type.label;
+  font-size: 18dp;
+  line-height: 26dp;
+  color: $color.paper-3;
+}
+.cpost .ptext {
+  $type.body;
+  font-size: 24dp;
+  line-height: 32dp;
+  margin-top: $space.s1;
+  max-height: 96dp;
+  overflow: hidden;
+  color: $color.paper;
+}
+.cpost.cquote .ptext {
+  font-size: 22dp;
+  line-height: 30dp;
+  max-height: 60dp;
+}
+.cpost .pmedia {
+  margin-top: $space.s3;
+  width: 400dp;
+  height: 225dp;
+  border-radius: $radius.s;
+}
+.cpost .pstats {
+  display: flex;
+  flex-direction: row;
+  gap: $space.s5;
+  margin-top: $space.s2;
+  $type.label;
+  font-size: 20dp;
+  line-height: 28dp;
+  color: $color.paper-3;
+}
+.cpost .pstats .icon {
+  font-size: 20dp;
+}
+.cnote {
+  position: relative;
+  margin-top: $space.s3;
+  padding: $space.s2 $space.s4;
+  border-radius: $radius.s;
+  background-color: $color.sheet;
+}
+.cnote .nlabel {
+  $type.label;
+  font-size: 20dp;
+}
+.cnote .ntext {
+  $type.body;
+  font-size: 22dp;
+  line-height: 30dp;
+  max-height: 60dp;
+  overflow: hidden;
+  color: $color.paper;
+}
+/* a panel shows a post whole */
+.ccard.panel .cpost .ptext {
+  font-size: 28dp;
+  line-height: 40dp;
+  max-height: none;
+}
+.ccard.panel .cnote .ntext {
+  max-height: none;
+}
+
+/* qr: drawn by the device, 240 dp, paper with its quiet zone */
+.cqr .qr {
+  width: $size.qr;
+  height: $size.qr;
+  border-radius: $radius.s;
+}
+.cqr .cmeta {
+  margin-top: $space.s3;
+}
+
+/* code: jetbrains mono 24 on ink-raised, wraps at any character, scrolls past 12 lines */
+.ccode {
+  position: relative;
+  max-height: 384dp;
+  overflow: hidden;
+  padding: $space.s3 $space.s4;
+  border-radius: $radius.s;
+  background-color: $color.ink-raised;
+}
+.ccode .ctext {
+  $type.code;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+.codemore {
+  margin-top: $space.s2;
+}
+
+/* choices: buttons for one, check-chips and a submit for several */
+.cchoices {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: $space.s4;
+}
+
+/* the fallback: the card's text and «недоступно на этом экране» */
+.ccard.fallback .cbody {
+  gap: $space.s2;
+}

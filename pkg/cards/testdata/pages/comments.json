@@ -1,0 +1,65 @@
+{
+ "version": 1,
+ "cards": [
+  {
+   "version": 1,
+   "id": "yt.comments.p1",
+   "revision": 1,
+   "fallbackText": "Комментарии",
+   "root": {
+    "card": {
+     "title": "Комментарии",
+     "subtitle": "1 204",
+     "children": [
+      {
+       "pagedList": {
+        "items": [
+         {
+          "post": {
+           "author": "Анна К.",
+           "avatar": {
+            "ref": "img:9c1e4b7a"
+           },
+           "time": "2 дня назад",
+           "text": "Лучшее объяснение темы из всех, что я видела.",
+           "stats": [
+            {
+             "kind": "STAT_KIND_LIKE",
+             "label": "312"
+            }
+           ]
+          }
+         },
+         {
+          "post": {
+           "author": "Игорь",
+           "time": "неделю назад",
+           "text": "Спасибо за таймкоды!",
+           "stats": [
+            {
+             "kind": "STAT_KIND_LIKE",
+             "label": "48"
+            }
+           ]
+          }
+         }
+        ],
+        "more": {
+         "action": {
+          "id": "a:cmt:cursor:20"
+         },
+         "label": "Показать ещё"
+        }
+       }
+      }
+     ]
+    }
+   },
+   "features": [
+    "card",
+    "paged_list",
+    "post"
+   ]
+  }
+ ]
+}

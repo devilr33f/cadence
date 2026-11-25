@@ -1,0 +1,32 @@
+# a YouTube resolve as the server streams it: human words at every stage, the pick, the countdown, then the relay.
+# `make screen-sim-run SCRIPT=screen/sim/examples/youtube-progress.txt` (screenshots in ./sim-out).
+
+start --headless --lang ru --size 1280x720
+wait-for route:home
+wait 4000
+
+send {"media_preparing": {"state": "resolving", "title": "Как устроен звук", "subtitle": "Лекторий", "stage": "cookies", "elapsedMs": 4, "remainingMs": -1}}
+wait-for route:resolving
+wait 300
+send {"media_preparing": {"state": "resolving", "stage": "extract", "elapsedMs": 85, "remainingMs": -1}}
+wait 300
+send {"media_preparing": {"state": "resolving", "stage": "challenge", "elapsedMs": 1250, "remainingMs": -1}}
+wait 500
+screenshot sim-out/youtube-progress-01-challenge.png
+
+send {"media_preparing": {"state": "resolving", "stage": "formats", "elapsedMs": 5100, "remainingMs": -1}}
+wait 350
+send {"media_preparing": {"state": "resolving", "stage": "pick", "elapsedMs": 5240, "height": 1080, "vcodec": "h264", "acodec": "mp4a", "audioTracks": 1, "remainingMs": -1}}
+wait 500
+screenshot sim-out/youtube-progress-02-pick.png
+
+send {"media_preparing": {"state": "resolving", "stage": "wait_available", "elapsedMs": 5300, "remainingMs": 3000}}
+wait 300
+screenshot sim-out/youtube-progress-03-wait-3s.png
+wait 2100
+screenshot sim-out/youtube-progress-04-wait-1s.png
+send {"media_preparing": {"state": "resolving", "stage": "wait_available", "elapsedMs": 8300, "remainingMs": 0}}
+send {"media_preparing": {"state": "resolving", "stage": "relay", "elapsedMs": 8350, "remainingMs": -1}}
+wait 500
+screenshot sim-out/youtube-progress-05-relay.png
+quit

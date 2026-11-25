@@ -1,0 +1,20 @@
+# the gl-transitions the host cycles through, by file name under the pack's transitions/ (fetch-transitions.sh): calm
+# ones only, no flash, glitch, static or strobe (photosensitivity), and none that takes a texture of its own
+CircleOpen
+CrossWarp
+DirectionalWipe
+Dreamy
+DreamyZoom
+Fade
+GooeyWipe
+InkBleed
+LiquidFill
+Morph
+PerlinDissolve
+RadialWipe
+Ripple
+RotateScaleFade
+ShoreWash
+SimpleZoom
+Swirl
+WindowSlices

@@ -1,0 +1,66 @@
+{
+ "version": 1,
+ "id": "catalog-3c45c5bb67a51b93ed",
+ "revision": 1,
+ "fallbackText": "Тьма · 2017 · 3 сезона",
+ "root": {
+  "card": {
+   "title": "Тьма",
+   "subtitle": "2017 · 3 сезона",
+   "icon": "film",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "column": {
+      "children": [
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "Секреты",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "Серия 1",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       },
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "Ложь",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "Серия 2",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       }
+      ],
+      "gap": "GAP_M"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "column",
+  "text"
+ ]
+}

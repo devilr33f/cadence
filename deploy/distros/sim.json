@@ -1,0 +1,109 @@
+{
+  "$schema": "./schema.json",
+  "name": "sim",
+  "board": "sim",
+  "kind": "speaker",
+  "status": "shipping",
+  "os": "linux",
+  "arch": [
+    "amd64",
+    "arm64"
+  ],
+  "package": {
+    "format": "image",
+    "output": "cadenced-sim:{version}"
+  },
+  "builder": {
+    "dockerfile": "device/Dockerfile.sim",
+    "image": "debian:trixie-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2",
+    "command": "docker build -f device/Dockerfile.sim -t cadenced-sim:dev ."
+  },
+  "runtime": {
+    "libc": "glibc"
+  },
+  "serverUrl": null,
+  "components": [
+    "cadenced",
+    "cadence-audiod",
+    "airplay-runtime",
+    "fake-soloist",
+    "fake-shairport"
+  ],
+  "media": {
+    "url": true,
+    "airplay": "fake",
+    "audioBackend": "sim",
+    "soloistJail": false,
+    "staticLink": true,
+    "screen": false,
+    "video": "off"
+  },
+  "dependencies": [
+    {
+      "name": "audiod-libs",
+      "source": "system",
+      "use": "build",
+      "distro": "debian-trixie",
+      "packages": [
+        "libopus-dev",
+        "libspeexdsp-dev",
+        "libssl-dev"
+      ],
+      "image": "debian:trixie-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2",
+      "note": "from the base image's apt, pinned by the image digest alone"
+    },
+    {
+      "name": "ffmpeg",
+      "source": "tarball",
+      "use": "build",
+      "version": "9.0.2",
+      "license": "LGPL-3.0-or-later",
+      "url": "https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz",
+      "sha256": "8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e",
+      "script": "deploy/builder/build-ffmpeg.sh",
+      "note": "audio-only build, linked statically into cadence-audiod"
+    },
+    {
+      "name": "shairport-sync",
+      "source": "tarball",
+      "use": "runtime",
+      "version": "5.6.2",
+      "license": "MIT",
+      "pinsFile": "deploy/builder/airplay-runtime.pins"
+    },
+    {
+      "name": "nqptp",
+      "source": "tarball",
+      "use": "runtime",
+      "version": "1.2.9",
+      "license": "GPL-2.0-only",
+      "pinsFile": "deploy/builder/airplay-runtime.pins",
+      "note": "run as its own program, unmodified"
+    },
+    {
+      "name": "avahi",
+      "source": "system",
+      "use": "runtime",
+      "distro": "debian-trixie",
+      "packages": [
+        "avahi"
+      ],
+      "pinsFile": "deploy/builder/airplay-runtime.pins",
+      "note": "built from debian's source package"
+    },
+    {
+      "name": "airplay-runtime-debs",
+      "source": "system",
+      "use": "runtime",
+      "distro": "debian-trixie",
+      "packages": [
+        "dbus-daemon",
+        "libapparmor1",
+        "libatomic1",
+        "gcc-14-base",
+        "base-files"
+      ],
+      "pinsFile": "deploy/builder/airplay-runtime.pins"
+    }
+  ]
+}

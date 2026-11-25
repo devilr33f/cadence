@@ -1,0 +1,82 @@
+{
+ "version": 1,
+ "id": "catalog-found-c7dcc54cd61ba91d14",
+ "revision": 1,
+ "fallbackText": "Нашлось в каталоге: 4",
+ "root": {
+  "card": {
+   "title": "Нашлось в каталоге",
+   "icon": "film",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "pagedList": {
+      "items": [
+       {
+        "mediaTile": {
+         "image": {
+          "ref": "img:AbCdEfGhIjKlMnOpQrStUv01",
+          "alt": "Поднятие уровня в одиночку",
+          "aspect": "ASPECT_POSTER"
+         },
+         "title": "Поднятие уровня в одиночку",
+         "subtitle": "2024 · 12 эп. · ★8,3",
+         "action": {
+          "id": "a:1"
+         }
+        }
+       },
+       {
+        "mediaTile": {
+         "image": {
+          "ref": "img:none",
+          "alt": "Поднятие уровня в одиночку 2",
+          "aspect": "ASPECT_POSTER"
+         },
+         "title": "Поднятие уровня в одиночку 2",
+         "subtitle": "2025 · 13 эп. · ★8,6",
+         "action": {
+          "id": "a:2"
+         }
+        }
+       },
+       {
+        "mediaTile": {
+         "image": {
+          "ref": "img:none",
+          "alt": "Solo Leveling: ReAwakening",
+          "aspect": "ASPECT_POSTER"
+         },
+         "title": "Solo Leveling: ReAwakening",
+         "subtitle": "2024 · Фильм · ★7,1",
+         "action": {
+          "id": "a:3"
+         }
+        }
+       },
+       {
+        "mediaTile": {
+         "image": {
+          "ref": "img:none",
+          "alt": "Solo Leveling: Arise",
+          "aspect": "ASPECT_POSTER"
+         },
+         "title": "Solo Leveling: Arise",
+         "subtitle": "2025 · нет источника",
+         "action": {
+          "id": "a:4"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "media_tile",
+  "paged_list"
+ ]
+}

@@ -1,0 +1,1 @@
+ready { version: "0.1.0" backends: BACKEND_AAUDIO system_volume { level: 20 } }

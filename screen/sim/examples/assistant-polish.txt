@@ -1,0 +1,32 @@
+# the assistant's polish: the listening speaker's name by the status (no line over the words, no level line at the
+# foot); a new turn's cards alone on the left, the cards behind the front one bare bands; media the turn starts here
+# fades the left cards, a «now playing» notice slides in at the top left, and the drawer leaves soon after the reply.
+# `build/screen-sim/sim run screen/sim/examples/assistant-polish.txt` (screenshots in sim-out/polish)
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+hold BACK 800
+wait-for drawer
+send {"assistant_turn": {"turnId": "t-1", "state": "listening", "mic": {"kind": "speaker", "name": "Bedroom"}}}
+wait 700
+screenshot sim-out/polish/01-listening.png
+send {"assistant_turn": {"turnId": "t-1", "revision": 2, "state": "resting", "mic": {"kind": "speaker", "name": "Bedroom"}, "transcript": "Найди system of a down", "steps": [{"id": "c1", "label": "Ищу музыку · 4 результата", "status": "done", "cardId": "call-f416ae85905e2e7663"}], "cards": ["card_call_music_search_done.binpb"]}}
+wait 1200
+screenshot sim-out/polish/02-first-turn.png
+# a new turn: the music from before leaves the left; this turn's three cards stack, the two behind as bare bands
+send {"assistant_turn": {"turnId": "t-2", "state": "thinking", "mic": {"kind": "speaker", "name": "Bedroom"}, "transcript": "Включи фрирен 2 сезон 1 серия", "steps": [{"id": "s1", "label": "Ищу в каталоге · 4 результата", "status": "done", "cardId": "catalog-found-c7dcc54cd61ba91d14"}], "cards": ["card_catalog_found.binpb"]}}
+wait 900
+send {"cards": {"contextId": "t-2", "cards": ["card_tool_catalog_item.binpb"]}}
+wait 900
+send {"cards": {"contextId": "t-2", "cards": ["card_call_catalog_series.binpb"]}}
+send {"assistant_turn": {"turnId": "t-2", "revision": 2, "state": "thinking", "mic": {"kind": "speaker", "name": "Bedroom"}, "transcript": "Включи фрирен 2 сезон 1 серия", "steps": [{"id": "s1", "label": "Ищу в каталоге · 4 результата", "status": "done", "cardId": "catalog-found-c7dcc54cd61ba91d14"}, {"id": "s3", "label": "Каталог · «Тьма»", "status": "done", "cardId": "catalog-3c45c5bb67a51b93ed"}, {"id": "s4", "label": "Каталог · «Фрирен 2 сезон»", "status": "done", "cardId": "call-8aa2faf45489efc560"}]}}
+wait 2500
+screenshot sim-out/polish/03-deck.png
+# the play starts here: the left cards fade, «now playing» slides in, the drawer leaves after the reply
+send {"assistant_turn": {"turnId": "t-2", "revision": 3, "state": "speaking", "mic": {"kind": "speaker", "name": "Bedroom"}, "transcript": "Включи фрирен 2 сезон 1 серия", "steps": [{"id": "s1", "label": "Ищу в каталоге · 4 результата", "status": "done", "cardId": "catalog-found-c7dcc54cd61ba91d14"}, {"id": "s3", "label": "Каталог · «Тьма»", "status": "done", "cardId": "catalog-3c45c5bb67a51b93ed"}, {"id": "s4", "label": "Каталог · «Фрирен 2 сезон»", "status": "done", "cardId": "call-8aa2faf45489efc560"}, {"id": "s2", "label": "Играет на экране", "status": "done", "cardId": "catalog-play-e913bd616e8c219884"}], "reply": "Включаю.", "cards": ["card_catalog_play_playing.binpb"]}}
+send {"media_play": {"url": "http://fake.invalid/frieren-2-1.mkv", "sessionId": "cad-frieren", "metadata": {"title": "Провожающая в последний путь Фрирен 2 сезон", "series": "Провожающая в последний путь Фрирен 2 сезон", "season": 2, "episode": "1", "episodeName": "Конец приключения", "artworkUrl": "https://cadence.example/v2/images/fakeart7-268-402________", "provider": "torrplayer", "providerName": "TorrPlayer", "source": "anilibria"}, "view": "video"}}
+wait 1200
+screenshot sim-out/polish/04-playing.png
+send {"assistant_turn": {"turnId": "t-2", "revision": 4, "state": "resting", "mic": {"kind": "speaker", "name": "Bedroom"}, "transcript": "Включи фрирен 2 сезон 1 серия", "steps": [{"id": "s1", "label": "Ищу в каталоге · 4 результата", "status": "done", "cardId": "catalog-found-c7dcc54cd61ba91d14"}, {"id": "s3", "label": "Каталог · «Тьма»", "status": "done", "cardId": "catalog-3c45c5bb67a51b93ed"}, {"id": "s4", "label": "Каталог · «Фрирен 2 сезон»", "status": "done", "cardId": "call-8aa2faf45489efc560"}, {"id": "s2", "label": "Играет на экране", "status": "done", "cardId": "catalog-play-e913bd616e8c219884"}], "reply": "Включаю.", "cards": ["card_catalog_play_playing.binpb"]}}
+wait 3500
+screenshot sim-out/polish/05-drawer-gone.png
+quit

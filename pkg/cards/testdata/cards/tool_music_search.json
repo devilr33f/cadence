@@ -1,0 +1,84 @@
+{
+ "version": 1,
+ "id": "music-cc1afafc2ae91531ac",
+ "revision": 1,
+ "fallbackText": "Результаты поиска: 3",
+ "root": {
+  "card": {
+   "title": "Нашлась музыка",
+   "icon": "music",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "column": {
+      "children": [
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "Группа крови",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "Кино · Трек · 4:45",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       },
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "Группа крови",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "Кино · Альбом · 11 треков",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       },
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "Русский рок",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "Spotify · Плейлист · 50 треков",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       }
+      ],
+      "gap": "GAP_M"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "column",
+  "text"
+ ]
+}

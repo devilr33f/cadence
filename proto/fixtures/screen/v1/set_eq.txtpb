@@ -1,0 +1,1 @@
+set_eq { request_id: "q-8" preamp_db: -2 bands { type: EQ_TYPE_PEAKING freq_hz: 1000 gain_db: 3 q: 1 } }

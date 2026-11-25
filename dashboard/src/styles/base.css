@@ -1,0 +1,71 @@
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    scrollbar-color: var(--input) transparent;
+    accent-color: var(--primary);
+  }
+
+  body {
+    @apply bg-background text-base text-foreground;
+    caret-color: var(--ring);
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  /* one focus look everywhere: a solid ring the keyboard sees, none for the pointer */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+
+  a {
+    text-underline-offset: 0.2em;
+  }
+
+  /* times, counts and generations line up in columns, as on a timetable */
+  time,
+  td,
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* the live tally breathes; a newly arrived stop flashes the accent once */
+@keyframes tally {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes arrive {
+  from {
+    background-color: var(--accent);
+  }
+}

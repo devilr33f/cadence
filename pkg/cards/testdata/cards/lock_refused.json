@@ -1,0 +1,32 @@
+{
+ "version": 1,
+ "id": "ha.lock.front",
+ "revision": 4,
+ "fallbackText": "Замок не открыт: нужно слово активации",
+ "root": {
+  "card": {
+   "title": "Входная дверь",
+   "icon": "lock",
+   "tone": "TONE_WARNING",
+   "children": [
+    {
+     "state": {
+      "kind": "STATE_KIND_LOCKED",
+      "label": "Заперта"
+     }
+    },
+    {
+     "text": {
+      "style": "TEXT_STYLE_BODY",
+      "text": "Не открыл: для замков нужно слово активации."
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state",
+  "text"
+ ]
+}

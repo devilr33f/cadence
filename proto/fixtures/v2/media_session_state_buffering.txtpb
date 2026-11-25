@@ -1,0 +1,12 @@
+media_session_state {
+  session_id: "sess-v1"
+  source: MEDIA_SOURCE_VIDEO
+  state: PLAYBACK_STATE_BUFFERING
+  position_ms: 60000
+  position_at_ms: 1762600000000
+  duration_ms: 1440000
+  audio_route: AUDIO_ROUTE_DIRECT
+  playable: PLAYABLE_KIND_STREAM
+  buffered_ms: 1200
+  buffering_percent: 37
+}

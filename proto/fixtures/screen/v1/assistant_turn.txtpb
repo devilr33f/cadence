@@ -1,0 +1,1 @@
+assistant_turn { turn_id: "turn-4" revision: 1 trigger: TRIGGER_WAKE state: ASSISTANT_STATE_LISTENING mic_source { kind: MIC_SOURCE_KIND_SPEAKER device_id: "0f8fad5b-d9cb-469f-a165-70867728950e" } }

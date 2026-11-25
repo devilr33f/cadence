@@ -1,0 +1,144 @@
+{
+ "version": 1,
+ "id": "ha.group.living_lights",
+ "revision": 1,
+ "fallbackText": "Гостиная: 2 из 3 ламп включены",
+ "root": {
+  "card": {
+   "title": "Свет в гостиной",
+   "subtitle": "3 лампы",
+   "icon": "light",
+   "tone": "TONE_SUCCESS",
+   "children": [
+    {
+     "column": {
+      "gap": "GAP_S",
+      "children": [
+       {
+        "row": {
+         "gap": "GAP_M",
+         "children": [
+          {
+           "text": {
+            "style": "TEXT_STYLE_BODY",
+            "text": "Люстра"
+           }
+          },
+          {
+           "state": {
+            "kind": "STATE_KIND_ON",
+            "label": "Вкл."
+           }
+          },
+          {
+           "toggle": {
+            "label": "Люстра",
+            "on": true,
+            "action": {
+             "id": "a:g1"
+            }
+           }
+          },
+          {
+           "meter": {
+            "value": 80,
+            "min": 0,
+            "max": 100,
+            "label": "Яркость",
+            "valueLabel": "80 %"
+           }
+          }
+         ]
+        }
+       },
+       {
+        "row": {
+         "gap": "GAP_M",
+         "children": [
+          {
+           "text": {
+            "style": "TEXT_STYLE_BODY",
+            "text": "Торшер"
+           }
+          },
+          {
+           "state": {
+            "kind": "STATE_KIND_ON",
+            "label": "Вкл."
+           }
+          },
+          {
+           "toggle": {
+            "label": "Торшер",
+            "on": true,
+            "action": {
+             "id": "a:g2"
+            }
+           }
+          },
+          {
+           "meter": {
+            "value": 40,
+            "min": 0,
+            "max": 100,
+            "label": "Яркость",
+            "valueLabel": "40 %"
+           }
+          }
+         ]
+        }
+       },
+       {
+        "row": {
+         "gap": "GAP_M",
+         "children": [
+          {
+           "text": {
+            "style": "TEXT_STYLE_BODY",
+            "text": "Бра"
+           }
+          },
+          {
+           "state": {
+            "kind": "STATE_KIND_OFF",
+            "label": "Выкл."
+           }
+          },
+          {
+           "toggle": {
+            "label": "Бра",
+            "on": false,
+            "action": {
+             "id": "a:g3"
+            }
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "actions": [
+    {
+     "label": "Выключить все",
+     "icon": "power",
+     "action": {
+      "id": "a:g0"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "button",
+  "card",
+  "column",
+  "meter",
+  "row",
+  "state",
+  "text",
+  "toggle"
+ ]
+}

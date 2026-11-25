@@ -1,0 +1,13 @@
+# cadence-rpi's third-party notices
+
+cadenced's go licenses live in licenses/go. cadence-screen links SDL3, freetype, curl, GLES and libmpv dynamically;
+their Debian copyright files are installed with those runtime packages. RmlUi 6.3 is linked statically (MIT), and its
+notice is in licenses/rmlui. cadence-audiod links opus and speexdsp statically (their Debian copyright files are in
+licenses/) and uses libairplay (UxPlay's lib/, GPL-3.0-or-later), Apple's ALAC decoder and nanopb; their notices are
+included too. libairplay's OpenSSL, libplist and avahi-client stay dynamic and carry their own Debian notices.
+
+The visualizer links libprojectM 4 (LGPL-2.1-or-later) dynamically: lib/libprojectM-4.so.4, built unmodified but for
+the backport of upstream's projectm_opengl_render_frame_fbo (media/third_party/projectm in Cadence's repository holds
+the pins, the patch and the build script, so it can be rebuilt and replaced), with projectm-eval (MIT) built in; their
+notices are in licenses/projectm and licenses/projectm-eval. The milkdrop presets in share/viz/milkdrop come from
+projectM's cream-of-the-crop pack, which carries no explicit license (licenses/milkdrop-presets/LICENSE.md).

@@ -1,0 +1,1 @@
+rpc_request { id: "r-1" method: "catalog.search" json: "{\"query\":\"frieren\"}" subscribe: true }

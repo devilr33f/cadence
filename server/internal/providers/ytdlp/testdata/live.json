@@ -1,0 +1,6 @@
+{"id":"5qZQEq_C3vc","live_status":"is_live","formats":[
+{"format_id":"91","url":"https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1900000000/itag/91/index.m3u8","protocol":"m3u8_native","vcodec":"avc1.4d400c","acodec":"mp4a.40.5","ext":"mp4","height":144,"fps":30,"tbr":290},
+{"format_id":"95","url":"https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1900000000/itag/95/index.m3u8","protocol":"m3u8_native","vcodec":"avc1.4d401f","acodec":"mp4a.40.2","ext":"mp4","height":720,"fps":30,"tbr":2600},
+{"format_id":"96","url":"https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1900000000/itag/96/index.m3u8","protocol":"m3u8_native","vcodec":"avc1.640028","acodec":"mp4a.40.2","ext":"mp4","height":1080,"fps":30,"tbr":4600},
+{"format_id":"300","url":"https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1900000000/itag/300/index.m3u8","protocol":"m3u8_native","vcodec":"avc1.4d4020","acodec":"mp4a.40.2","ext":"mp4","height":720,"fps":60,"tbr":3000}
+]}

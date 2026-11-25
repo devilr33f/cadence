@@ -1,0 +1,5 @@
+# the image takes the dashboard's package and lockfile alone
+*
+!dashboard/package.json
+!dashboard/pnpm-lock.yaml
+!dashboard/pnpm-workspace.yaml

@@ -1,0 +1,61 @@
+{
+ "version": 1,
+ "id": "ha.cover.living_blinds",
+ "revision": 2,
+ "fallbackText": "Жалюзи в гостиной открыты на 40 %",
+ "root": {
+  "card": {
+   "title": "Жалюзи в гостиной",
+   "icon": "blinds",
+   "children": [
+    {
+     "state": {
+      "kind": "STATE_KIND_OPEN",
+      "label": "Открыты"
+     }
+    },
+    {
+     "meter": {
+      "value": 40,
+      "min": 0,
+      "max": 100,
+      "label": "Положение",
+      "valueLabel": "40 %"
+     }
+    },
+    {
+     "row": {
+      "gap": "GAP_M",
+      "children": [
+       {
+        "button": {
+         "label": "Открыть",
+         "icon": "arrow_up",
+         "action": {
+          "id": "a:b1"
+         }
+        }
+       },
+       {
+        "button": {
+         "label": "Закрыть",
+         "icon": "arrow_down",
+         "action": {
+          "id": "a:b2"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "button",
+  "card",
+  "meter",
+  "row",
+  "state"
+ ]
+}

@@ -1,0 +1,48 @@
+# the music flow's streaming cards: one card per tool call, replaced in place by its id as the call goes on, the
+# step's line its title. the search's line spins, then counts its results, which go left as tiles; the play's media
+# card loads, then plays, in the same place; a second play fails and its card says why.
+# `build/screen-sim/sim run screen/sim/examples/music-cards.txt` (fixtures: server/internal/cards' call_music_* goldens).
+# the covers are the sim's painted fakes at their real shapes (an artist photo 2.35:1, a 4:3 one, a tall one, square
+# albums): each shows square, cover-fit to its centre
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+hold BACK 800
+wait-for drawer
+send {"assistant_turn": {"turnId": "t-1", "state": "thinking", "transcript": "Включи музыку system of a down", "steps": [{"id": "c1", "label": "Ищу музыку «System of a Down»", "status": "running"}]}}
+wait 700
+screenshot sim-out/music-cards/01-search-running.png
+send {"assistant_turn": {"turnId": "t-1", "revision": 2, "state": "thinking", "transcript": "Включи музыку system of a down", "steps": [{"id": "c1", "label": "Ищу музыку · 4 результата", "status": "done", "cardId": "call-f416ae85905e2e7663"}], "cards": ["card_call_music_search_done.binpb"]}}
+wait 1200
+screenshot sim-out/music-cards/02-search-done.png
+send {"assistant_turn": {"turnId": "t-1", "revision": 3, "state": "thinking", "transcript": "Включи музыку system of a down", "steps": [{"id": "c1", "label": "Ищу музыку · 4 результата", "status": "done", "cardId": "call-f416ae85905e2e7663"}, {"id": "c2", "label": "Загружаю «Toxicity · System of a Down»", "status": "running", "cardId": "call-8ea034d7a2019e0595"}], "cards": ["card_call_music_search_done.binpb", "card_call_music_play_pending.binpb"]}}
+wait 900
+screenshot sim-out/music-cards/03-play-pending.png
+send {"assistant_turn": {"turnId": "t-1", "revision": 4, "state": "resting", "transcript": "Включи музыку system of a down", "steps": [{"id": "c1", "label": "Ищу музыку · 4 результата", "status": "done", "cardId": "call-f416ae85905e2e7663"}, {"id": "c2", "label": "Играет «Toxicity · System of a Down»", "status": "done", "cardId": "call-8ea034d7a2019e0595"}], "cards": ["card_call_music_search_done.binpb", "card_call_music_play_done.binpb"]}}
+wait 900
+screenshot sim-out/music-cards/04-play-done.png
+# the same play failing instead: its card's next revision says why, in the same place
+send {"assistant_turn": {"turnId": "t-1", "revision": 5, "state": "resting", "transcript": "Включи музыку system of a down", "steps": [{"id": "c1", "label": "Ищу музыку · 4 результата", "status": "done", "cardId": "call-f416ae85905e2e7663"}, {"id": "c2", "label": "Не включилось «Toxicity · System of a Down» · не воспроизводится", "status": "failed", "cardId": "call-8ea034d7a2019e0595"}], "cards": ["card_call_music_search_done.binpb", "card_call_music_play_failed.binpb"]}}
+wait 900
+screenshot sim-out/music-cards/05-play-failed.png
+# a playlist: what plays, its owner and track count, the song now and its cover
+send {"assistant_turn": {"turnId": "t-2", "state": "resting", "transcript": "Включи лучшее system of a down", "steps": [{"id": "c4", "label": "Играет «System of a Down: лучшее · YouTube Music»", "status": "done", "cardId": "call-b4babe1832c0a73aac"}], "cards": ["card_call_music_playlist_done.binpb"]}}
+wait 900
+screenshot sim-out/music-cards/06-playlist.png
+# a play that loads: its card shows the player's buffering (how full, how far ahead), then, as a live frame under the
+# drawer's lease, the next song its radio played, in the same place: title, artist, cover and length
+send {"assistant_turn": {"turnId": "t-3", "state": "thinking", "transcript": "Включи Toxicity", "steps": [{"id": "c5", "label": "Загружаю «Toxicity · System of a Down»", "status": "running", "cardId": "call-004943c2db48cb45cb"}], "cards": ["card_call_music_play_loading.binpb"]}}
+wait 700
+send {"assistant_turn": {"turnId": "t-3", "revision": 2, "state": "resting", "transcript": "Включи Toxicity", "steps": [{"id": "c5", "label": "Играет «Toxicity · System of a Down»", "status": "done", "cardId": "call-004943c2db48cb45cb"}], "cards": ["card_call_music_play_buffering.binpb"]}}
+wait 900
+screenshot sim-out/music-cards/07-buffering.png
+send {"cards": {"contextId": "live", "cards": ["card_call_music_play_next.binpb"]}}
+wait 900
+screenshot sim-out/music-cards/08-next-song.png
+# a chat card streams too: the volume's pending card from the call, then its level in the same place
+send {"assistant_turn": {"turnId": "t-4", "state": "thinking", "transcript": "Громкость 60", "steps": [{"id": "v1", "label": "Меняю громкость", "status": "running", "cardId": "call-a2c4dd01baa7d37828"}], "cards": ["card_call_volume_pending.binpb"]}}
+wait 700
+screenshot sim-out/music-cards/09-volume-pending.png
+send {"assistant_turn": {"turnId": "t-4", "revision": 2, "state": "resting", "transcript": "Громкость 60", "steps": [{"id": "v1", "label": "Громкость 60 %", "status": "done", "cardId": "call-a2c4dd01baa7d37828"}], "cards": ["card_call_volume_done.binpb"]}}
+wait 700
+screenshot sim-out/music-cards/10-volume-done.png
+quit

@@ -1,0 +1,29 @@
+# home with a provider that cannot browse (ytmusic: unsupported) and one whose feed is missing (torrplayer:
+# not_found): no row and no error for either, and neither asked again on the refreshes that coming back to home
+# runs (torrserver is). build/screen-sim/sim --fixtures screen/sim/examples/home-quiet run screen/sim/examples/home-quiet.txt
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+wait 2500
+screenshot sim-out/home-quiet-01-home.png
+rpc-calls catalog.browse#ytmusic
+rpc-calls catalog.browse#torrplayer
+rpc-calls catalog.browse#torrserver
+send {"route": {"route": "search", "query": "x"}}
+wait 800
+send {"route": {"route": "home"}}
+wait 1500
+send {"route": {"route": "search", "query": "y"}}
+wait 800
+send {"route": {"route": "home"}}
+wait 1500
+press DOWN
+wait 300
+press DOWN
+wait 300
+press DOWN
+wait 600
+screenshot sim-out/home-quiet-02-home-scrolled.png
+rpc-calls catalog.browse#ytmusic
+rpc-calls catalog.browse#torrplayer
+rpc-calls catalog.browse#torrserver
+quit

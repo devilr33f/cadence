@@ -1,0 +1,300 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Подключение к серверу Cadence",
+        "description": "Home Assistant видит все устройства этого сервера: добавленные, переименованные и удалённые там устройства сразу появятся и здесь.",
+        "data": {
+          "url": "Адрес сервера",
+          "token": "Токен API"
+        },
+        "data_description": {
+          "url": "Адрес сервера по https, например https://cadence.example.com.",
+          "token": "Токен со скоупом ha: cadence-server admin token create --name home-assistant --scope ha."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Новый токен для {server}",
+        "description": "Сервер не принял токен: его удалили. Создай новый со скоупом ha.",
+        "data": {
+          "token": "Токен API"
+        }
+      },
+      "reconfigure": {
+        "title": "Другой сервер Cadence",
+        "description": "Оставь токен пустым, чтобы не менять прежний, пока хост тот же.",
+        "data": {
+          "url": "Адрес сервера",
+          "token": "Токен API"
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "Введи адрес сервера по https, без логина, параметров и якоря.",
+      "invalid_auth": "Сервер не принял токен.",
+      "insufficient_scope": "У токена нет скоупа ha.",
+      "token_too_broad": "Этот токен может больше, чем нужно Home Assistant: создай токен только со скоупом ha.",
+      "token_required": "Введи токен ещё раз: сохранённый никогда не уходит на другой хост.",
+      "cannot_connect": "Сервер недоступен или его сертификату нет доверия.",
+      "unknown": "Сервер ответил что-то неожиданное."
+    },
+    "abort": {
+      "already_configured": "Этот сервер уже подключён.",
+      "reauth_successful": "Новый токен работает.",
+      "reconfigure_successful": "Настройки сервера сохранены."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "online": {
+        "name": "В сети"
+      },
+      "ringing": {
+        "name": "Звонит"
+      }
+    },
+    "sensor": {
+      "cpu": {
+        "name": "Загрузка процессора"
+      },
+      "memory": {
+        "name": "Занятая память"
+      },
+      "disk": {
+        "name": "Занятое место на диске"
+      },
+      "temperature": {
+        "name": "Температура"
+      },
+      "next_alarm": {
+        "name": "Следующий будильник"
+      },
+      "next_timer": {
+        "name": "Ближайший таймер"
+      },
+      "next_reminder": {
+        "name": "Ближайшее напоминание"
+      }
+    },
+    "button": {
+      "stop_ring": {
+        "name": "Остановить звонок"
+      },
+      "snooze": {
+        "name": "Отложить"
+      }
+    },
+    "event": {
+      "alarm": {
+        "name": "Будильник",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ring_started": "Звонок начался",
+              "stopped": "Остановлен",
+              "snoozed": "Отложен",
+              "missed": "Пропущен"
+            }
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "say": {
+      "name": "Сказать",
+      "description": "Произносит текст на колонках Cadence синтезом речи сервера.",
+      "fields": {
+        "device_id": {
+          "name": "Колонки",
+          "description": "Устройства Cadence, которые скажут текст."
+        },
+        "entity_id": {
+          "name": "Медиаплееры",
+          "description": "Или их медиаплееры."
+        },
+        "text": {
+          "name": "Текст",
+          "description": "Что сказать, от 1 до 500 символов."
+        },
+        "language": {
+          "name": "Язык",
+          "description": "На каком языке говорить; без него — на языке сервера по умолчанию."
+        }
+      }
+    },
+    "set_timer": {
+      "name": "Поставить таймер",
+      "description": "Запускает таймер на колонках Cadence. Будильники из Home Assistant не ставятся.",
+      "fields": {
+        "device_id": {
+          "name": "Колонки",
+          "description": "Устройства Cadence, на которых прозвенит таймер."
+        },
+        "duration": {
+          "name": "Длительность",
+          "description": "Сколько, от 1 секунды до 24 часов."
+        }
+      }
+    },
+    "set_reminder": {
+      "name": "Поставить напоминание",
+      "description": "Ставит напоминание на колонках Cadence: когда оно сработает, колонка скажет его текст. Укажите время (с датой или днями) или число минут.",
+      "fields": {
+        "device_id": {
+          "name": "Колонки",
+          "description": "Устройства Cadence, на которых сработает напоминание."
+        },
+        "text": {
+          "name": "Текст",
+          "description": "Что сказать, когда напоминание сработает, до 500 символов."
+        },
+        "time": {
+          "name": "Время",
+          "description": "Когда сработает; без даты и дней — в ближайшее такое время."
+        },
+        "date": {
+          "name": "Дата",
+          "description": "День, когда оно сработает один раз."
+        },
+        "days": {
+          "name": "Дни",
+          "description": "Дни недели, по которым оно срабатывает каждую неделю."
+        },
+        "in_minutes": {
+          "name": "Через минут",
+          "description": "Или сработает один раз через столько минут, вместо времени."
+        }
+      }
+    }
+  },
+  "selector": {
+    "language": {
+      "options": {
+        "en": "Английский",
+        "ru": "Русский"
+      }
+    },
+    "day": {
+      "options": {
+        "mon": "Понедельник",
+        "tue": "Вторник",
+        "wed": "Среда",
+        "thu": "Четверг",
+        "fri": "Пятница",
+        "sat": "Суббота",
+        "sun": "Воскресенье"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_auth": {
+      "message": "Сервер Cadence не принял токен."
+    },
+    "cannot_connect": {
+      "message": "Сервер Cadence недоступен ({code})."
+    },
+    "no_target": {
+      "message": "Выбери колонку Cadence или её медиаплеер."
+    },
+    "unknown_target": {
+      "message": "{target} — не колонка Cadence, которую знает этот сервер."
+    },
+    "not_loaded": {
+      "message": "Сервер Cadence для {target} сейчас не подключён."
+    },
+    "enqueue_unsupported": {
+      "message": "У колонки Cadence нет очереди: она включает медиа только сразу."
+    },
+    "media_unsupported": {
+      "message": "Колонка Cadence играет только адреса http и https длиной до 2047 символов."
+    },
+    "device_offline": {
+      "message": "Колонка «{target}» не в сети."
+    },
+    "busy": {
+      "message": "Колонка «{target}» сейчас занята."
+    },
+    "forbidden": {
+      "message": "Этому токену нельзя управлять колонкой «{target}»."
+    },
+    "not_found": {
+      "message": "На сервере больше нет колонки «{target}»."
+    },
+    "command_failed": {
+      "message": "Колонка «{target}» отказалась ({detail})."
+    },
+    "invalid_arguments": {
+      "message": "Колонка «{target}» не приняла значения команды."
+    },
+    "timeout": {
+      "message": "Колонка «{target}» не ответила вовремя."
+    },
+    "unknown_capability": {
+      "message": "Колонка «{target}» так не умеет."
+    },
+    "unknown_command": {
+      "message": "Колонка «{target}» так не умеет."
+    },
+    "no_audio": {
+      "message": "У колонки «{target}» нет звукового выхода."
+    },
+    "tts_unconfigured": {
+      "message": "На сервере Cadence не настроен синтез речи, так что колонке «{target}» нечем говорить."
+    },
+    "superseded": {
+      "message": "На колонке «{target}» его заменила более новая сессия или объявление."
+    },
+    "tts_failed": {
+      "message": "Синтез речи для колонки «{target}» не удался."
+    },
+    "tts_timeout": {
+      "message": "Синтез речи для колонки «{target}» занял слишком много времени."
+    },
+    "announce_invalid": {
+      "message": "Сервер не принял текст или его язык для колонки «{target}»."
+    },
+    "request_failed": {
+      "message": "Сервер Cadence отказал для колонки «{target}» ({code})."
+    },
+    "no_catalog": {
+      "message": "У {target} нет экрана, чтобы смотреть каталог."
+    },
+    "no_catalog_session": {
+      "message": "На {target} сейчас не играет ничего из каталога."
+    },
+    "not_a_group_member": {
+      "message": "{entity} не колонка Cadence того же сервера, что и {target}, и не может войти в её группу."
+    },
+    "stereo_pair": {
+      "message": "{target} в стереопаре: к паре нельзя добавить другую колонку."
+    },
+    "unknown_device": {
+      "message": "Колонка для группы с {target} неизвестна серверу."
+    },
+    "invalid_choice": {
+      "message": "У играющего на {target} названия нет такого выбора."
+    },
+    "unknown_ref": {
+      "message": "Этого предмета больше нет в каталоге."
+    },
+    "unplayable": {
+      "message": "Ни один источник каталога не может воспроизвести это."
+    },
+    "sign_in_required": {
+      "message": "Источнику каталога нужен повторный вход."
+    },
+    "unavailable": {
+      "message": "Источник каталога не ответил для {target}."
+    },
+    "timer_duration": {
+      "message": "Таймер Cadence идёт целыми секундами, от 1 секунды до 24 часов."
+    },
+    "reminder_when": {
+      "message": "Укажите для напоминания либо время (с датой или днями, но не с тем и другим), либо число минут."
+    },
+    "reminders_unsupported": {
+      "message": "{target} не умеет ставить напоминания."
+    }
+  }
+}

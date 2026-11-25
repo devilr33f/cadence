@@ -1,0 +1,41 @@
+{
+ "version": 1,
+ "id": "screen-state-2304b1b298c70ea3b6",
+ "revision": 1,
+ "fallbackText": "Экран · Тьма · title",
+ "root": {
+  "card": {
+   "title": "Экран",
+   "subtitle": "Тьма",
+   "icon": "tv",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "title",
+      "kind": "STATE_KIND_UNKNOWN"
+     }
+    },
+    {
+     "keyvalue": {
+      "items": [
+       {
+        "key": "Страница",
+        "value": "Тьма"
+       },
+       {
+        "key": "Играет",
+        "value": "Секреты · 10:40"
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "keyvalue",
+  "state"
+ ]
+}

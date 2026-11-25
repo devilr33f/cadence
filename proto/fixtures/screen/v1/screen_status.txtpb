@@ -1,0 +1,1 @@
+screen_status { power: SCREEN_POWER_ON route: SCREEN_ROUTE_PLAYER drawer_open: false display { width: 1920 height: 1080 refresh_mhz: 59940 } }

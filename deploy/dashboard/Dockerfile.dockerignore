@@ -1,0 +1,10 @@
+# the image takes dashboard/ alone, without what installs, builds and the e2e make, nor the tests
+*
+!dashboard
+dashboard/node_modules
+dashboard/dist
+dashboard/.tanstack
+dashboard/design-preview
+dashboard/e2e
+dashboard/**/*.test.ts
+dashboard/**/*.test.tsx

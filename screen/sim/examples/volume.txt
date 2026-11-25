@@ -1,0 +1,47 @@
+# the volume overlay: the remote's volume keys reach the fake cadenced, which steps its level by 5 and sends the level
+# in force back (VolumeState), as cadenced does after applying it; android's own moves come the same way
+start --headless --lang ru --size 1280x720
+wait-for route:home
+# the fake's approved claim opens the enroll page a moment after boot; home again, as cadenced's route would
+wait 2000
+send {"route": {"route": "home"}}
+wait-for route:home
+wait 800
+focus
+screenshot sim-out/volume-00-home.png
+
+press VOLUME_UP
+wait 60
+screenshot sim-out/volume-01-entering.png
+wait 400
+screenshot sim-out/volume-02-up-35.png
+press VOLUME_UP
+press VOLUME_UP
+wait 400
+screenshot sim-out/volume-03-up-45.png
+# focus never moved
+focus
+
+press VOLUME_MUTE
+wait 400
+screenshot sim-out/volume-04-muted.png
+press VOLUME_MUTE
+
+# a level from elsewhere (voice, the dashboard, an airplay sender, android's own keys)
+send {"volume_state": {"level": 80, "muted": false, "show": true}}
+wait 400
+screenshot sim-out/volume-05-remote-80.png
+
+# over the player
+send {"route": {"route": "title", "ref": "ref-tg-1"}}
+wait-for route:title
+wait 800
+press VOLUME_DOWN
+wait 400
+screenshot sim-out/volume-06-title-down.png
+
+# 2 s after the last change it has faded away
+wait 2400
+screenshot sim-out/volume-07-hidden.png
+focus
+quit

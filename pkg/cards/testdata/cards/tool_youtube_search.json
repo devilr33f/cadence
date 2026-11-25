@@ -1,0 +1,84 @@
+{
+ "version": 1,
+ "id": "youtube-f1c503620c7ab5f846",
+ "revision": 1,
+ "fallbackText": "Результаты поиска: 3",
+ "root": {
+  "card": {
+   "title": "Нашлось на YouTube",
+   "icon": "film",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "column": {
+      "children": [
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "Купли Барамидзе",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "@kuplinov",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       },
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "YT Probably Stolen 9",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "Купли Барамидзе · 46:00",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       },
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "Прямой эфир сейчас",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "Купли Барамидзе · Прямой эфир",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       }
+      ],
+      "gap": "GAP_M"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "column",
+  "text"
+ ]
+}

@@ -1,0 +1,1132 @@
+/* playback and lean-back (design r2 sections 12-15, 19, 25): the video osd, audio mode, the side sheets (panels,
+   the queue, the voiceover switcher) and ambient. a template: tokens-gen expands every $token; a literal colour
+   fails the build. stream i2's routes (screen/app/routes) build the markup */
+
+/* ---------- the video osd (section 12): three rows in the lower 45 % over one bottom scrim ---------- */
+.osd {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  transform: translateY(0dp);
+  transition: opacity $motion.glide, transform $motion.glide;
+}
+.osd.off {
+  visibility: hidden;
+}
+.osd.gone {
+  opacity: 0;
+  transform: translateY(24dp);
+  transition: opacity $motion.sheet-exit, transform $motion.sheet-exit;
+}
+.osd-top {
+  position: absolute;
+  left: $size.safe-x;
+  right: $size.safe-x;
+  top: $size.safe-y;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.osd-top .badges {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s3;
+}
+.osd-top .meta {
+  $type.body;
+  color: $color.paper-2;
+  margin-top: $space.s2;
+}
+.osd-top .when {
+  text-align: right;
+}
+.osd-top .now {
+  $type.figures-l;
+  color: $color.paper;
+}
+.osd-top .ends {
+  $type.body;
+  color: $color.paper-2;
+}
+/* the rows sit on fixed lines (title 640, scrubber 808, transport 848-952, details 996): the focused transport's
+   word (12 dp under its 104 dp circle) ends above the details strip, which straddles the safe line (y 1026) until
+   focus moves to it, when they all lift 72 dp */
+.osd-body {
+  position: absolute;
+  left: $size.safe-x;
+  right: $size.safe-x;
+  top: 640dp;
+  height: 440dp;
+  transform: translateY(0dp);
+  transition: transform $motion.glide;
+}
+.osd-body.lifted {
+  transform: translateY(-72dp);
+}
+.osd-title {
+  $type.title-l;
+  margin-right: 520dp;
+  color: $color.paper;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.osd-sub {
+  $type.body;
+  color: $color.paper-2;
+  margin-top: $space.s1;
+  margin-right: 520dp;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* the osd's slot for a segment's action (skip the opening, the ending): the title's lines leave it 520 dp */
+.osd-slot {
+  position: absolute;
+  right: 0;
+  top: 56dp;
+  height: $size.button-h;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $space.s4;
+}
+.osd-row-a {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 144dp;
+}
+.osd-row-b {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 208dp;
+  height: 104dp;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s5;
+}
+.osd-row-b .chips {
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+}
+.osd-row-c {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 356dp;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+  opacity: 0.8;
+  transition: opacity $motion.glide;
+}
+.lifted .osd-row-c {
+  opacity: 1;
+}
+/* rmlui inherits opacity: a child that sets its own would show through a hidden osd */
+.osd.gone .osd-row-c {
+  opacity: 0;
+}
+/* contrast over a bright picture: the osd's scrim is taller and darker under the rows than the shared bottom one,
+   the pills and the transport's circles sit on a dark fill of their own, and the words carry a shadow; all of it
+   static (no blur layer), so the stick pays nothing per frame */
+.osd .scrim-bottom {
+  height: 62%;
+  decorator: $scrim.osd;
+}
+.osd .chip {
+  background-color: $scrim.control;
+  border-color: $color.hairline;
+}
+.osd .chip:focus {
+  background-color: $color.ember;
+  border-color: $color.ember;
+}
+.osd .ibtn {
+  background-color: $scrim.control;
+}
+.osd .ibtn:focus {
+  background-color: $color.paper;
+}
+.osd .ibtn .word, .osd-title, .osd-sub, .scrub .times, .scrub .chapter {
+  font-effect: shadow(0dp 2dp $scrim.control);
+}
+.osd-sub {
+  color: $color.paper;
+}
+/* play held by the gate: the word shows unfocused too, and the circle is quiet */
+.osd .ibtn.gated .word {
+  opacity: 1;
+  white-space: nowrap;
+  color: $color.paper-2;
+}
+.osd .ibtn.gated:focus .word {
+  color: $color.paper;
+}
+
+/* the scrubber as the osd draws it: a focusable track, chapters as 4 dp gaps, the chapter's name over the thumb */
+.scrub {
+  position: relative;
+  height: 56dp;
+}
+.scrub .bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 24dp;
+  height: $size.slider-h;
+  border-radius: 4dp;
+  background-color: $color.line;
+}
+.scrub .buffered {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 4dp;
+  background-color: $color.paper-30;
+}
+.scrub .played {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 4dp;
+  background-color: $color.paper;
+}
+.scrub:focus .played {
+  background-color: $color.ember;
+}
+.scrub .gapmark {
+  position: absolute;
+  top: -2dp;
+  bottom: -2dp;
+  width: 4dp;
+  background-color: $color.ink;
+}
+.scrub .thumb {
+  position: absolute;
+  top: 16dp;
+  width: $size.thumb;
+  height: $size.thumb;
+  margin-left: -12dp;
+  border-radius: 12dp;
+  background-color: $color.paper;
+  opacity: 0;
+}
+.scrub:focus .thumb {
+  opacity: 1;
+  background-color: $color.ember;
+}
+.scrub .chapter {
+  position: absolute;
+  top: -36dp;
+  width: 480dp;
+  margin-left: -240dp;
+  text-align: center;
+  $type.label;
+  color: $color.paper;
+  white-space: nowrap;
+}
+.scrub .times {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 40dp;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  $type.figures;
+  color: $color.paper-2;
+}
+
+/* the compact bar: ← → with the osd hidden, scrubber and times only, 120 dp tall */
+.compact {
+  position: absolute;
+  left: $size.safe-x;
+  right: $size.safe-x;
+  bottom: $size.safe-y;
+  height: 120dp;
+  opacity: 1;
+  transition: opacity $motion.quick;
+}
+.compact.gone {
+  opacity: 0;
+}
+
+/* subtitles drawn by the screen (mediacodec_embed draws none): bottom edge at y 960 with the osd hidden, above the
+   title block (y 600) while it shows; per-line ink box, sizes s m l */
+.subs {
+  position: absolute;
+  left: 240dp;
+  width: 1440dp;
+  bottom: 120dp;
+  text-align: center;
+}
+.subs.raised {
+  bottom: 480dp;
+}
+.subs span {
+  $type.subtitle;
+  background-color: $scrim.subtitle;
+  padding: 0 $space.s3;
+}
+.subs.size-s span {
+  font-size: 36dp;
+  line-height: 50dp;
+}
+.subs.size-l span {
+  font-size: 56dp;
+  line-height: 74dp;
+}
+
+/* the skip pill: bottom-right in title-safe, focusable with the osd hidden, a thin line shrinking over the segment */
+/* the skip pill: floating bottom-right above the compact bar while the osd is hidden; in the osd's slot (.inslot,
+   right-aligned above the scrubber) while it shows, so it never sits over a control */
+.skip {
+  position: absolute;
+  right: $size.safe-x;
+  bottom: 200dp;
+  height: 64dp;
+  padding: 0 $space.s6;
+  border-radius: 32dp;
+  background-color: $color.sheet;
+  $type.label;
+  line-height: 64dp;
+  color: $color.paper;
+  overflow: hidden;
+}
+.skip.inslot {
+  position: relative;
+  right: auto;
+  bottom: auto;
+}
+.skip:focus {
+  background-color: $color.paper;
+  color: $color.ink;
+}
+.skip .left {
+  position: absolute;
+  left: 24dp;
+  right: 24dp;
+  bottom: 8dp;
+  height: 2dp;
+  background-color: $color.ember;
+  transform-origin: 0% 50%;
+}
+
+/* up next: bottom-right, art, title, «Далее через 10» with a shrinking cadence line */
+.upnext {
+  position: absolute;
+  right: $size.safe-x;
+  bottom: 120dp;
+  width: 640dp;
+  padding: $space.s5;
+  border-radius: $radius.l;
+  background-color: $color.sheet;
+  display: flex;
+  flex-direction: column;
+  gap: $space.s3;
+}
+.upnext .uhead {
+  display: flex;
+  flex-direction: row;
+  gap: $space.s5;
+  align-items: center;
+}
+.upnext .uart {
+  width: 192dp;
+  height: 108dp;
+  border-radius: $radius.s;
+  background-color: $color.line;
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+.upnext .utext {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.upnext .utitle {
+  $type.title-s;
+  color: $color.paper;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.upnext .umeta {
+  $type.body;
+  color: $color.paper-2;
+  margin-top: $space.s1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.upnext .uline {
+  height: 4dp;
+  border-radius: 2dp;
+  background-color: $color.ember;
+  transform-origin: 0% 50%;
+}
+.upnext .ubuttons {
+  display: flex;
+  flex-direction: row;
+  gap: $space.s4;
+}
+.similar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $scrim.sheet;
+}
+.similar .srow {
+  position: absolute;
+  left: $size.safe-x;
+  right: $size.safe-x;
+  top: 560dp;
+}
+
+/* buffering after 1 s: a 48 dp spinner centred and its percentage; the error's state block */
+.buffering {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 500dp;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space.s4;
+  $type.body;
+  color: $color.paper;
+}
+.failure {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $scrim.sheet;
+}
+/* the state block and its buttons as one centred column (design §12: the state block centred on scrim-sheet) */
+.failure .fbody {
+  position: absolute;
+  left: $size.safe-x;
+  right: $size.safe-x;
+  top: 340dp;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ---------- the right side sheet (sections 14, 15, 18.6): 720 dp, opaque, the film unscrimmed on the left ---------- */
+.side {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 720dp;
+  padding: $size.safe-y 40dp 0 40dp;
+  background-color: $color.sheet;
+  border-top-left-radius: $radius.l;
+  border-bottom-left-radius: $radius.l;
+  opacity: 1;
+  transform: translateX(0dp);
+  transition: opacity $motion.sheet, transform $motion.sheet;
+  overflow: hidden;
+}
+.side.entering {
+  opacity: 0;
+  transform: translateX(48dp);
+  transition: none;
+}
+.side .shead {
+  $type.title-l;
+  color: $color.paper;
+}
+.side .shint {
+  $type.body;
+  color: $color.paper-2;
+  margin-bottom: $space.s5;
+}
+.side .sbody {
+  position: relative;
+  width: 640dp;
+}
+/* a panel's cards at the sheet's 640 dp content width (design §14), not the drawer's or a page's */
+.side .ccard, .side .ccard.panel {
+  width: 640dp;
+  box-sizing: border-box;
+}
+.side .sgroup {
+  $type.label;
+  color: $color.paper-2;
+  margin: $space.s5 0 $space.s3 0;
+}
+/* a sheet's rows grow with their text, so the shared ring (absolute, sized before an auto height is known) would
+   clip to a bar at the top: the row's own border is its ring instead, there at rest in the row's colour, so focus
+   moves nothing (no lift, no reflow), only the colours ease */
+.side .item {
+  margin-bottom: $space.s3;
+  height: auto;
+  min-height: $size.list-item-h;
+  padding-top: $space.s3;
+  padding-bottom: $space.s3;
+  box-sizing: border-box;
+  border: $size.ring $color.ink-raised;
+  transform: none;
+  transition: background-color $motion.focus, border-color $motion.focus;
+}
+.side .item:focus {
+  transform: none;
+  border-color: $color.ember;
+  background-color: $color.line;
+}
+.side .item.pressed {
+  transform: none;
+  background-color: $color.ink-raised;
+}
+.side .item > .ring, .side .item > .glow {
+  display: none;
+}
+.side .item:focus .lead.icon {
+  color: $color.paper;
+}
+/* every row the same height, one line of text or two, and art that has not come yet a quiet tile, not a hole */
+.side .item .texts {
+  min-height: $size.list-art;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.side .item .lead {
+  background-color: $color.line;
+}
+.side .item .lead.icon {
+  background-color: $color.transparent;
+}
+.side .item.now {
+  height: 128dp;
+}
+.side .item.history .ititle {
+  color: $color.paper-2;
+}
+.side .item .num {
+  $type.figures;
+  color: $color.paper-2;
+  width: 40dp;
+}
+.side .eqbars {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 4dp;
+  height: 30dp;
+}
+.side .eqbars div {
+  width: 6dp;
+  border-radius: 2dp;
+  background-color: $color.ember;
+}
+.side .choice-note {
+  $type.label;
+  color: $color.ember;
+}
+
+/* ---------- audio mode (section 13) ---------- */
+.audio {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+.audio .aart {
+  position: absolute;
+  left: 96dp;
+  top: 200dp;
+  width: 600dp;
+  height: 600dp;
+  border-radius: $radius.m;
+  overflow: hidden;
+  transition: transform $motion.level, left $motion.level;
+}
+.audio .aart .aimg, .upnext .uart .uimg {
+  width: 100%;
+  height: 100%;
+}
+/* the cover is rounded at decode to the art's own radius: no overflow, so no clip mask a frame */
+.audio .aart .aimg {
+  border-radius: $radius.m;
+}
+.audio .aart.pre {
+  overflow: visible;
+}
+.audio .aart .letter {
+  font-family: $font.display;
+  font-weight: 700;
+  font-size: 240dp;
+  line-height: 600dp;
+  text-align: center;
+  color: $color.paper;
+  opacity: 0.8;
+}
+.audio .acol {
+  position: absolute;
+  left: 792dp;
+  right: 96dp;
+  top: 214dp;
+}
+/* the source chip, then where a cast plays and from which device */
+.audio .asource {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s3;
+  margin-bottom: $space.s6;
+}
+.audio .asource .anote {
+  margin-top: 0;
+}
+.audio .acontext {
+  height: $size.badge-h;
+  padding: 0 $space.s4;
+  border-radius: $radius.s;
+  background-color: $scrim.control;
+  color: $color.paper;
+  $type.badge;
+  line-height: 40dp;
+  white-space: nowrap;
+  max-width: 640dp;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.audio .atitle {
+  $type.display;
+  color: $color.paper;
+  max-height: 160dp;
+  overflow: hidden;
+}
+/* the explicit mark sits after the title, on its last line, as tall as the title's x-height */
+.audio .atitle .badge.explicit {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: $space.s4;
+  width: 44dp;
+  height: 44dp;
+  border-radius: $radius.s;
+  font-size: 26dp;
+  line-height: 44dp;
+}
+.audio .aartist {
+  $type.title-m;
+  color: $color.paper;
+  margin-top: $space.s3;
+}
+.audio .aalbum {
+  $type.body;
+  color: $color.paper-2;
+}
+.audio .anote {
+  $type.body;
+  color: $color.paper-2;
+  margin-top: $space.s2;
+}
+/* up next shares the provider badge's height, radius and colours; a long title truncates inside it */
+.audio .anext {
+  margin-top: $space.s2;
+  max-width: 100%;
+}
+.audio .anext > span:last-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.audio .aprogress {
+  position: absolute;
+  left: 792dp;
+  right: 96dp;
+  top: 680dp;
+}
+.audio .atimes {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  $type.figures;
+  color: $color.paper-2;
+  margin-top: $space.s2;
+}
+/* the player's cache while a song loads: how full, how far ahead, how fast */
+.audio .abuffer {
+  $type.body;
+  color: $color.paper-2;
+  margin-top: $space.s2;
+}
+/* one full-width overlay row: lean-back fades and lifts it, without changing any other element's geometry */
+.audio .acontrols {
+  position: absolute;
+  left: 96dp;
+  right: 96dp;
+  top: 852dp;
+  min-height: $size.icon-button-l;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space.s4 $space.s5;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0dp);
+  /* visibility rides the fade, so the row eases out as it eases in rather than vanishing at once */
+  transition: opacity $motion.enter, transform $motion.enter, visibility $motion.enter;
+}
+/* each button rises into place a beat after the one before it, overshooting a little; they sink back together */
+.audio .acontrols > * {
+  opacity: 1;
+  transform: translateY(0dp) scale(1);
+  transition: opacity 0.24s cubic-out, transform 0.42s back-out;
+}
+.audio .acontrols > *:nth-child(2) { transition: opacity 0.24s 0.03s cubic-out, transform 0.42s 0.03s back-out; }
+.audio .acontrols > *:nth-child(3) { transition: opacity 0.24s 0.06s cubic-out, transform 0.42s 0.06s back-out; }
+.audio .acontrols > *:nth-child(4) { transition: opacity 0.24s 0.09s cubic-out, transform 0.42s 0.09s back-out; }
+.audio .acontrols > *:nth-child(5) { transition: opacity 0.24s 0.12s cubic-out, transform 0.42s 0.12s back-out; }
+.audio .acontrols > *:nth-child(6) { transition: opacity 0.24s 0.15s cubic-out, transform 0.42s 0.15s back-out; }
+.audio .acontrols > *:nth-child(7) { transition: opacity 0.24s 0.18s cubic-out, transform 0.42s 0.18s back-out; }
+.audio .acontrols > *:nth-child(8) { transition: opacity 0.24s 0.21s cubic-out, transform 0.42s 0.21s back-out; }
+.audio .acontrols > *:nth-child(9) { transition: opacity 0.24s 0.24s cubic-out, transform 0.42s 0.24s back-out; }
+.audio.lean .acontrols > * {
+  opacity: 0;
+  transform: translateY(28dp) scale(0.86);
+  transition: opacity 0.16s cubic-in, transform 0.2s cubic-in;
+}
+.audio .acontrols .chip {
+  max-width: 360dp;
+}
+.audio .acontrols .chip > span:last-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.audio.lean .acontrols {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12dp);
+  transition: opacity $motion.quick-exit, transform $motion.quick-exit, visibility $motion.quick-exit;
+}
+/* the drive scenes: the song's title, artist and album inside the shape they draw in the middle; the sleeve's own
+   cover and text fade out while lean and back with the controls */
+.audio .group, .audio .aprogress {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity $motion.enter, visibility $motion.enter;
+}
+.audio.drive.lean .group, .audio.drive.lean .aprogress {
+  opacity: 0;
+  visibility: hidden;
+}
+.audio .adrive {
+  position: absolute;
+  left: 770dp;
+  width: 380dp;
+  top: 520dp;
+  text-align: center;
+  transform-origin: 50% 30%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity $motion.level, visibility $motion.level;
+}
+.audio.drive.lean .adrive {
+  opacity: 1;
+  visibility: visible;
+}
+.audio .adrive .dtitle {
+  font-family: $font.display;
+  font-weight: 700;
+  font-size: 42dp;
+  line-height: 48dp;
+  max-height: 96dp;
+  overflow: hidden;
+  color: $color.paper;
+  font-effect: shadow(0dp 2dp $scrim.control);
+}
+.audio .adrive .dartist {
+  $type.title-s;
+  color: $color.paper;
+  margin-top: $space.s2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-effect: shadow(0dp 2dp $scrim.control);
+}
+.audio .adrive .dalbum {
+  $type.body;
+  color: $color.paper-2;
+  margin-top: $space.s1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* the music queue is a second column only once media.queue answered; a single url and a cast keep the geometry above */
+.audio.queued .aart {
+  left: 64dp;
+  top: 220dp;
+  width: 480dp;
+  height: 480dp;
+}
+.audio.queued .aart .letter {
+  font-size: 190dp;
+  line-height: 480dp;
+}
+.audio.queued .acol {
+  left: 600dp;
+  right: 560dp;
+  top: 230dp;
+}
+.audio.queued .aprogress {
+  left: 600dp;
+  right: 560dp;
+}
+.audio.queued .acontrols {
+  right: 560dp;
+}
+.aqueue {
+  position: absolute;
+  right: 64dp;
+  top: 140dp;
+  bottom: 140dp;
+  width: 440dp;
+  border-radius: $radius.m;
+  background-color: $scrim.control;
+  overflow: hidden;
+}
+.aqhead {
+  position: absolute;
+  left: 16dp;
+  right: 16dp;
+  top: 16dp;
+  height: 72dp;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+}
+.aqcover {
+  width: 72dp;
+  height: 72dp;
+  border-radius: $radius.s;
+  flex: 0 0 auto;
+}
+.aqcover.placeholder {
+  background-color: $color.line;
+  text-align: center;
+}
+.aqcover.placeholder .icon {
+  font-size: 36dp;
+  line-height: 72dp;
+  color: $color.paper-2;
+}
+.aqheading {
+  flex: 1 1 0;
+  overflow: hidden;
+}
+.aqtitle {
+  $type.title-s;
+  color: $color.paper;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.aqcount {
+  $type.label;
+  color: $color.paper-2;
+  white-space: nowrap;
+}
+.aqview {
+  position: absolute;
+  left: 12dp;
+  right: 12dp;
+  top: 108dp;
+  bottom: 12dp;
+  overflow: hidden;
+}
+.aqlist {
+  display: flex;
+  flex-direction: column;
+  gap: $space.s2;
+}
+.aqueue .item {
+  height: 84dp;
+  min-height: 84dp;
+  padding: 0 12dp;
+  gap: $space.s3;
+  background-color: $color.transparent;
+}
+.aqueue .item.current {
+  background-color: $color.line;
+}
+.aqueue .item.current .ititle {
+  color: $color.ember;
+}
+.aqueue .item:focus {
+  transform: none;
+  background-color: $color.line;
+}
+.aqueue .item > .ring {
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: $radius.m;
+}
+.aqueue .item > .glow {
+  display: none;
+}
+.aqueue .item .lead {
+  width: 56dp;
+  height: 56dp;
+}
+.aqueue .item .lead.icon {
+  font-size: 32dp;
+  line-height: 56dp;
+}
+.aqueue .item .ititle {
+  font-size: 26dp;
+  line-height: 32dp;
+}
+.aqueue .item .imeta {
+  font-size: 22dp;
+  line-height: 28dp;
+}
+.aqueue .item .trail {
+  font-size: 22dp;
+}
+.audio.ambient .aqueue {
+  display: none;
+}
+/* a panel or the queue open over audio mode: the art column slides 200 dp left */
+.audio.sheeted .aart {
+  transform: translateX(-200dp);
+}
+/* the visualizer is the page's background; the cover and text remain in the layer above it */
+/* ambient after 2 min: one ink 40 % layer, the group drifting in a 160 x 90 box, a clock */
+.audio .adim {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $scrim.duck;
+  display: none;
+}
+.audio.ambient .adim {
+  display: block;
+}
+.audio.ambient .acontrols, .audio.ambient .aprogress, .audio.ambient .asource,
+.audio.ambient .aalbum, .audio.ambient .anote, .audio.ambient .anext {
+  display: none;
+}
+.audio.ambient .group {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+.audio.ambient .aart {
+  left: 480dp;
+  top: 340dp;
+  width: 400dp;
+  height: 400dp;
+}
+.audio.ambient .aart .letter {
+  font-size: 180dp;
+  line-height: 400dp;
+}
+.audio.ambient .acol {
+  left: 920dp;
+  top: 420dp;
+}
+.audio.ambient .atitle {
+  $type.title-l;
+}
+.audio .aclock {
+  position: absolute;
+  right: 96dp;
+  top: 54dp;
+  $type.figures-l;
+  color: $color.paper-2;
+  display: none;
+}
+.audio.ambient .aclock, .audio.clocked .aclock {
+  display: block;
+}
+/* the cover blurred over the sleeve's gradient, faint: its colours tint the page, the ink below the fold stays */
+.audio .ablur {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.2;
+}
+.audio .ablur .ablurimg {
+  width: 100%;
+  height: 100%;
+}
+.audio.viz .ablur {
+  display: none;
+}
+/* the controls' header: the wordmark over the art's edge, the clock on the right */
+.audio .awordmark {
+  position: absolute;
+  left: 96dp;
+  top: 58dp;
+  font-family: $font.display;
+  font-weight: 700;
+  font-size: 34dp;
+  line-height: 40dp;
+  letter-spacing: -0.5dp;
+  color: $color.paper;
+}
+.audio.lean .awordmark {
+  display: none;
+}
+
+/* ---------- ambient and idle (plan item 15): the overlay drifts 8 dp a minute ---------- */
+.amb {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+.amb .shade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 360dp;
+  decorator: $scrim.bottom;
+}
+/* the drift moves it ±80 x ±45 dp: these keep it inside title-safe at either end */
+.amb .over {
+  position: absolute;
+  left: 176dp;
+  bottom: 99dp;
+  right: 176dp;
+}
+.amb .aclockbig {
+  font-family: $font.figures;
+  font-weight: 300;
+  font-size: 168dp;
+  line-height: 176dp;
+  letter-spacing: -4dp;
+  color: $color.paper;
+  font-effect: glow(0dp 12dp 0dp 0dp $scrim.control);
+}
+.amb .aweather {
+  $type.title-s;
+  color: $color.paper-2;
+}
+.amb .acaption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  $type.body-l;
+  color: $color.paper;
+  text-align: right;
+  max-width: 900dp;
+}
+.amb .aplaying {
+  $type.body;
+  color: $color.paper-2;
+  margin-top: $space.s3;
+}
+.amb .fade {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $color.ink;
+  opacity: 0;
+  transition: opacity $motion.level;
+}
+.amb .fade.black {
+  opacity: 1;
+}
+
+/* .hidden (base) loses to the display these blocks declare after it */
+.upnext.hidden, .buffering.hidden, .failure.hidden, .skip.hidden, .osd .btn.hidden, .upnext .btn.hidden {
+  display: none;
+}
+
+/* the player's cache: how far ahead it reaches and what it reads, centred between the scrubber's times; the speed
+   under the buffering spinner */
+.scrub .cache-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 40dp;
+  text-align: center;
+  $type.figures;
+  color: $color.paper-2;
+  white-space: nowrap;
+}
+.scrub .cache-info.hidden {
+  display: none;
+}
+.buffering .buf-speed {
+  $type.figures;
+  color: $color.paper-2;
+}
+/* the controls over the drive scenes: the scene dims behind them */
+.audio .adrivedim {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $scrim.duck;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity $motion.enter, visibility $motion.enter;
+}
+.audio.drive .adrivedim {
+  opacity: 1;
+  visibility: visible;
+}
+.audio.drive.lean .adrivedim {
+  opacity: 0;
+  visibility: hidden;
+}
+.audio.drive.lean #a-queue-host {
+  opacity: 0;
+  visibility: hidden;
+}
+/* the visualizer sheet's sections: the drive family's scene and shape */
+.sheet-label {
+  $type.label;
+  color: $color.paper-2;
+  margin: $space.s5 0 $space.s2 $space.s2;
+}
+/* the visualizer sheet: a section a row of chips, wrapping */
+.vizsheet .vizrow {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: $space.s3;
+}

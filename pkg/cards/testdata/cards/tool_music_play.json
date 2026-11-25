@@ -1,0 +1,32 @@
+{
+ "version": 1,
+ "id": "music-play-f34da15a354a088b8e",
+ "revision": 1,
+ "fallbackText": "Музыка: Играет",
+ "root": {
+  "card": {
+   "title": "Музыка",
+   "icon": "music",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Играет",
+      "kind": "STATE_KIND_ON"
+     }
+    },
+    {
+     "text": {
+      "text": "Треков: 11",
+      "style": "TEXT_STYLE_BODY"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state",
+  "text"
+ ]
+}

@@ -1,0 +1,40 @@
+{
+ "version": 1,
+ "id": "dnd-005831192ceff72e6d",
+ "revision": 1,
+ "fallbackText": "Не беспокоить до 13:00",
+ "root": {
+  "card": {
+   "title": "Не беспокоить",
+   "icon": "moon",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "row": {
+      "children": [
+       {
+        "state": {
+         "label": "Включено",
+         "kind": "STATE_KIND_ON"
+        }
+       },
+       {
+        "value": {
+         "value": "13:00",
+         "label": "До"
+        }
+       }
+      ],
+      "gap": "GAP_M"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "row",
+  "state",
+  "value"
+ ]
+}

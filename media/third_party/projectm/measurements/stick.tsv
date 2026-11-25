@@ -1,0 +1,11 @@
+id	median_ms	p95_ms	frames	strobe	source
+# S5 device half (2026-11-14, out/device/c-viz-full.log), the stick at 960x540, mesh 48x32: median and worst of the
+# per-second mean viz_ms each preset logged (the second it was switched in left out), frames unknown (0); strobe
+# not checked there (strobe.tsv carries it)
+milkdrop:Hypnotic/Illusion Radiate/Flexi + Rovastar - Fractopia [blame hexcollie].milk	15.47	16.85	0	unchecked	s5-stick
+milkdrop:Fractal/Blobby/306 nz+ ain no hoehoe.milk	17.84	21.19	0	unchecked	s5-stick
+milkdrop:Supernova/Burst/$$$ Royal - Mashup (276) --- Isosceles edit.milk	25.46	28.22	0	unchecked	s5-stick
+milkdrop:Dancer/Aurora/$$$ Royal - Mashup (257).milk	27.87	28.71	0	unchecked	s5-stick
+milkdrop:Particles/Blobby/$$$ Royal - Mashup (287).milk	128.56	138.13	0	unchecked	s5-stick
+milkdrop:Waveform/Spectrum/EVET + flexi - X32 - Astroluxn777.milk	327.11	362.08	0	unchecked	s5-stick
+milkdrop:Sparkle/Explosions/$$$ Royal - Mashup (244).milk	739.85	769.48	0	unchecked	s5-stick

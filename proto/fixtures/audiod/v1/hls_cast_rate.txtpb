@@ -1,0 +1,1 @@
+hls_cast { session_id: "hls-1" action: HLS_CAST_ACTION_RATE }

@@ -1,0 +1,39 @@
+[project]
+name = "cadence-home-assistant"
+version = "2.0.0"
+description = "The Cadence v2 Home Assistant integration's tests and tools"
+requires-python = ">=3.14.2,<3.15"
+dependencies = []
+
+[dependency-groups]
+dev = [
+  "homeassistant==2026.10.4",
+  "pytest-homeassistant-custom-component==0.13.375",
+  "ruff==0.17.4",
+]
+# what client.py, feed.py and models.py need without Home Assistant (the e2e smoke): aiohttp alone, which the lock
+# resolves with the dev group, so it is the version Home Assistant pins
+client = ["aiohttp"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-p no:cacheprovider"
+
+[tool.ruff]
+target-version = "py314"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["ASYNC", "B", "E", "F", "I", "PTH", "RUF", "S", "SIM", "UP", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+# tests poll the fake (wait_for) and name its fixtures' mountpoints
+"tests/**" = ["ASYNC109", "ASYNC110", "S101", "S105", "S106", "S108"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["custom_components"]

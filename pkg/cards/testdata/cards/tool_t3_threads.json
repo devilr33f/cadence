@@ -1,0 +1,33 @@
+{
+ "version": 1,
+ "id": "t3-b534631140f8dc299a",
+ "revision": 1,
+ "fallbackText": "T3 Code: 5",
+ "root": {
+  "card": {
+   "title": "T3 Code",
+   "icon": "code",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "keyvalue": {
+      "items": [
+       {
+        "key": "Починить сборку",
+        "value": "Работает"
+       },
+       {
+        "key": "Обновить зависимости",
+        "value": "Ждёт разрешения"
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "keyvalue"
+ ]
+}

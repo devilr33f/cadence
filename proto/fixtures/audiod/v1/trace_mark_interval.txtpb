@@ -1,0 +1,1 @@
+trace_mark { stage: TRACE_STAGE_VQE_STATS at_unix_ns: 1762700000000000000 session_id: "mic-1" duration_ns: 2000000000 values { key: "frames" value: 100 } values { key: "vqe_us" value: 1234.5 } }

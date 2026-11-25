@@ -1,0 +1,9 @@
+soloist_config {
+  enabled: true
+  api_key: "test-key-not-real"
+  device_name: "Cadence"
+  dir: "/data/cadence/soloist"
+  scratch_dir: "/tmp/cadence-media/soloist"
+  ca_file: "/data/cadence/ca-certificates.crt"
+  initial_volume: 35
+}

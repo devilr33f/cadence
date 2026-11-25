@@ -1,0 +1,65 @@
+{
+ "version": 1,
+ "id": "catalog-alts-076a3dca99081ac966",
+ "revision": 1,
+ "fallbackText": "Другие источники: 2",
+ "root": {
+  "card": {
+   "title": "Другие источники",
+   "icon": "film",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "column": {
+      "children": [
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "AniLiberty",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "28 эп. · AniLibria, Субтитры · 1080p",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       },
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "anime365",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "26 эп. · AniDUB, SHIZA, Studio Band +1 · 720p · сейчас",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       }
+      ],
+      "gap": "GAP_M"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "column",
+  "text"
+ ]
+}

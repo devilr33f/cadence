@@ -1,0 +1,30 @@
+configure {
+  capture {
+    backend: BACKEND_ALSA
+    device: "default"
+    sample_rate: 48000
+    channels: 4
+    period_frames: 256
+    buffer_frames: 8192
+    layout { channels: 4 mic_channels: [0, 1, 2] reference_channels: [3] sample_rate: 48000 }
+    engines {
+      enabled: true
+      stock_roots: ["/usr/lib/cadence-stock", "/system/vendor/quasar"]
+      library: "libvendor.so"
+      activation_model: "spotter_models/activation/main"
+      command_model: "/data/cadence/stock/command"
+      vqe_preset: "board"
+      command_words: ["стоп", "хватит", "пауза", "тише", "громче"]
+    }
+  }
+  output {
+    backend: BACKEND_ALSA
+    device: "default"
+    mixer_control: "Master"
+    channels: 2
+    period_frames: 960
+    buffer_frames: 7680
+  }
+  volume { level: 40 }
+  ca_file: "/data/cadence/ca-certificates.crt"
+}

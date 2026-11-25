@@ -1,0 +1,32 @@
+{
+ "version": 1,
+ "id": "alarm-gone-b1d41903dc6e198a1a",
+ "revision": 1,
+ "fallbackText": "Снят",
+ "root": {
+  "card": {
+   "title": "Будильник",
+   "icon": "alarm",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Снят",
+      "kind": "STATE_KIND_OFF"
+     }
+    },
+    {
+     "text": {
+      "text": "7:30",
+      "style": "TEXT_STYLE_BODY"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state",
+  "text"
+ ]
+}

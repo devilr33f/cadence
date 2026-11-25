@@ -1,0 +1,68 @@
+{
+ "version": 1,
+ "id": "call-8ea034d7a2019e0595",
+ "revision": 3,
+ "fallbackText": "Не включилось «Toxicity · System of a Down» · не воспроизводится",
+ "root": {
+  "card": {
+   "title": "Не включилось «Toxicity · System of a Down» · не воспроизводится",
+   "icon": "music",
+   "tone": "TONE_WARNING",
+   "children": [
+    {
+     "row": {
+      "children": [
+       {
+        "image": {
+         "ref": "img:fakeart2-400-400________",
+         "alt": "Toxicity",
+         "aspect": "ASPECT_SQUARE"
+        }
+       },
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "Toxicity",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "System of a Down",
+            "style": "TEXT_STYLE_META"
+           }
+          },
+          {
+           "text": {
+            "text": "Трек · Toxicity · 3:39",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       }
+      ],
+      "gap": "GAP_M"
+     }
+    },
+    {
+     "state": {
+      "label": "не воспроизводится",
+      "kind": "STATE_KIND_UNAVAILABLE"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "column",
+  "image",
+  "row",
+  "state",
+  "text"
+ ]
+}

@@ -1,0 +1,23 @@
+# a title page with the facts the server lays over it (Shikimori's and MyAnimeList's: rank, studio, dates,
+# popularity, related titles; the owner's own list entry), home's hero with its rank and list status, and the
+# «Искать у других источников» sheet. `build/screen-sim/sim run screen/sim/examples/title-facts.txt`
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+wait 1500
+screenshot sim-out/title-facts/01-home-hero.png
+send {"route": {"route": "title", "ref": "ref-tg-1"}}
+wait-for route:title 15000
+wait 1200
+screenshot sim-out/title-facts/02-title.png
+press RIGHT
+wait 200
+press RIGHT
+wait 300
+focus
+press OK
+wait 250
+screenshot sim-out/title-facts/03-searching.png
+wait 900
+focus
+screenshot sim-out/title-facts/04-alternatives.png
+quit

@@ -1,0 +1,68 @@
+{
+ "version": 1,
+ "id": "call-004943c2db48cb45cb",
+ "revision": 3,
+ "fallbackText": "Играет «Chop Suey! · System of a Down»",
+ "root": {
+  "card": {
+   "title": "Играет «Chop Suey! · System of a Down»",
+   "icon": "music",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "row": {
+      "children": [
+       {
+        "image": {
+         "ref": "img:fakeart5-480-360________",
+         "alt": "Chop Suey!",
+         "aspect": "ASPECT_SQUARE"
+        }
+       },
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "Chop Suey!",
+            "style": "TEXT_STYLE_BODY"
+           }
+          },
+          {
+           "text": {
+            "text": "System of a Down",
+            "style": "TEXT_STYLE_META"
+           }
+          },
+          {
+           "text": {
+            "text": "Трек · Toxicity · 3:30",
+            "style": "TEXT_STYLE_META"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       }
+      ],
+      "gap": "GAP_M"
+     }
+    },
+    {
+     "state": {
+      "label": "Играет",
+      "kind": "STATE_KIND_ON"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "column",
+  "image",
+  "row",
+  "state",
+  "text"
+ ]
+}

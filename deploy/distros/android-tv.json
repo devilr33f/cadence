@@ -1,0 +1,152 @@
+{
+  "$schema": "./schema.json",
+  "name": "android-tv",
+  "board": "android-tv",
+  "kind": "screen",
+  "status": "planned",
+  "os": "android",
+  "arch": [
+    "armeabi-v7a",
+    "arm64-v8a"
+  ],
+  "package": {
+    "format": "apk",
+    "output": "build/dist/cadence-{version}-android-tv-{arch}.apk"
+  },
+  "builder": {
+    "dockerfile": "deploy/android/Dockerfile",
+    "command": "make dist DISTRO=android-tv"
+  },
+  "runtime": {
+    "libc": "bionic",
+    "minSdk": 30,
+    "targetSdk": 28,
+    "ndk": "r29"
+  },
+  "serverUrl": null,
+  "components": [
+    "cadenced",
+    "cadence-audiod",
+    "cadence-screen",
+    "soloist-runtime",
+    "libairplay",
+    "android-app"
+  ],
+  "media": {
+    "url": false,
+    "airplay": "uxplay",
+    "audioBackend": "aaudio",
+    "soloistJail": false,
+    "staticLink": false,
+    "screen": true,
+    "video": "mpv-surface"
+  },
+  "dependencies": [
+    {
+      "name": "sdl3",
+      "source": "prebuilt",
+      "use": "both",
+      "version": "3.4.20",
+      "license": "Zlib",
+      "url": "https://github.com/libsdl-org/SDL/releases/download/release-3.4.20/SDL3-devel-3.4.20-android.zip",
+      "sha256": "535320e58f3bd7235b3e15f940595cdeeb9b8c0aa6b3810ff127345e3567d4da",
+      "note": "AAR with prefab SDL3-shared"
+    },
+    {
+      "name": "libmpv",
+      "source": "prebuilt",
+      "use": "both",
+      "version": "1.0.0",
+      "license": "GPL-3.0-or-later",
+      "coordinate": "dev.jdtech.mpv:libmpv:1.0.0",
+      "sha256": "df146592480fc8418415a06b1f1a1d6318b0088e21f52254b0e9a82b61ca8fa2",
+      "note": "mpv 0.41.0 with FFmpeg n8.1; its libav*.so files and libc++_shared (NDK r29) ship, its libmpv.so is replaced by ours (mpv below)"
+    },
+    {
+      "name": "mpv",
+      "source": "tarball",
+      "use": "both",
+      "version": "v0.41.0",
+      "license": "GPL-3.0-or-later",
+      "pinsFile": "media/third_party/mpv/mpv.pins",
+      "note": "mpv 0.41.0 with the ao_cadence patch, and libass, libplacebo, freetype, fribidi, harfbuzz, libunibreak, fontconfig, libxml2 and lua linked in statically at the aar's versions (make mpv MPV_TARGET=android-armeabi-v7a): a drop-in libmpv.so for the aar's, its headers from the same commit; ffmpeg is never compiled"
+    },
+    {
+      "name": "openssl",
+      "source": "tarball",
+      "use": "build",
+      "version": "3.5.9",
+      "license": "Apache-2.0",
+      "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+      "sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+      "script": "deploy/builder/libairplay.Dockerfile",
+      "note": "libcrypto.a for android-arm (api 30), linked into libairplay's users"
+    },
+    {
+      "name": "libplist",
+      "source": "tarball",
+      "use": "build",
+      "version": "2.6.0",
+      "license": "LGPL-2.1-or-later",
+      "url": "https://github.com/libimobiledevice/libplist/releases/download/2.6.0/libplist-2.6.0.tar.bz2",
+      "sha256": "67be9ee3169366589c92dc7c22809b90f51911dd9de22520c39c9a64fb047c9c",
+      "script": "deploy/builder/libairplay.Dockerfile",
+      "note": "its sources compiled static by media/third_party/uxplay.cmake (CADENCE_AIRPLAY_DEPS=prefix)"
+    },
+    {
+      "name": "opus",
+      "source": "vcpkg",
+      "use": "both",
+      "port": "opus",
+      "triplet": "arm-neon-android",
+      "pending": "the vcpkg baseline commit in vcpkg.json (stream E)"
+    },
+    {
+      "name": "rmlui",
+      "source": "vcpkg",
+      "use": "build",
+      "port": "rmlui",
+      "triplet": "arm-neon-android",
+      "license": "MIT",
+      "pending": "the vcpkg baseline commit in vcpkg.json (stream E)"
+    },
+    {
+      "name": "freetype",
+      "source": "vcpkg",
+      "use": "build",
+      "port": "freetype",
+      "triplet": "arm-neon-android",
+      "pending": "the vcpkg baseline commit in vcpkg.json (stream E)"
+    },
+    {
+      "name": "alac",
+      "source": "vcpkg",
+      "use": "build",
+      "port": "alac",
+      "triplet": "arm-neon-android",
+      "license": "Apache-2.0",
+      "pending": "Apple's ALAC decoder: a vcpkg port or a pinned tarball (stream F)"
+    },
+    {
+      "name": "uxplay",
+      "source": "submodule",
+      "use": "build",
+      "path": "media/third_party/uxplay",
+      "repository": "https://github.com/FDH2/UxPlay",
+      "commit": "df67c212a433cf6dda3676dd40c097900d24e645",
+      "patches": "media/third_party/android-airplay-server/app/src/main/cpp/patches/UxPlay",
+      "license": "GPL-3.0-or-later",
+      "note": "lib/ only (v1.73.7), android-airplay-server's UxPlay pin, built as libairplay (media/third_party/uxplay.cmake) with its 9 patches applied out of tree by deploy/builder/apply-patches.sh"
+    },
+    {
+      "name": "android-airplay-server",
+      "source": "submodule",
+      "use": "build",
+      "path": "media/third_party/android-airplay-server",
+      "repository": "https://github.com/jqssun/android-airplay-server",
+      "commit": "a46cca0a6a1274e9e33c0e750f0f1c1eb1d881ea",
+      "license": "GPL-3.0-or-later",
+      "note": "v0.0.36, for its UxPlay patch series alone; its own submodules (UxPlay, libplist, openssl-cmake, FFmpeg) are never initialised"
+    }
+  ]
+}

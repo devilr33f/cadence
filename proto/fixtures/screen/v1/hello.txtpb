@@ -1,0 +1,11 @@
+hello {
+  protocol: 1
+  version: "0.1.0"
+  platform: PLATFORM_ANDROID
+  display { width: 1920 height: 1080 refresh_mhz: 60000 hdr: ["hdr10", "hlg"] }
+  hwdec: ["mediacodec"]
+  video_codecs: ["h264", "hevc", "vp9"]
+  max_video_height: 2160
+  card_versions: [1]
+  mirroring: true
+}

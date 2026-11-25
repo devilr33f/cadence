@@ -1,0 +1,98 @@
+syntax = "proto3";
+package cadence.v2;
+
+option go_package = "git.shino.boo/devilreef/cadence/pkg/gen/cadence/v2;cadencev2";
+
+enum Trigger {
+  TRIGGER_UNSPECIFIED = 0;
+  TRIGGER_WAKE = 1;
+  TRIGGER_BUTTON = 2;
+  TRIGGER_FOLLOW_UP = 3;
+  // a turn the server starts itself (task events); a device never sends it
+  TRIGGER_EVENT = 4;
+  // the command spotter heard a home phrase with no session (WordHeard); never starts one
+  TRIGGER_WORD = 5;
+}
+
+enum SessionEventKind {
+  SESSION_EVENT_KIND_UNSPECIFIED = 0;
+  SESSION_EVENT_KIND_SPEECH_STARTED = 1;
+  SESSION_EVENT_KIND_THINKING = 2;
+  SESSION_EVENT_KIND_LISTENING = 3;
+}
+
+message SessionStart {
+  string session_id = 1;
+  Trigger trigger = 2;
+  Wake wake = 3;
+  // the device's voice.turn span, opened at the wake (or press): the server's turn spans are its children
+  TraceContext trace = 4;
+  // the session began from a wake that stopped a ring; absent otherwise
+  AfterRing after_ring = 5;
+}
+
+// the ring a wake stopped before its session began: kind is "alarm", "timer"
+// (later "reminder"), id the device's id of it
+message AfterRing {
+  string kind = 1;
+  string id = 2;
+  // how long before the session began the ring stopped
+  uint32 stopped_ms_ago = 3;
+}
+
+// a w3c trace context on a frame (pkg/tracectx's Carrier): ids and flags only, never baggage. empty when tracing is
+// off or the span is not sampled; a malformed one is ignored, never refused
+message TraceContext {
+  // 00-<trace id>-<span id>-<flags>, 55 characters
+  string traceparent = 1;
+  // at most 512 characters; a longer one is dropped
+  string tracestate = 2;
+}
+
+message Wake {
+  string engine = 1;
+  float score = 2;
+}
+
+message MicAudio {
+  string session_id = 1;
+  uint32 seq = 2;
+  bytes opus = 3;
+}
+
+message SessionCancel {
+  string session_id = 1;
+  string reason = 2;
+}
+
+message SessionEvent {
+  string session_id = 1;
+  SessionEventKind kind = 2;
+}
+
+message SessionClose {
+  string session_id = 1;
+  bool follow_up_allowed = 2;
+  string code = 3;
+  // how long the device keeps a follow-up session open; 0 = none, meaningful only with follow_up_allowed
+  uint32 follow_up_window_ms = 4;
+  // the codes-only failure detail; present when code is a failed turn's code
+  TurnFailure failure = 5;
+}
+
+// why a turn failed. every string is an id or a fixed code, never an upstream
+// error body; timings are milliseconds. shared by the voice close and the
+// screen's AssistantTurn, so the drawer's retry view can name the real cause.
+message TurnFailure {
+  string code = 1;
+  // stt, llm, tool, tts, setup or internal
+  string stage = 2;
+  // the agent step, starting at 1; 0 before the loop
+  uint32 step = 3;
+  string provider = 4;
+  string model = 5;
+  string tool = 6;
+  uint32 http_status = 7;
+  int64 waited_ms = 8;
+  int64 limit_ms = 9;
+}

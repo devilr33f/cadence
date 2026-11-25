@@ -1,0 +1,25 @@
+# the dev stack's one origin (M7b-D7), as a deployed server's traefik routes cadence-v2's host: the server's own paths to the
+# server (the admin api and its live feed, the device api: link, enroll and otlp, and its health), every other path
+# to the dashboard. the server router's rule is the path half of the cadence-v2 router's in deploy/server/compose.yml,
+# which dashboard-deploy.test.sh holds equal
+http:
+  routers:
+    server:
+      entryPoints: [web]
+      rule: PathPrefix(`/api/`) || PathPrefix(`/v2/`) || Path(`/healthz`)
+      priority: 100
+      service: server
+    dashboard:
+      entryPoints: [web]
+      rule: PathPrefix(`/`)
+      priority: 1
+      service: dashboard
+  services:
+    server:
+      loadBalancer:
+        servers:
+          - url: http://server:8080
+    dashboard:
+      loadBalancer:
+        servers:
+          - url: http://dashboard:3000

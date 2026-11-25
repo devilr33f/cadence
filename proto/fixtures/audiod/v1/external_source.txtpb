@@ -1,0 +1,8 @@
+external_source {
+  id: "sess-v1"
+  op: EXTERNAL_OP_UPDATE
+  kind: MEDIA_SOURCE_KIND_VIDEO
+  state: PLAYBACK_STATE_PLAYING
+  audio_route: AUDIO_ROUTE_DIRECT
+  audio_controls: [AUDIO_CONTROL_VOLUME, AUDIO_CONTROL_DUCK, AUDIO_CONTROL_MUTE]
+}

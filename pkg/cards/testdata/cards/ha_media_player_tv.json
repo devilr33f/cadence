@@ -1,0 +1,25 @@
+{
+ "version": 1,
+ "id": "ha-fc098481166a218929",
+ "revision": 1,
+ "fallbackText": "Living room TV: Играет",
+ "root": {
+  "card": {
+   "title": "Living room TV",
+   "icon": "tv",
+   "tone": "TONE_SUCCESS",
+   "children": [
+    {
+     "state": {
+      "label": "Играет",
+      "kind": "STATE_KIND_ON"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state"
+ ]
+}

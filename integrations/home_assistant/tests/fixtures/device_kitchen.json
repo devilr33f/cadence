@@ -1,0 +1,379 @@
+{
+  "id": "0b6f3c52-7d1e-4a8b-9f2c-5e4d3a2b1c0d",
+  "name": "Kitchen",
+  "model": "sim",
+  "status": "enrolled",
+  "room": "",
+  "online": true,
+  "lastSeenAt": "2026-11-12T10:00:00Z",
+  "daemonVersion": "",
+  "capabilities": [
+    {
+      "id": "alarms",
+      "version": 1,
+      "desired": null,
+      "desiredGen": 0,
+      "appliedGen": 0,
+      "appliedError": "",
+      "state": {
+        "alarms": [
+          {
+            "id": "a1",
+            "days": [
+              "mon",
+              "tue",
+              "wed",
+              "thu",
+              "fri"
+            ],
+            "next": "2026-11-13T07:39:00Z",
+            "time": "07:30",
+            "level": 40
+          }
+        ],
+        "timers": [
+          {
+            "id": "t1",
+            "next": "2026-11-12T10:10:00Z",
+            "endsAt": "2026-11-12T10:10:00Z",
+            "seconds": 600
+          }
+        ],
+        "ringing": null,
+        "snoozed": [
+          {
+            "id": "a1",
+            "kind": "alarm",
+            "until": "2026-11-13T07:39:00Z"
+          }
+        ],
+        "lastRing": {
+          "at": "2026-11-12T10:00:00Z",
+          "id": "a1",
+          "kind": "alarm",
+          "stoppedBy": "snooze"
+        },
+        "reminders": [
+          {
+            "id": "r1",
+            "date": "2026-11-12",
+            "next": "2026-11-12T18:00:00Z",
+            "time": "18:00",
+            "label": "Take the bins out"
+          }
+        ]
+      },
+      "available": true,
+      "configSchema": {
+        "type": "object"
+      },
+      "stateSchema": {
+        "type": "object"
+      },
+      "commands": [
+        {
+          "name": "set_timer",
+          "argsSchema": {
+            "type": "object",
+            "properties": {
+              "sessionId": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "seconds": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "sessionId",
+              "id",
+              "seconds"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "snooze",
+          "argsSchema": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "minutes": {
+                "type": "integer"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "stop_ring",
+          "argsSchema": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      ],
+      "secrets": [],
+      "secretSpecs": []
+    },
+    {
+      "id": "audio.output",
+      "version": 1,
+      "desired": null,
+      "desiredGen": 0,
+      "appliedGen": 0,
+      "appliedError": "",
+      "state": {
+        "level": 35,
+        "channels": 2,
+        "maxBitrate": 128000
+      },
+      "available": true,
+      "configSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "stateSchema": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "integer"
+          },
+          "channels": {
+            "type": "integer"
+          },
+          "maxBitrate": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "level",
+          "channels",
+          "maxBitrate"
+        ]
+      },
+      "commands": [
+        {
+          "name": "change_level",
+          "argsSchema": {
+            "type": "object",
+            "properties": {
+              "delta": {
+                "type": "integer",
+                "minimum": -100,
+                "maximum": 100
+              },
+              "sessionId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 63
+              }
+            },
+            "required": [
+              "delta"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "set_level",
+          "argsSchema": {
+            "type": "object",
+            "properties": {
+              "level": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "sessionId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 63
+              }
+            },
+            "required": [
+              "level"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ],
+      "secrets": [],
+      "secretSpecs": []
+    },
+    {
+      "id": "media.player",
+      "version": 1,
+      "desired": null,
+      "desiredGen": 0,
+      "appliedGen": 0,
+      "appliedError": "",
+      "state": null,
+      "available": true,
+      "configSchema": {
+        "type": "object",
+        "properties": {
+          "duckMode": {
+            "enum": [
+              "duck",
+              "muffle"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "stateSchema": {
+        "type": "object",
+        "properties": {
+          "duckMode": {
+            "enum": [
+              "duck",
+              "muffle"
+            ]
+          }
+        },
+        "required": [
+          "duckMode"
+        ],
+        "additionalProperties": false
+      },
+      "commands": [
+        {
+          "name": "next",
+          "argsSchema": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "pause",
+          "argsSchema": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "previous",
+          "argsSchema": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "resume",
+          "argsSchema": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "seek",
+          "argsSchema": {
+            "type": "object",
+            "properties": {
+              "positionMs": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "positionMs"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "stop",
+          "argsSchema": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        }
+      ],
+      "secrets": [],
+      "secretSpecs": []
+    },
+    {
+      "id": "media.url",
+      "version": 1,
+      "desired": null,
+      "desiredGen": 0,
+      "appliedGen": 0,
+      "appliedError": "",
+      "state": null,
+      "available": true,
+      "configSchema": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "stateSchema": null,
+      "commands": [
+        {
+          "name": "play",
+          "argsSchema": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://.",
+                "maxLength": 2047
+              },
+              "mode": {
+                "enum": [
+                  "session",
+                  "overlay"
+                ]
+              },
+              "metadata": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  },
+                  "album": {
+                    "type": "string"
+                  },
+                  "artworkUrl": {
+                    "type": "string",
+                    "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://.",
+                    "maxLength": 2047
+                  }
+                },
+                "additionalProperties": false
+              },
+              "startMs": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "url"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ],
+      "secrets": [],
+      "secretSpecs": []
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+duck { turn_id: "turn-4" ramp_ms: 220 reason: DUCK_REASON_ASSISTANT }

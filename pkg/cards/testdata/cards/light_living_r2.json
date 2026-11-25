@@ -1,0 +1,43 @@
+{
+ "version": 1,
+ "id": "ha.light.living",
+ "revision": 2,
+ "fallbackText": "Свет в гостиной: 70 %",
+ "root": {
+  "card": {
+   "title": "Свет в гостиной",
+   "subtitle": "3 лампы",
+   "icon": "light",
+   "tone": "TONE_SUCCESS",
+   "children": [
+    {
+     "toggle": {
+      "label": "Включён",
+      "on": true,
+      "action": {
+       "id": "a:7f3c"
+      }
+     }
+    },
+    {
+     "slider": {
+      "label": "Яркость",
+      "value": 70,
+      "min": 1,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "action": {
+       "id": "a:7f3d"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "slider",
+  "toggle"
+ ]
+}

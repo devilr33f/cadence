@@ -1,0 +1,35 @@
+{
+  "type": "media_state",
+  "deviceId": "0b6f3c52-7d1e-4a8b-9f2c-5e4d3a2b1c0d",
+  "at": "2026-11-12T10:00:00Z",
+  "data": {
+    "sessionId": "video-31",
+    "source": "video",
+    "state": "paused",
+    "positionMs": 79000,
+    "positionAt": "2026-11-12T09:59:30.000Z",
+    "rate": 1,
+    "durationMs": 1422000,
+    "volume": 60,
+    "metadata": {
+      "title": "Rebuilding a World",
+      "artist": "",
+      "album": "",
+      "artworkUrl": "https://cadence.example/v2/images/Zm1Ub0NhdENkNjRWY2hmQ2Fk",
+      "artworkHash": "00357776f08ddc3aab68002328b28dc3f69a711c5d96595215c1f9c3efc7f3d8",
+      "kind": "episode",
+      "series": "Rebuilding a World",
+      "episode": "7",
+      "episodeName": "The Guild Advisor",
+      "providerName": "torrplayer",
+      "providerSource": "anime365"
+    },
+    "actions": [
+      "pause",
+      "resume",
+      "stop",
+      "seek",
+      "next"
+    ]
+  }
+}

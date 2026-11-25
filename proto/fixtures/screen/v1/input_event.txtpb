@@ -1,0 +1,1 @@
+input_event { key: KEY_ASSISTANT action: KEY_ACTION_DOWN source: INPUT_SOURCE_REMOTE at_ms: 1762600000000 }

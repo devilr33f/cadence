@@ -1,0 +1,9 @@
+# audio_controls at its nanopb max_count of 8
+media_state {
+  session_id: "sess-a1"
+  source: MEDIA_SOURCE_KIND_AIRPLAY
+  state: PLAYBACK_STATE_PLAYING
+  actions: [MEDIA_ACTION_PAUSE]
+  audio_route: AUDIO_ROUTE_MIXER
+  audio_controls: [AUDIO_CONTROL_VOLUME, AUDIO_CONTROL_DUCK, AUDIO_CONTROL_MUTE, AUDIO_CONTROL_EQ, AUDIO_CONTROL_VIZ_PCM, AUDIO_CONTROL_VIZ_BANDS, AUDIO_CONTROL_VOLUME, AUDIO_CONTROL_DUCK]
+}

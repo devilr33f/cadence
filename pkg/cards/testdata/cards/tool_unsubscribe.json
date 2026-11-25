@@ -1,0 +1,25 @@
+{
+ "version": 1,
+ "id": "sub-876853a4a158e646ba",
+ "revision": 1,
+ "fallbackText": "Подписка: Отменена, t3code",
+ "root": {
+  "card": {
+   "title": "Подписка",
+   "icon": "bookmark",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Отменена",
+      "kind": "STATE_KIND_OFF"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state"
+ ]
+}

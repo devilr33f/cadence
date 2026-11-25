@@ -1,0 +1,1 @@
+log_line { source: "soloist" level: LOG_LEVEL_INFO text: "the rest of a line…" truncated: true continued: true }

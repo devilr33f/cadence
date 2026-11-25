@@ -1,0 +1,69 @@
+# background audio on home: local music and an airplay cast keep a focused way back, and the remote's media key works
+# without reopening the page. `make screen-sim-run SCRIPT=screen/sim/examples/background-audio.txt`; shots in sim-out/.
+
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+wait 800
+
+# a youtube music track plays on the audio page
+send {"media_play": {"url": "http://fake.invalid/background-audio", "sessionId": "background-music", "metadata": {"itemRef": "ref:track:background", "title": "Северное сияние", "artist": "Полярные огни", "album": "Длинная ночь", "kind": "track", "provider": "youtube_music", "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042"}, "view": "audio"}}
+wait-for route:audio 5000
+wait-for media:playing 5000
+wait 700
+screenshot sim-out/background-audio-01-local-page.png
+
+# BACK keeps it playing; home's chip has the cover, title, artist and state, and owns focus
+press BACK
+wait-for route:home 5000
+focus
+wait 1000
+screenshot sim-out/background-audio-02-local-home-playing.png
+
+# the same key works on another route; coming home shows the paused state without losing the chip's focus
+send {"route": {"route": "search", "query": "музыка"}}
+wait-for route:search 5000
+press PLAY_PAUSE
+wait-for media:paused 5000
+send {"route": {"route": "home"}}
+wait-for route:home 5000
+focus
+wait 400
+screenshot sim-out/background-audio-03-local-home-paused.png
+press PLAY_PAUSE
+wait-for media:playing 5000
+
+# leave the chip and come back with the d-pad, then OK opens its audio page again
+press DOWN
+wait 250
+press UP
+focus
+press OK
+wait-for route:audio 5000
+wait 400
+screenshot sim-out/background-audio-04-local-returned.png
+
+# a phone's cast uses the same home entry and cadenced's own transport
+send {"now_playing": {"sessionId": "background-cast", "source": "airplay", "state": "playing", "sender": "iPhone Маши", "title": "worms", "artist": "guardin", "album": "worms", "positionMs": 94000, "durationMs": 123000, "actions": ["pause", "resume", "stop"], "artworkPath": "screen/sim/examples/cover-dusk.jpg", "artworkSha256": "8c73c45694719f0b7718292a66db96f639dcde4a5122325ff24c39a16cb56637", "colorA": 9720415, "colorB": 6568524}}
+wait-for route:audio 5000
+wait 700
+press BACK
+wait-for route:home 5000
+wait 1000
+press PLAY_PAUSE
+wait-for cast:pause 3000
+send {"now_playing": {"sessionId": "background-cast", "source": "airplay", "state": "paused", "sender": "iPhone Маши", "title": "worms", "artist": "guardin", "album": "worms", "positionMs": 95000, "durationMs": 123000, "actions": ["pause", "resume", "stop"], "artworkPath": "screen/sim/examples/cover-dusk.jpg", "artworkSha256": "8c73c45694719f0b7718292a66db96f639dcde4a5122325ff24c39a16cb56637", "colorA": 9720415, "colorB": 6568524}}
+wait 500
+press PLAY_PAUSE
+wait-for cast:resume 3000
+send {"now_playing": {"sessionId": "background-cast", "source": "airplay", "state": "playing", "sender": "iPhone Маши", "title": "worms", "artist": "guardin", "album": "worms", "positionMs": 96000, "durationMs": 123000, "actions": ["pause", "resume", "stop"], "artworkPath": "screen/sim/examples/cover-dusk.jpg", "artworkSha256": "8c73c45694719f0b7718292a66db96f639dcde4a5122325ff24c39a16cb56637", "colorA": 9720415, "colorB": 6568524}}
+wait 300
+press OK
+wait-for route:audio 5000
+
+# when the cast ends, home's entry goes with it
+press BACK
+wait-for route:home 5000
+send {"now_playing": {}}
+wait 600
+screenshot sim-out/background-audio-07-cast-ended.png
+quit

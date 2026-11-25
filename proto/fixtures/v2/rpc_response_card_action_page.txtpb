@@ -1,0 +1,1 @@
+rpc_response { id: "r-11" status: "ok" json: "{}" card_action { page { version: 1 id: "pg-2" cards { version: 1 id: "p-3" revision: 1 fallback_text: "Комментарий" root { card { title: "Комментарий" children { long_text { text: "Второй." } } } } features: "card" features: "long_text" } next { id: "a:p:3" } } } }

@@ -1,0 +1,87 @@
+{
+ "version": 1,
+ "id": "task.7c1d",
+ "revision": 5,
+ "fallbackText": "Задача работает 12 мин: сравнивает цены",
+ "root": {
+  "card": {
+   "title": "Сравнить цены на билеты",
+   "subtitle": "с колонки «Кухня» · 12 мин назад",
+   "icon": "sparkle",
+   "children": [
+    {
+     "row": {
+      "gap": "GAP_M",
+      "children": [
+       {
+        "state": {
+         "kind": "STATE_KIND_ON",
+         "label": "Работает"
+        }
+       },
+       {
+        "text": {
+         "style": "TEXT_STYLE_META",
+         "text": "12 мин"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "steps": {
+      "items": [
+       {
+        "label": "Ищу рейсы",
+        "status": "STEP_STATUS_DONE"
+       },
+       {
+        "label": "Сравниваю цены",
+        "status": "STEP_STATUS_RUNNING"
+       },
+       {
+        "label": "Пишу сводку",
+        "status": "STEP_STATUS_PENDING"
+       }
+      ]
+     }
+    },
+    {
+     "progress": {
+      "fraction": 0.4,
+      "label": "2 из 5"
+     }
+    },
+    {
+     "longText": {
+      "text": "Нашёл 14 рейсов на 12 декабря.\nСравниваю цены у трёх перевозчиков…",
+      "collapsedLines": 4,
+      "reading": true,
+      "tail": true
+     }
+    }
+   ],
+   "actions": [
+    {
+     "label": "Отменить задачу",
+     "icon": "cross",
+     "action": {
+      "id": "a:k:cancel",
+      "confirm": "Отменить задачу «Сравнить цены на билеты»?"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "button",
+  "card",
+  "long_text",
+  "long_text.tail",
+  "progress",
+  "row",
+  "state",
+  "steps",
+  "text"
+ ]
+}

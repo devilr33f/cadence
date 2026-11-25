@@ -1,0 +1,1 @@
+input_event { key: KEY_OK action: KEY_ACTION_PRESS source: INPUT_SOURCE_API }

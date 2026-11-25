@@ -1,0 +1,40 @@
+{
+ "version": 1,
+ "id": "alarm-3b117a0fed7aab1a2e",
+ "revision": 1,
+ "fallbackText": "Будильник на 7:30, По будням",
+ "root": {
+  "card": {
+   "title": "Будильник",
+   "icon": "alarm",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "row": {
+      "children": [
+       {
+        "value": {
+         "value": "7:30",
+         "label": "По будням"
+        }
+       },
+       {
+        "state": {
+         "label": "Включён",
+         "kind": "STATE_KIND_ON"
+        }
+       }
+      ],
+      "gap": "GAP_M"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "row",
+  "state",
+  "value"
+ ]
+}

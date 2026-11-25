@@ -1,0 +1,36 @@
+{
+ "version": 1,
+ "id": "error.t42",
+ "revision": 1,
+ "fallbackText": "Не получилось: источник не ответил",
+ "root": {
+  "card": {
+   "title": "Не получилось",
+   "icon": "warning",
+   "tone": "TONE_DANGER",
+   "children": [
+    {
+     "text": {
+      "style": "TEXT_STYLE_BODY",
+      "text": "Источник не ответил вовремя. Попробуйте ещё раз или выберите другую озвучку."
+     }
+    }
+   ],
+   "actions": [
+    {
+     "label": "Повторить",
+     "icon": "refresh",
+     "action": {
+      "id": "a:e1"
+     },
+     "primary": true
+    }
+   ]
+  }
+ },
+ "features": [
+  "button",
+  "card",
+  "text"
+ ]
+}

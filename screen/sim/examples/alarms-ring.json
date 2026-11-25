@@ -1,0 +1,84 @@
+{
+  "alarms_summary": {
+    "revision": 2,
+    "devices": [
+      {
+        "deviceId": "sim-tv",
+        "name": "Сим",
+        "roomName": "Гостиная",
+        "here": true,
+        "snoozeMinutes": 9,
+        "items": [
+          {
+            "kind": "timer",
+            "id": "t1",
+            "seconds": 600,
+            "nextInS": 300
+          }
+        ]
+      },
+      {
+        "deviceId": "living-pickle",
+        "name": "Станция",
+        "roomName": "Гостиная",
+        "sameRoom": true,
+        "snoozeMinutes": 10,
+        "items": [
+          {
+            "kind": "alarm",
+            "id": "a1",
+            "time": "07:30",
+            "days": [
+              "mon",
+              "tue",
+              "wed",
+              "thu",
+              "fri"
+            ],
+            "nextInS": 36000
+          },
+          {
+            "kind": "reminder",
+            "id": "r1",
+            "label": "Полить цветы",
+            "time": "19:00",
+            "nextInS": 7200
+          }
+        ]
+      },
+      {
+        "deviceId": "kitchen-midi",
+        "name": "Кухня",
+        "roomName": "Кухня",
+        "snoozeMinutes": 9,
+        "items": [
+          {
+            "kind": "timer",
+            "id": "t2",
+            "seconds": 900,
+            "nextInS": 720
+          },
+          {
+            "kind": "alarm",
+            "id": "a2",
+            "time": "06:45",
+            "nextInS": 30000,
+            "snoozed": true
+          }
+        ]
+      }
+    ],
+    "ringing": [
+      {
+        "deviceId": "living-pickle",
+        "deviceName": "Станция",
+        "roomName": "Гостиная",
+        "kind": "alarm",
+        "id": "a1",
+        "time": "07:30",
+        "own": false,
+        "snoozeMinutes": 10
+      }
+    ]
+  }
+}

@@ -1,0 +1,85 @@
+# what other devices play: home's strip (this room's), the top bar's indicator (all rooms) and the quick panel of
+# their cards (devices.panel: the fake's built-in page, one card per device). devices.media answers the list at the
+# link's start and an event 9 s later (the kitchen paused, the others stopped): the strip and the indicator follow.
+# `make screen-sim-run SCRIPT=screen/sim/examples/devices.txt`; shots in sim-out/devices/
+rpc-answer devices.media screen/sim/examples/devices-media.json
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+wait 1200
+screenshot sim-out/devices/01-home-strip.png
+
+# ↓ from the hero's button reaches the strip; OK on the second item opens the panel on its device's card
+press DOWN
+wait 300
+focus
+press RIGHT
+wait 300
+focus
+screenshot sim-out/devices/02-strip-focused.png
+press OK
+wait-for route:devices 3000
+wait 800
+focus
+context
+rpc-calls devices.panel
+screenshot sim-out/devices/03-panel.png
+
+# up to the kitchen's position: it runs from its anchor; → twice seeks 20 s on, held there, one card.action after
+# 600 ms with the value in seconds
+press UP
+wait 200
+press UP
+wait 200
+press UP
+wait 200
+press UP
+wait 400
+focus
+screenshot sim-out/devices/03b-timeline-focused.png
+wait 2000
+screenshot sim-out/devices/03c-timeline-running.png
+press RIGHT
+wait 100
+press RIGHT
+wait 200
+screenshot sim-out/devices/03d-timeline-moved.png
+wait 900
+rpc-calls card.action
+
+# BACK closes it, the panel's subscription cancelled
+press BACK
+wait 600
+route
+
+# the top bar's indicator opens it too
+press UP
+wait 200
+press UP
+wait 200
+focus
+screenshot sim-out/devices/04-indicator.png
+press OK
+wait-for route:devices 3000
+wait 600
+focus
+press BACK
+wait 400
+
+# cadenced's Route DEVICES opens it from anywhere, on the device its ref names
+send {"route": {"route": "search", "query": "музыка"}}
+wait-for route:search 3000
+send {"route": {"route": "devices", "ref": "bedroom-midi"}}
+wait-for route:devices 3000
+wait 800
+focus
+context
+screenshot sim-out/devices/05-route.png
+press BACK
+wait 400
+send {"route": {"route": "home"}}
+wait-for route:home 3000
+
+# the feed's event: the strip and the indicator follow
+wait 6000
+screenshot sim-out/devices/06-after-event.png
+quit

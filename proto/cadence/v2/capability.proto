@@ -1,0 +1,88 @@
+syntax = "proto3";
+package cadence.v2;
+
+import "cadence/v2/session.proto";
+
+option go_package = "git.shino.boo/devilreef/cadence/pkg/gen/cadence/v2;cadencev2";
+
+// A report too large for one frame goes as parts 0 to parts-1, in order, each
+// with some of the descriptors and the hash of the whole report. parts 0 or 1
+// is a single frame, as a peer without parts sends it.
+message CapabilityReport {
+  repeated Descriptor descriptors = 1;
+  bytes hash = 2;
+  uint32 part = 3;
+  uint32 parts = 4;
+}
+
+message Descriptor {
+  string id = 1;
+  uint32 version = 2;
+  string config_schema = 3;
+  string state_schema = 4;
+  repeated SecretSpec secrets = 5;
+  // command name -> JSON Schema of its args
+  map<string, string> commands = 6;
+}
+
+message SecretSpec {
+  string name = 1;
+  string description = 2;
+}
+
+message ConfigSet {
+  string capability = 1;
+  int64 generation = 2;
+  string json = 3;
+  map<string, string> secrets = 4;
+}
+
+message ConfigApplied {
+  string capability = 1;
+  int64 generation = 2;
+  string error_code = 3;
+}
+
+// unavailable: the capability's hardware is absent right now (a screen's hdmi
+// sink unplugged); it stays reported and configured, and comes back with a
+// delta that leaves the flag off. json may then be empty: the device has no
+// state to send. A server without the field reads every delta as available.
+message StateDelta {
+  string capability = 1;
+  string json = 2;
+  bool unavailable = 3;
+}
+
+message CapabilityCommand {
+  string request_id = 1;
+  string capability = 2;
+  string name = 3;
+  string json = 4;
+  // set only on a command the agent sends to another device than the turn's: the server's word for the caller's
+  // session, which this device does not know
+  SessionGrant grant = 5;
+}
+
+// The server vouches that a command on this device runs for a session the user began with the wake word or a press
+// on another device (the caller). The target takes it in place of a session of its own for this one command alone:
+// its capability and name, this device as the target, before expires_at_unix_ms (the server's clock), and once (id).
+// The args' sessionId is still the caller's session, and every local rule still applies (rule 7 per target).
+message SessionGrant {
+  // random, used once: a second command with the same id gets no grant
+  string id = 1;
+  string caller_device_id = 2;
+  string caller_session_id = 3;
+  // how the caller's session began: only TRIGGER_WAKE and TRIGGER_BUTTON vouch
+  Trigger caller_trigger = 4;
+  string target_device_id = 5;
+  string capability = 6;
+  string command = 7;
+  int64 expires_at_unix_ms = 8;
+}
+
+// code is empty when ok
+message CommandResult {
+  string request_id = 1;
+  string code = 2;
+  string json = 3;
+}

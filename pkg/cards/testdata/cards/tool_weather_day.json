@@ -1,0 +1,60 @@
+{
+ "version": 1,
+ "id": "weather-3fb37b9274e6a53bc1",
+ "revision": 1,
+ "fallbackText": "Москва: Небольшой дождь, -2…+4 °C",
+ "root": {
+  "card": {
+   "title": "Погода · Москва",
+   "subtitle": "Небольшой дождь",
+   "icon": "rain",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "row": {
+      "children": [
+       {
+        "icon": {
+         "name": "rain",
+         "size": 48
+        }
+       },
+       {
+        "value": {
+         "value": "+4",
+         "unit": "°C",
+         "label": "Днём"
+        }
+       },
+       {
+        "value": {
+         "value": "-2",
+         "unit": "°C",
+         "label": "Ночью"
+        }
+       }
+      ],
+      "gap": "GAP_L"
+     }
+    },
+    {
+     "keyvalue": {
+      "items": [
+       {
+        "key": "Осадки",
+        "value": "1,5 мм"
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "icon",
+  "keyvalue",
+  "row",
+  "value"
+ ]
+}

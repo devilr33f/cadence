@@ -1,0 +1,32 @@
+{
+ "version": 1,
+ "id": "media-c57d2f1a494be68c47",
+ "revision": 1,
+ "fallbackText": "Воспроизведение: Перемотка",
+ "root": {
+  "card": {
+   "title": "Воспроизведение",
+   "icon": "forward10",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Перемотка",
+      "kind": "STATE_KIND_ON"
+     }
+    },
+    {
+     "text": {
+      "text": "1:35",
+      "style": "TEXT_STYLE_BODY"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state",
+  "text"
+ ]
+}

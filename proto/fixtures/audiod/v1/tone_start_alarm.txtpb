@@ -1,0 +1,1 @@
+tone_start { id: "alarm-1" kind: TONE_KIND_ALARM }

@@ -1,0 +1,172 @@
+{
+ "version": 1,
+ "id": "weather.now.moscow",
+ "revision": 1,
+ "fallbackText": "Москва: +4 °C, облачно; к 16:00 +2 °C, дождь",
+ "root": {
+  "card": {
+   "title": "Погода в Москве",
+   "subtitle": "Облачно",
+   "icon": "cloud",
+   "children": [
+    {
+     "row": {
+      "gap": "GAP_L",
+      "children": [
+       {
+        "icon": {
+         "name": "cloud",
+         "size": 48
+        }
+       },
+       {
+        "value": {
+         "value": "+4",
+         "unit": "°C",
+         "label": "Сейчас",
+         "trend": "TREND_DOWN"
+        }
+       },
+       {
+        "keyvalue": {
+         "items": [
+          {
+           "key": "Ветер",
+           "value": "5 м/с"
+          },
+          {
+           "key": "Влажность",
+           "value": "81 %"
+          }
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "divider": {}
+    },
+    {
+     "grid": {
+      "columns": 4,
+      "gap": "GAP_M",
+      "children": [
+       {
+        "column": {
+         "gap": "GAP_S",
+         "children": [
+          {
+           "text": {
+            "style": "TEXT_STYLE_META",
+            "text": "13:00"
+           }
+          },
+          {
+           "icon": {
+            "name": "cloud",
+            "size": 32
+           }
+          },
+          {
+           "value": {
+            "value": "+4",
+            "unit": "°C"
+           }
+          }
+         ]
+        }
+       },
+       {
+        "column": {
+         "gap": "GAP_S",
+         "children": [
+          {
+           "text": {
+            "style": "TEXT_STYLE_META",
+            "text": "14:00"
+           }
+          },
+          {
+           "icon": {
+            "name": "cloud",
+            "size": 32
+           }
+          },
+          {
+           "value": {
+            "value": "+3",
+            "unit": "°C"
+           }
+          }
+         ]
+        }
+       },
+       {
+        "column": {
+         "gap": "GAP_S",
+         "children": [
+          {
+           "text": {
+            "style": "TEXT_STYLE_META",
+            "text": "15:00"
+           }
+          },
+          {
+           "icon": {
+            "name": "rain",
+            "size": 32
+           }
+          },
+          {
+           "value": {
+            "value": "+3",
+            "unit": "°C"
+           }
+          }
+         ]
+        }
+       },
+       {
+        "column": {
+         "gap": "GAP_S",
+         "children": [
+          {
+           "text": {
+            "style": "TEXT_STYLE_META",
+            "text": "16:00"
+           }
+          },
+          {
+           "icon": {
+            "name": "rain",
+            "size": 32
+           }
+          },
+          {
+           "value": {
+            "value": "+2",
+            "unit": "°C"
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "column",
+  "divider",
+  "grid",
+  "icon",
+  "keyvalue",
+  "row",
+  "text",
+  "value"
+ ]
+}

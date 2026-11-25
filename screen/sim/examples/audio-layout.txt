@@ -1,0 +1,91 @@
+# the audio page with a real row of server controls, a long up-next title, and both visualizer families.
+# `make screen-sim-run SCRIPT=screen/sim/examples/audio-layout.txt`; screenshots land in sim-out/.
+# for 720p, change start's size to 1280x720 (the layout's dp geometry is the same).
+
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+send {"media_session_state": {"sessionId": "audio-layout", "actions": ["previous", "next"], "upNext": [{"ref": "ref:track:next", "title": "Hostile Illusion — A Very Long Next Track Title With More Words Than the Text Column Can Hold", "subtitle": "Polar Lights", "durationMs": 214000}]}}
+send {"media_play": {"url": "http://fake.invalid/audio-layout", "sessionId": "audio-layout", "metadata": {"title": "A Very Long Track Title That Still Leaves Room for the Artwork", "artist": "An Artist With a Deliberately Long Name", "album": "An Album Whose Name Runs On", "kind": "track", "provider": "youtube_music", "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042"}, "view": "audio", "views": ["video", "audio", "visualizer"]}}
+wait-for route:audio 5000
+wait 1200
+bands 30 70 120 180 230 255 210 160 120 90 70 50 35 25 15 8
+wait 100
+
+# audio-only starts with the visualizer off; choose the classic background through the real controls
+press DOWN
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press OK
+wait 200
+press DOWN
+press OK
+wait 500
+press BACK
+wait 400
+screenshot sim-out/audio-page-01-lean-classic.png
+
+# the key only reveals the controls; the art and the text column must not move
+press DOWN
+wait 400
+screenshot sim-out/audio-page-02-controls-classic.png
+focus
+
+# play -> next -> queue -> view -> visualizer, then Milkdrop in its sheet
+press RIGHT
+press RIGHT
+press RIGHT
+press RIGHT
+press OK
+wait 200
+press DOWN
+press DOWN
+press OK
+wait 1000
+screenshot sim-out/audio-page-03-controls-milkdrop.png
+press BACK
+wait 400
+screenshot sim-out/audio-page-04-lean-milkdrop.png
+
+# an airplay cast keeps the selected milkdrop background and its cover; feed audiod-legal pcm whose output timing is
+# unknown (mono_ns 0), rather than touching a device
+send {"now_playing": {"sessionId": "airplay-layout", "source": "airplay", "sender": "iPhone Маши", "title": "worms", "artist": "guardin", "album": "worms", "positionMs": 94000, "durationMs": 123000, "artworkPath": "screen/sim/examples/cover-dusk.jpg", "artworkSha256": "8c73c45694719f0b7718292a66db96f639dcde4a5122325ff24c39a16cb56637", "colorA": 9720415, "colorB": 6568524}}
+wait 1000
+pcm 0
+wait 40
+pcm 0
+wait 40
+pcm 0
+wait 40
+pcm 0
+wait 40
+pcm 0
+wait 40
+pcm 0
+wait 40
+pcm 0
+wait 40
+pcm 0
+wait 40
+pcm 0
+wait 40
+pcm 0
+wait 40
+pcm 0
+wait 40
+pcm 0
+wait 400
+screenshot sim-out/audio-page-05-airplay-milkdrop-lean.png
+press DOWN
+wait 400
+screenshot sim-out/audio-page-06-airplay-milkdrop-controls.png
+
+# a cast with neither metadata nor a cover uses the same geometry and toolbar overlay
+send {"now_playing": {"sessionId": "airplay-bare", "source": "airplay", "state": "playing"}}
+wait 800
+screenshot sim-out/audio-page-07-airplay-bare-lean.png
+press DOWN
+wait 400
+screenshot sim-out/audio-page-08-airplay-bare-controls.png
+quit

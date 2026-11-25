@@ -1,0 +1,15 @@
+version: v2
+plugins:
+  - remote: buf.build/protocolbuffers/go:v1.36.12
+    out: pkg/gen
+    opt:
+      - module=git.shino.boo/devilreef/cadence/pkg/gen
+      # the vendored otlp files name go.opentelemetry.io in go_package; messages only, no grpc plugin
+      - Mopentelemetry/proto/common/v1/common.proto=git.shino.boo/devilreef/cadence/pkg/gen/otlp/common/v1;commonv1
+      - Mopentelemetry/proto/resource/v1/resource.proto=git.shino.boo/devilreef/cadence/pkg/gen/otlp/resource/v1;resourcev1
+      - Mopentelemetry/proto/logs/v1/logs.proto=git.shino.boo/devilreef/cadence/pkg/gen/otlp/logs/v1;logsv1
+      - Mopentelemetry/proto/metrics/v1/metrics.proto=git.shino.boo/devilreef/cadence/pkg/gen/otlp/metrics/v1;metricsv1
+      - Mopentelemetry/proto/collector/logs/v1/logs_service.proto=git.shino.boo/devilreef/cadence/pkg/gen/otlp/collector/logs/v1;logsservicev1
+      - Mopentelemetry/proto/collector/metrics/v1/metrics_service.proto=git.shino.boo/devilreef/cadence/pkg/gen/otlp/collector/metrics/v1;metricsservicev1
+      - Mopentelemetry/proto/trace/v1/trace.proto=git.shino.boo/devilreef/cadence/pkg/gen/otlp/trace/v1;tracev1
+      - Mopentelemetry/proto/collector/trace/v1/trace_service.proto=git.shino.boo/devilreef/cadence/pkg/gen/otlp/collector/trace/v1;traceservicev1

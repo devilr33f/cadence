@@ -1,0 +1,1 @@
+mirror_start { session_id: "mir-1" codec: MIRROR_CODEC_H265 width: 1920 height: 1080 client_name: "iPhone" }

@@ -1,0 +1,15 @@
+#!/bin/sh
+# the tests' wpa_cli: a reply queue, for tests only. each call records its
+# arguments on one line in $FAKE_STATE/calls and answers with the first block
+# of $FAKE_STATE/replies (blocks separated by a line %%), popping it. an empty
+# queue answers FAIL.
+state="${FAKE_STATE:?no FAKE_STATE}"
+printf '%s\n' "$*" >>"$state/calls"
+if [ ! -s "$state/replies" ]; then
+	echo FAIL
+	exit 0
+fi
+awk '$0=="%%"{exit} {print}' "$state/replies" >"$state/.reply"
+sed '1,/^%%$/d' "$state/replies" >"$state/.replies"
+mv "$state/.replies" "$state/replies"
+cat "$state/.reply"

@@ -1,0 +1,67 @@
+id	median_ms	p95_ms	frames	strobe	source
+# viz-bench on mesa llvmpipe (make screen-p-gl-test's image), 480x270, 6 s each of the synthetic beat, 2026-11-14: the strobe column counts; the times are llvmpipe's, not the stick's
+milkdrop:Fractal/Pointy/Pinbi7&fvese-hyperspace.milk	2.95	5.50	180	ok	llvmpipe
+milkdrop:Waveform/Wire Flower/Geiss - Drift.milk	3.26	6.33	180	ok	llvmpipe
+milkdrop:Waveform/Wire Tangle/Microcosm.milk	3.38	6.47	180	ok	llvmpipe
+milkdrop:Geometric/Wire Circles/Ondras - Eruptions.milk	3.40	7.26	180	ok	llvmpipe
+milkdrop:Waveform/Wire Circular/Mr_Zoolook - Hypnodisc.milk	3.47	9.03	180	ok	llvmpipe
+milkdrop:Sparkle/Mass Stars/phat + EoS - Bass_responce_Red_Movements_Disorienting nebula3_fire_works_uninverted seizure85b.milk	3.50	6.39	180	ok	llvmpipe
+milkdrop:Fractal/Nested Dancer/EoS - random 06B.milk	3.59	5.74	180	ok	llvmpipe
+milkdrop:Supernova/Radiate/Northern Lights.milk	3.67	6.39	180	ok	llvmpipe
+milkdrop:Fractal/Nested Circle/EoS+Phat - I_v2 monks medicine.milk	3.70	7.48	180	ok	llvmpipe
+milkdrop:Waveform/Wire Flat Double/Geiss - Casino.milk	3.99	6.91	180	ok	llvmpipe
+milkdrop:Fractal/Nested Square/ORB - Going nowhere.milk	4.00	6.81	180	ok	llvmpipe
+milkdrop:Fractal/Lattice/va ultramix - 11.milk	4.01	7.55	180	ok	llvmpipe
+milkdrop:Fractal/Nested Spiral/Stahlregen - Old school, baby! (Spiral Ornament)_1.milk	4.14	8.02	180	ok	llvmpipe
+milkdrop:Sparkle/Glimmer/64.milk	4.19	7.30	180	ok	llvmpipe
+milkdrop:Dancer/Wake/yin - 395 - Artificial Inspiration (brainstorming - outward).milk	4.22	6.32	180	ok	llvmpipe
+milkdrop:Sparkle/Mass Stars/phat + EoS - Bass_responce_Red_Movements_Disorienting nebula3.milk	4.25	7.40	180	ok	llvmpipe
+milkdrop:Reaction/Liquid Gradient/hexcollie - Alex2.milk	4.26	6.98	180	ok	llvmpipe
+milkdrop:Supernova/Stars/138.milk	4.34	6.90	180	ok	llvmpipe
+milkdrop:Particles/Grid/EoS - matrix cube F dots.milk	4.35	10.08	180	ok	llvmpipe
+milkdrop:Sparkle/Mass Squares/Stahlregen - Dots (Pixels - Blocky).milk	4.37	7.28	180	ok	llvmpipe
+milkdrop:Drawing/Trails Mirror/fiShbRaiN - witchcraft (necromancer remix).milk	4.47	17.50	180	ok	llvmpipe
+milkdrop:Reaction/Liquid Gradient/Phat_Zylot_EoS square_faces.milk	4.51	7.42	180	ok	llvmpipe
+milkdrop:Sparkle/Mass Stars/phat + EoS - Bass_responce_Red_Movements_Disorienting nebula3_fire_works_uninverted.milk	4.55	7.90	180	ok	llvmpipe
+milkdrop:Drawing/Trails Mirror/fiShbRaiN - witchcraft (neuromancer remix).milk	4.57	7.74	180	ok	llvmpipe
+milkdrop:Waveform/Wire Tangle/beta106i - Origins of Life (All Human).milk	4.61	8.05	180	ok	llvmpipe
+milkdrop:Dancer/Comet/EoS + Phat and Zylot - Chasers (Sentinal BioMechanical Mix).milk	4.61	6.77	180	ok	llvmpipe
+milkdrop:Particles/Points Trails/EoS - more waveforms 4.milk	4.63	9.01	180	ok	llvmpipe
+milkdrop:Sparkle/Mass Stars/phat + EoS - Bass_responce_Red_Movements_Disorienting nebula.milk	4.69	7.30	180	ok	llvmpipe
+milkdrop:Supernova/Burst/Hexcollie - First.milk	4.69	7.52	180	ok	llvmpipe
+milkdrop:Hypnotic/Illusion Radiate/Flexi + Rovastar - Fractopia [blame hexcollie].milk	4.77	8.16	180	ok	llvmpipe
+milkdrop:Geometric/Cube Array/amandio c - odd star.milk	4.81	7.17	180	ok	llvmpipe
+milkdrop:Geometric/Wire Sphere/EoS - magnetosphere 04.milk	4.83	6.85	180	ok	llvmpipe
+milkdrop:Waveform/Wire Tangle/Aderrasi - Ashes Of Air (Remix).milk	4.87	7.68	180	ok	llvmpipe
+milkdrop:Dancer/Glowsticks/EoS - glowsticks v2 05 and proton lights (+Krash's beat code)  (2).milk	4.93	7.01	180	ok	llvmpipe
+milkdrop:Fractal/Lattice Mirror/Hexcollie - K Hole2.milk	4.95	8.07	180	ok	llvmpipe
+milkdrop:Supernova/Radiate/bmelgren - Getter Sun tweek 2.milk	5.01	7.91	180	ok	llvmpipe
+milkdrop:Dancer/Glowsticks Mirror/EoS - glowsticks v2 05 and proton lights (+Krash's beat code) _Phat_remix099999.milk	5.09	6.40	180	ok	llvmpipe
+milkdrop:Geometric/Wire Morph/amandio c - iterative - squares 1.milk	5.09	8.00	180	ok	llvmpipe
+milkdrop:Particles/Points Fast/Rovastar - Kronos' Twisted Spawn.milk	5.12	8.77	180	ok	llvmpipe
+milkdrop:Drawing/Trails/fiShbRaiN - witchcraft (DMT remix).milk	5.21	9.01	180	ok	llvmpipe
+milkdrop:Reaction/Liquid Gradient/va ultramix2 - 253.milk	5.23	7.65	180	ok	llvmpipe
+milkdrop:Waveform/Spectrum/suksma - n19 3 layer overlap opt.milk	5.24	19.59	180	ok	llvmpipe
+milkdrop:Reaction/Liquid Gradient/Flexi - leaving colors - magic happened to my wallpaper.milk	5.37	11.84	180	ok	llvmpipe
+milkdrop:Geometric/Wire Trace/74.milk	5.40	13.11	180	ok	llvmpipe
+milkdrop:Sparkle/Mass Squares/Stahlregen - Dots (Pixels - reactive blur).milk	5.44	9.04	180	ok	llvmpipe
+milkdrop:Supernova/Orbits/yin - 252 - Artificial poles of the continuum (remix #2).milk	5.46	10.05	180	ok	llvmpipe
+milkdrop:Particles/Points Trails/EoS - pointfield 09 the gases beyond 85c.milk	5.52	8.66	180	ok	llvmpipe
+milkdrop:Dancer/Shapes/shifter - cyanred.milk	5.57	7.26	180	ok	llvmpipe
+milkdrop:Drawing/Trails Mirror/fiShbRaiN - witchcraft (metropolish remix) - test.milk	5.77	26.54	180	ok	llvmpipe
+milkdrop:Drawing/Fractal Mirror/ShadowHarlequin - Fitting Butterfly - v4 - [Loadus & Geiss - FractalDrop 22] v2v2v2v2newcolorsv2.milk	6.08	40.73	180	ok	llvmpipe
+milkdrop:Drawing/Trails Mirror/shifter & fiShbRaiN - witchcraft (i'm melting).milk	6.22	10.51	180	ok	llvmpipe
+milkdrop:Dancer/Comet Mirror/EoS + Phat - chasers 14 sentinel 616_Update.milk	6.22	9.55	180	ok	llvmpipe
+milkdrop:Dancer/Nexus Mirror/EoS - ascopic h ethereum.milk	6.24	8.07	180	ok	llvmpipe
+milkdrop:Reaction/Liquid Gradient/beta106i - Airhandler (Last Breath - Demon Evolution).milk	6.83	12.30	180	ok	llvmpipe
+milkdrop:Geometric/Stripes/Dbleja - Horizontology (Red Mix).milk	7.25	10.35	180	ok	llvmpipe
+milkdrop:Geometric/Wire Grid/EoS - matrix cube G.milk	7.45	10.63	180	ok	llvmpipe
+milkdrop:Supernova/Lasers/$$$ Royal - Mashup (290).milk	7.52	14.89	180	ok	llvmpipe
+milkdrop:Fractal/Blobby/306 nz+ ain no hoehoe.milk	7.58	12.04	180	strobe	llvmpipe
+milkdrop:Reaction/Liquid Blobby/shifter - spincycle b.milk	7.64	12.26	180	ok	llvmpipe
+milkdrop:Particles/Points/shifter - rapid birth.milk	8.40	13.92	180	ok	llvmpipe
+milkdrop:Particles/Points/EoS and PieturP - Starfield-with-huge-stars.milk	9.12	19.22	180	ok	llvmpipe
+milkdrop:Particles/Points/53.milk	9.61	17.05	180	ok	llvmpipe
+milkdrop:Reaction/Liquid Closeup/shifter - phasm slick (fps+ mix).milk	9.82	20.93	180	ok	llvmpipe
+milkdrop:Supernova/Radiate/EoS - spark C_Phats_nebulous_mix3.milk	10.42	14.90	180	ok	llvmpipe
+milkdrop:Drawing/Trails Mirror/Redi Jedi - Time travling through a traffic jam.milk	12.16	102.37	180	ok	llvmpipe

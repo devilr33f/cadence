@@ -1,0 +1,26 @@
+# the drive scenes under the audio page: a cast with its cover, real music streamed into the visualizer feed, the
+# title in the shape while lean, the controls staggering in and out. the track is any f32 stereo 48 khz file
+# (ffmpeg -i song.mp3 -ac 2 -ar 48000 -f f32le /tmp/song.f32); it stays local.
+# `build/screen-sim/sim run screen/sim/examples/audio-drive.txt`; screenshots land in sim-out/.
+
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+send {"capability_config": {"capability": "display.screen", "json": {"visualizer": "drive"}}}
+send {"now_playing": {"sessionId": "airplay-drive", "source": "airplay", "state": "playing", "sender": "iPhone", "title": "От винта", "artist": "Смешарики, GEmz Shoy", "album": "Phonk remix", "positionMs": 20000, "durationMs": 125000, "artworkPath": "screen/sim/examples/cover-dusk.jpg", "artworkSha256": "8c73c45694719f0b7718292a66db96f639dcde4a5122325ff24c39a16cb56637", "colorA": 9720415, "colorB": 6568524}}
+wait-for route:audio 5000
+pcm-file /tmp/song.f32
+wait 3000
+screenshot sim-out/audio-drive-01-lean.png
+wait 533
+screenshot sim-out/audio-drive-02-lean.png
+press DOWN
+wait 120
+screenshot sim-out/audio-drive-03-controls-entering.png
+wait 600
+screenshot sim-out/audio-drive-04-controls.png
+press BACK
+wait 120
+screenshot sim-out/audio-drive-05-controls-leaving.png
+wait 900
+screenshot sim-out/audio-drive-06-lean.png
+pcm-stop

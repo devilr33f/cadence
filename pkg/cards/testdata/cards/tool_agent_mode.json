@@ -1,0 +1,25 @@
+{
+ "version": 1,
+ "id": "mode-74395a5de639a8760c",
+ "revision": 1,
+ "fallbackText": "Режим: smart",
+ "root": {
+  "card": {
+   "title": "Режим",
+   "icon": "sparkle",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "value": {
+      "value": "smart",
+      "label": "Сейчас"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "value"
+ ]
+}

@@ -1,0 +1,19 @@
+{
+  "card.on_sources": "{count, plural, one {on # source} other {on # sources}}",
+  "card.torrent_summary": "episodes {from}–{to} · {quality} · {size} · {seeds, plural, one {# seed} other {# seeds}}",
+  "notice.episode_missing": "episode {n} is missing",
+  "notice.ha_unreachable": "Couldn't reach Home Assistant",
+  "notice.host_unreachable": "Host unreachable",
+  "notice.no_seeds": "no seeds",
+  "notice.not_on_sources": "not on the sources",
+  "notice.unavailable_on_screen": "not available on this screen",
+  "step.read_page": "Reading the video page…",
+  "step.read_sources": "{count, plural, one {Reading # source} other {Reading # sources}}",
+  "step.search_in": "Searching {provider}",
+  "step.watching": "Watching",
+  "step.web_search": "Searching the web: {query}",
+  "task.state": "{state, select, running {Running} waiting {Waiting for an answer} done {Done} failed {Failed} cancelled {Cancelled} other {Unknown}}",
+  "time.left": "{left} left",
+  "toast.saved": "Saved",
+  "toast.voiceover_switched": "Voiceover: {name} · position kept"
+}

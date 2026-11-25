@@ -1,0 +1,1 @@
+config_applied { capability: "audio.output" generation: 7 error_code: "invalid_value" }

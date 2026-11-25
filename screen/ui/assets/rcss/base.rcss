@@ -1,0 +1,143 @@
+/* afterglow's base (design r2 sections 3-5): rmlui has no user-agent sheet, so block elements are declared here.
+   a template: tokens-gen expands every $token; a literal colour fails the build */
+body, div, p, h1, h2, h3, section, header, footer, ul, li, form, img {
+  display: block;
+}
+span, em, strong, b {
+  display: inline;
+}
+strong, b {
+  font-weight: 600;
+}
+
+body {
+  font-family: $font.text;
+  font-weight: 400;
+  font-size: 26dp;
+  line-height: 36dp;
+  color: $color.paper;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* the page: ink, the 1920 x 1080 dp canvas */
+.page {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $color.ink;
+  overflow: hidden;
+}
+.page.over-video {
+  background-color: $color.transparent;
+}
+/* title-safe: x 96-1824, y 54-1026 */
+.safe {
+  position: absolute;
+  left: $size.safe-x;
+  top: $size.safe-y;
+  right: $size.safe-x;
+  bottom: $size.safe-y;
+}
+.vscroll {
+  position: relative;
+  /* eased by Focus::glide (an animation from where it is: rmlui transitions ignore an inline transform) */
+  transform: translateY(0px);
+}
+
+/* the remote reaches only these; rmlui's own spatial navigation stays off (the focus manager moves focus) */
+.f {
+  focus: auto;
+  tab-index: auto;
+  nav: none;
+}
+
+.line1 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.icon {
+  font-family: $font.icons;
+  font-weight: 400;
+  font-style: normal;
+  white-space: nowrap;
+}
+.figures {
+  font-family: $font.figures;
+  font-weight: 500;
+}
+.mono {
+  font-family: $font.mono;
+  font-weight: 400;
+}
+.hstack {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.vstack {
+  display: flex;
+  flex-direction: column;
+}
+.wrap {
+  flex-wrap: wrap;
+}
+.grow {
+  flex: 1 1 0;
+}
+.hidden {
+  display: none;
+}
+.muted {
+  color: $color.paper-2;
+}
+.dim {
+  color: $color.paper-3;
+}
+
+/* section 9: offline dims cached rows; unavailable elements stay focusable at half */
+.offline-dim {
+  opacity: 0.6;
+}
+.unavailable {
+  opacity: 0.5;
+}
+
+/* scrims over video (static decorators, one layer each) */
+.scrim-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 45%;
+  decorator: $scrim.bottom;
+}
+.scrim-top {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 180dp;
+  decorator: $scrim.top;
+}
+.scrim-duck {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $scrim.duck;
+}
+.scrim-sheet {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $scrim.sheet;
+}

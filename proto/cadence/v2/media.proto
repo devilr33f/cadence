@@ -1,0 +1,257 @@
+syntax = "proto3";
+package cadence.v2;
+
+option go_package = "git.shino.boo/devilreef/cadence/pkg/gen/cadence/v2;cadencev2";
+
+// all of it is memory-only on the server and the device (D11): titles, channel names, refs and labels are never logged
+// or stored
+message MediaMetadata {
+  string title = 1;
+  string artist = 2;
+  string album = 3;
+  string artwork_url = 4;
+  // the hex SHA-256 of a cover the device uploaded (PUT /v2/devices/{id}/artwork/{sha256}) because its source had no
+  // url for it (airplay); empty when there is none
+  string artwork_sha256 = 5;
+  MediaKind kind = 6;
+  // the show an episode belongs to
+  string series = 7;
+  // 0 = none or unknown
+  uint32 season = 8;
+  // the episode's label as its provider keys it ("13", "5.5", "OVA 1"); empty for none
+  string episode = 9;
+  MediaProvider provider = 10;
+  // opaque and server-issued; the device only echoes it (ScreenContext, item actions)
+  string item_ref = 11;
+  // the episode's own name, when its provider has one beside the label; empty for none
+  string episode_name = 16;
+  MediaChannel channel = 12;
+  repeated MediaBadge badges = 13;
+  // markers on the scrubber, ordered by start_ms
+  repeated MediaChapter chapters = 14;
+  repeated MediaStat stats = 15;
+}
+
+enum MediaKind {
+  MEDIA_KIND_UNSPECIFIED = 0;
+  MEDIA_KIND_TRACK = 1;
+  MEDIA_KIND_EPISODE = 2;
+  MEDIA_KIND_MOVIE = 3;
+  MEDIA_KIND_VIDEO = 4;
+  MEDIA_KIND_LIVE = 5;
+  MEDIA_KIND_CHANNEL = 6;
+  MEDIA_KIND_PODCAST = 7;
+}
+
+message MediaProvider {
+  // a token: youtube, youtube_music, spotify, torrserver, torrplayer, airplay, ...
+  string id = 1;
+  // the display name, server-formatted
+  string name = 2;
+  // a torrplayer source under the provider (aniliberty, anime365, ...); empty for none
+  string source = 3;
+}
+
+// a youtube channel, a spotify artist or show
+message MediaChannel {
+  string name = 1;
+  string artwork_sha256 = 2;
+  // opaque and server-issued
+  string ref = 3;
+}
+
+enum MediaBadgeKind {
+  MEDIA_BADGE_KIND_UNSPECIFIED = 0;
+  MEDIA_BADGE_KIND_EXPLICIT = 1;
+  MEDIA_BADGE_KIND_LIVE = 2;
+  MEDIA_BADGE_KIND_PREMIERE = 3;
+  MEDIA_BADGE_KIND_HD = 4;
+  MEDIA_BADGE_KIND_UHD = 5;
+  MEDIA_BADGE_KIND_HDR = 6;
+  MEDIA_BADGE_KIND_SUBTITLES = 7;
+  MEDIA_BADGE_KIND_NEW = 8;
+  MEDIA_BADGE_KIND_CUSTOM = 9;
+}
+
+// a mark is never colour alone: label is always set, server-formatted in the device's language
+message MediaBadge {
+  MediaBadgeKind kind = 1;
+  string label = 2;
+}
+
+message MediaChapter {
+  uint64 start_ms = 1;
+  string title = 2;
+}
+
+// a count with its server-formatted label ("1,2 млн просмотров")
+message MediaStat {
+  // a token: views, likes, subscribers, ...
+  string kind = 1;
+  uint64 count = 2;
+  string label = 3;
+}
+
+enum MediaSource {
+  MEDIA_SOURCE_UNSPECIFIED = 0;
+  MEDIA_SOURCE_URL = 1;
+  MEDIA_SOURCE_SOLOIST = 2;
+  MEDIA_SOURCE_AIRPLAY = 3;
+  MEDIA_SOURCE_STREAM = 4;
+  // a screen's player (mpv)
+  MEDIA_SOURCE_VIDEO = 5;
+  // airplay mirroring: a screen's video plane
+  MEDIA_SOURCE_SCREENCAST = 6;
+  // a session another app or device renders (a handoff, an android app); audiod only arbitrates it
+  MEDIA_SOURCE_EXTERNAL = 7;
+  // a member of a multiroom group playing its leader's stream
+  MEDIA_SOURCE_GROUP = 8;
+  // a phone or pc playing to the device over bluetooth a2dp
+  MEDIA_SOURCE_BLUETOOTH = 9;
+}
+
+enum PlaybackState {
+  PLAYBACK_STATE_UNSPECIFIED = 0;
+  PLAYBACK_STATE_IDLE = 1;
+  PLAYBACK_STATE_PLAYING = 2;
+  PLAYBACK_STATE_PAUSED = 3;
+  PLAYBACK_STATE_BUFFERING = 4;
+}
+
+// who renders a session's sound, so the dashboard and HA show a control the route lacks as unsupported
+enum AudioRoute {
+  AUDIO_ROUTE_UNSPECIFIED = 0;
+  // pcm into audiod's mixer
+  AUDIO_ROUTE_MIXER = 1;
+  // our player renders to the platform itself (v2: passthrough, exoplayer)
+  AUDIO_ROUTE_DIRECT = 2;
+  // another app on this device plays
+  AUDIO_ROUTE_EXTERNAL = 3;
+  // another device plays (a handoff)
+  AUDIO_ROUTE_REMOTE = 4;
+  // no sound: muted video, ambient
+  AUDIO_ROUTE_NONE = 5;
+}
+
+enum AudioControl {
+  AUDIO_CONTROL_UNSPECIFIED = 0;
+  AUDIO_CONTROL_VOLUME = 1;
+  AUDIO_CONTROL_DUCK = 2;
+  AUDIO_CONTROL_MUTE = 3;
+  AUDIO_CONTROL_EQ = 4;
+  AUDIO_CONTROL_VIZ_PCM = 5;
+  AUDIO_CONTROL_VIZ_BANDS = 6;
+}
+
+// design §19: what a play became
+enum PlayableKind {
+  PLAYABLE_KIND_UNSPECIFIED = 0;
+  // the device opens a url
+  PLAYABLE_KIND_STREAM = 1;
+  // another device plays (spotify connect); transport acts on the remote session
+  PLAYABLE_KIND_HANDOFF = 2;
+  // played from another provider's match (a spotify track from youtube music)
+  PLAYABLE_KIND_MATCH = 3;
+}
+
+enum MediaItemActionKind {
+  MEDIA_ITEM_ACTION_KIND_UNSPECIFIED = 0;
+  MEDIA_ITEM_ACTION_KIND_LIKE = 1;
+  MEDIA_ITEM_ACTION_KIND_DISLIKE = 2;
+  MEDIA_ITEM_ACTION_KIND_SAVE = 3;
+  MEDIA_ITEM_ACTION_KIND_SUBSCRIBE = 4;
+  MEDIA_ITEM_ACTION_KIND_ADD_TO_QUEUE = 5;
+  MEDIA_ITEM_ACTION_KIND_CUSTOM = 6;
+}
+
+// invoked with media.player/item_action {sessionId, actionId}; the new toggled state comes with the next session state
+message MediaItemAction {
+  // opaque and server-issued
+  string id = 1;
+  MediaItemActionKind kind = 2;
+  string label = 3;
+  // an icon token of the design's set
+  string icon = 4;
+  bool toggled = 5;
+  bool enabled = 6;
+}
+
+message MediaQueueItem {
+  // opaque and server-issued; media.player/jump {ref} plays it
+  string ref = 1;
+  string title = 2;
+  string subtitle = 3;
+  uint64 duration_ms = 4;
+  string artwork_sha256 = 5;
+  repeated MediaBadge badges = 6;
+}
+
+enum MediaPanelKind {
+  MEDIA_PANEL_KIND_UNSPECIFIED = 0;
+  MEDIA_PANEL_KIND_DESCRIPTION = 1;
+  MEDIA_PANEL_KIND_COMMENTS = 2;
+  MEDIA_PANEL_KIND_CHANNEL = 3;
+  MEDIA_PANEL_KIND_LYRICS = 4;
+  MEDIA_PANEL_KIND_RELATED = 5;
+  MEDIA_PANEL_KIND_CUSTOM = 6;
+}
+
+// opened with rpc media.panel {sessionId, panelId, cursor}, which answers a page of cadence cards
+message MediaPanel {
+  // opaque and server-issued
+  string id = 1;
+  MediaPanelKind kind = 2;
+  string title = 3;
+  // server-formatted ("1 204 комментария"); empty for none
+  string count_label = 4;
+}
+
+// device -> server: a session the device plays, on each change (Envelope.media_session_state). server -> device, on
+// the same field: the server's own fields of a session it owns (the music queue's, the video service's), sent when
+// they change: session_id, actions (the transport the server serves: next, previous), item_actions, up_next,
+// queue_position, panels, playable, played_via and handoff_device_id; the device keeps them by session id, merges
+// them into what it shows (the screen's media_session_state) and never echoes them back, and every other field is
+// unset there
+message MediaSessionState {
+  string session_id = 1;
+  MediaSource source = 2;
+  PlaybackState state = 3;
+  uint64 position_ms = 4;
+  // unix ms on the device clock
+  int64 position_at_ms = 5;
+  float rate = 6;
+  // 0 = live or unknown
+  uint64 duration_ms = 7;
+  optional uint32 volume = 8;
+  MediaMetadata metadata = 9;
+  // transport controls: pause, resume, stop, seek, next, previous
+  repeated string actions = 10;
+  // the provider's actions on the item (like, save, ...), apart from transport
+  repeated MediaItemAction item_actions = 11;
+  // at most 20; the whole queue is rpc media.queue {sessionId, cursor}
+  repeated MediaQueueItem up_next = 12;
+  // the playing item's index in the queue; absent when there is no queue
+  optional uint32 queue_position = 13;
+  repeated MediaPanel panels = 14;
+  AudioRoute audio_route = 15;
+  // what the route can apply; anything else answers unsupported
+  repeated AudioControl audio_controls = 16;
+  // how long a control takes to be heard on this route, 0 = sample-exact or unknown
+  uint32 control_latency_ms = 17;
+  PlayableKind playable = 18;
+  // a match's actual provider, for the meta line under the badge
+  MediaProvider played_via = 19;
+  // a handoff's target device id, for the meta line under the badge
+  string handoff_device_id = 20;
+  // how far ahead of the position the player has buffered; 0 = none or unknown (a player that does not say)
+  uint64 buffered_ms = 21;
+  // how full the cache is towards resuming while the player waits for it, 0-100; absent while it does not wait
+  optional uint32 buffering_percent = 22;
+  // the screen showed its first real picture, or an audio-only session passed its startup hold
+  bool picture_ready = 23;
+  // the player's own failure token (decode, network, unsupported), empty while it plays
+  string error_code = 24;
+  // a follower screen's video (multiroom P4): its picture follows the group's stream and its sound is the group's, so
+  // it never takes the speaker from the group's session nor counts as a source of the device's own
+  bool follow = 25;
+}

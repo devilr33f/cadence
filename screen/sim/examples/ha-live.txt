@@ -1,0 +1,23 @@
+# live Home Assistant cards after a write: the drawer holds a lease on its chat's cards, renewed by heartbeat
+# (cards.lease) while it is open; the server's next state of a leased card (a Cards frame, context "live")
+# replaces the card in place; closing the drawer releases the lease (cards.release).
+# `build/screen-sim/sim run screen/sim/examples/ha-live.txt`
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+hold BACK 800
+wait-for drawer
+send {"assistant_turn": {"turnId": "t-1", "state": "resting", "transcript": "Включи свет в гостиной", "steps": [{"id": "c1", "label": "Управляю домом", "status": "done"}], "reply": "Включил.", "cards": ["card_light_living.binpb"]}}
+wait 600
+rpc-calls cards.lease
+screenshot sim-out/ha-live/01-written.png
+wait 3200
+rpc-calls cards.lease
+send {"cards": {"contextId": "live", "cards": ["card_light_living_r2.binpb"]}}
+wait 500
+screenshot sim-out/ha-live/02-live-state.png
+press BACK
+wait 400
+press BACK
+wait 400
+rpc-calls cards.release
+quit

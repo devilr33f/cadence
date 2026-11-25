@@ -1,0 +1,13 @@
+[
+  {"name": "chunk", "frame": {"_tag":"Chunk","requestId":2,"values":[{"kind":"synchronized"},{"kind":"event","sequence":42,"event":{"type":"run.updated"}}]}},
+  {"name": "stream_end", "frame": {"_tag":"Exit","requestId":2,"exit":{"_tag":"Success"}}},
+  {"name": "unary_success", "frame": {"_tag":"Exit","requestId":3,"exit":{"_tag":"Success","value":{"sequence":7}}}},
+  {"name": "typed_failure", "frame": {"_tag":"Exit","requestId":4,"exit":{"_tag":"Failure","cause":[{"_tag":"Fail","error":{"_tag":"OrchestrationV2DispatchCommandError","commandId":"c","commandType":"thread.stop","message":"secret upstream text"}}]}}},
+  {"name": "authorization_failure", "frame": {"_tag":"Exit","requestId":5,"exit":{"_tag":"Failure","cause":[{"_tag":"Fail","error":{"_tag":"EnvironmentAuthorizationError","message":"no","requiredScope":"orchestration:operate"}}]}}},
+  {"name": "die", "frame": {"_tag":"Exit","requestId":6,"exit":{"_tag":"Failure","cause":[{"_tag":"Die","defect":"boom"}]}}},
+  {"name": "interrupt", "frame": {"_tag":"Exit","requestId":7,"exit":{"_tag":"Failure","cause":[{"_tag":"Interrupt","fiberId":12}]}}},
+  {"name": "defect", "frame": {"_tag":"Defect","defect":{"name":"Error","message":"x"}}},
+  {"name": "pong", "frame": {"_tag":"Pong"}},
+  {"name": "protocol_error", "frame": {"_tag":"ClientProtocolError","error":{"_tag":"RpcClientError"},"requestIds":[3,"4"]}},
+  {"name": "unknown_tag", "frame": {"_tag":"FutureFrame","whatever":1}}
+]

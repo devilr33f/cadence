@@ -1,0 +1,38 @@
+# the classic visualizer's background band, fed exactly as audiod's tap feeds it on the device. the first four frames
+# are a short display-rate sequence between analysis frames; the last three show a pause decaying to the sleeping floor.
+# `make screen-sim-run SCRIPT=screen/sim/examples/audio-bars.txt` (screenshots in ./sim-out).
+
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+send {"now_playing": {"sessionId": "viz-bands", "source": "spotify", "title": "Ночной паром", "artist": "Северные огни", "album": "Причал", "positionMs": 97000, "durationMs": 231000, "actions": ["pause", "resume", "stop", "seek", "next", "previous"], "artworkPath": "screen/sim/examples/cover-dusk.jpg", "artworkSha256": "8c73c45694719f0b7718292a66db96f639dcde4a5122325ff24c39a16cb56637", "colorA": 9720415, "colorB": 6568524}}
+wait-for route:audio 5000
+wait 500
+bands 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+wait 33
+bands 30 70 120 180 230 255 210 160 120 90 70 50 35 25 15 8
+wait 16
+screenshot sim-out/audio-bars-01-motion-a.png
+wait 16
+screenshot sim-out/audio-bars-02-motion-b.png
+bands 180 230 255 210 160 120 90 70 50 35 25 15 8 20 45 80
+wait 16
+screenshot sim-out/audio-bars-03-motion-c.png
+wait 33
+screenshot sim-out/audio-bars-04-motion-d.png
+
+# the foreground keeps its cover, text, progress and controls over the soft background band
+press DOWN
+wait 300
+screenshot sim-out/audio-bars-05-controls.png
+
+send {"now_playing": {"sessionId": "viz-bands", "source": "spotify", "state": "paused", "title": "Ночной паром", "artist": "Северные огни", "album": "Причал", "positionMs": 97000, "durationMs": 231000, "actions": ["pause", "resume", "stop", "seek", "next", "previous"], "artworkPath": "screen/sim/examples/cover-dusk.jpg", "artworkSha256": "8c73c45694719f0b7718292a66db96f639dcde4a5122325ff24c39a16cb56637", "colorA": 9720415, "colorB": 6568524}}
+wait 120
+screenshot sim-out/audio-bars-06-pausing-a.png
+wait 240
+screenshot sim-out/audio-bars-07-pausing-b.png
+wait 1000
+screenshot sim-out/audio-bars-08-paused.png
+perf reset
+wait 500
+perf paused-idle
+quit

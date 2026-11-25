@@ -1,0 +1,1 @@
+capture_failed { session_id: "sess-1" reason: "open_failed" }

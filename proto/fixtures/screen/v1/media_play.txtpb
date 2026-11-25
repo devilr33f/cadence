@@ -1,0 +1,14 @@
+media_play {
+  request_id: "q-4"
+  session_id: "sess-v1"
+  purpose: MEDIA_PURPOSE_CONTENT
+  url: "http://192.168.1.10:8090/play/abc/1"
+  audio_url: "http://192.168.1.10:8090/play/abc/2"
+  headers { key: "Referer" value: "https://example.org/" }
+  subtitles { url: "http://192.168.1.10:8090/sub/1.ass" language: "ru" label: "Russian" format: SUBTITLE_FORMAT_ASS is_default: true }
+  start_ms: 60000
+  metadata { title: "Episode title" kind: MEDIA_KIND_EPISODE series: "A Series" episode: "13" item_ref: "e:13" }
+  skips { kind: SKIP_KIND_OPENING start_ms: 30000 end_ms: 120000 }
+  playable: PLAYABLE_KIND_STREAM
+  actions: ["next", "previous"]
+}

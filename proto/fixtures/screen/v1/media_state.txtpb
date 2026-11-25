@@ -1,0 +1,13 @@
+media_state {
+  session_id: "sess-v1"
+  state: PLAYBACK_STATE_PLAYING
+  position_ms: 61000
+  position_at_ms: 1762600001000
+  rate: 1
+  duration_ms: 1440000
+  tracks { id: "a1" kind: MEDIA_TRACK_KIND_AUDIO language: "ru" selected: true }
+  audio_route: AUDIO_ROUTE_MIXER
+  audio_controls: [AUDIO_CONTROL_VOLUME, AUDIO_CONTROL_DUCK, AUDIO_CONTROL_MUTE, AUDIO_CONTROL_EQ, AUDIO_CONTROL_VIZ_PCM, AUDIO_CONTROL_VIZ_BANDS]
+  buffered_ms: 30000
+  purpose: MEDIA_PURPOSE_CONTENT
+}

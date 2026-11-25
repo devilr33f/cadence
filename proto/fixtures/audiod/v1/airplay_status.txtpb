@@ -1,0 +1,1 @@
+airplay_status { state: AIRPLAY_STATE_READY }

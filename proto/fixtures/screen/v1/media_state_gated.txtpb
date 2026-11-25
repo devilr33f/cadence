@@ -1,0 +1,9 @@
+media_state {
+  session_id: "video-7"
+  state: PLAYBACK_STATE_PAUSED
+  position_ms: 0
+  position_at_ms: 1762600001000
+  audio_route: AUDIO_ROUTE_MIXER
+  purpose: MEDIA_PURPOSE_CONTENT
+  gated: true
+}

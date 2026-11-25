@@ -1,0 +1,55 @@
+# the tv's ui, walked: home, a title, the player, the assistant drawer. headless by default;
+# `build/screen-sim/sim run screen/sim/examples/walkthrough.txt` (screenshots land in ./sim-out)
+# windowed (watch it live): add --windowed before run, and start with --windowed below
+
+start --headless --lang ru --size 1280x720
+
+# home loads its rows from the fake catalog
+wait-for route:home
+route
+context
+screenshot sim-out/01-home.png
+
+# a title page, as cadenced's own Route message opens it (the remote's OK on a poster walks here too: focus
+# DOWN into the rows, OK on an anime's poster, OK on «Смотреть»)
+send {"route": {"route": "title", "ref": "ref-tg-1"}}
+wait-for route:title
+focus
+# the page's detail arrives as the fake answers catalog.item
+wait 800
+screenshot sim-out/02-title.png
+
+# play it: OK on «Продолжить» (the episode wants its voiceover: the picker), OK on the choice;
+# resolving shows the fake's stages, then cadenced's MediaPlay starts the placeholder player
+wait 800
+press OK
+wait-for route:picker 10000
+press OK
+wait-for route:resolving 10000
+wait-for route:player 20000
+wait-for media:playing 10000
+screenshot sim-out/03-player.png
+
+# the osd hides itself after 5 s while playing; the transport keys bring it back
+wait 3000
+press PLAY_PAUSE
+screenshot sim-out/04-osd.png
+press PLAY_PAUSE
+
+# the assistant drawer: hold BACK (past 500 ms) is the remote's mic button
+hold BACK 800
+wait-for drawer
+send {"assistant_turn": {"turnId": "t-1", "state": "listening", "transcript": "включи свет"}}
+send {"assistant_turn": {"turnId": "t-1", "revision": 2, "state": "thinking"}}
+send {"cards": {"contextId": "t-1", "cards": ["card_light_living.binpb"]}}
+send {"assistant_turn": {"turnId": "t-1", "revision": 3, "state": "speaking", "reply": "Готово, включаю"}}
+screenshot sim-out/05-assistant.png
+send {"assistant_turn": {"turnId": "t-1", "revision": 4, "state": "resting"}}
+
+# a toast over whatever shows, and the airplay pin overlay
+send {"toast": {"kind": "success", "text": "Таймер на 10 минут", "durationMs": 20000}}
+screenshot sim-out/06-toast.png
+send {"airplay_pin": {"pin": "4913", "clientName": "iPhone"}}
+screenshot sim-out/07-airplay.png
+
+quit

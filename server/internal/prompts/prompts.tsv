@@ -1,0 +1,9 @@
+id	lang	text
+offline	ru	Нет связи с сервером.
+offline	en	No connection to the server.
+failed	ru	Не получилось, попробуйте ещё раз.
+failed	en	That did not work, please try again.
+not_heard	ru	Не расслышала.
+not_heard	en	Sorry, I did not catch that.
+reminder	ru	Напоминание.
+reminder	en	Reminder.

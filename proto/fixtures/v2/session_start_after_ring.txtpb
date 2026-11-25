@@ -1,0 +1,1 @@
+session_start { session_id: "s-2" trigger: TRIGGER_WAKE wake { engine: "stock" score: 0.9 } after_ring { kind: "alarm" id: "a1b2" stopped_ms_ago: 40 } }

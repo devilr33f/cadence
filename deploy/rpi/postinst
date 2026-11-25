@@ -1,0 +1,15 @@
+#!/bin/sh
+# cadence-rpi's postinst. cadence-screen.service is cadenced's to start and stop as an hdmi sink comes and goes, so an
+# upgrade from a deb whose unit was enabled (graphical.target) drops that enablement, and systemd reads the new unit
+# (no [Install], a start limit) at once, which ends a running restart loop. nothing is started or restarted here:
+# `systemctl restart cadence.service` brings the new cadenced, which starts or stops the screen itself.
+set -e
+if [ "$1" = configure ]; then
+  rm -f /etc/systemd/system/graphical.target.wants/cadence-screen.service \
+    /etc/systemd/system/multi-user.target.wants/cadence-screen.service
+  if [ -d /run/systemd/system ]; then
+    systemctl daemon-reload || true
+    systemctl reset-failed cadence-screen.service >/dev/null 2>&1 || true
+  fi
+fi
+exit 0

@@ -1,0 +1,26 @@
+{
+ "version": 1,
+ "id": "ha-fd72763c5932939966",
+ "revision": 1,
+ "fallbackText": "Bathroom humidity: 48.5",
+ "root": {
+  "card": {
+   "title": "Bathroom humidity",
+   "icon": "sensor",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "value": {
+      "value": "48,5",
+      "unit": "%",
+      "label": "Влажность"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "value"
+ ]
+}

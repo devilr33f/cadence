@@ -1,0 +1,1 @@
+hls_playback_info { session_id: "hls-1" position_ms: 600000 duration_ms: 600000 ready: true ended: true reason: "finished" }

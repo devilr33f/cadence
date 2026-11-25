@@ -1,0 +1,1 @@
+voice_state { state: ASSISTANT_STATE_LISTENING mic: 90 }

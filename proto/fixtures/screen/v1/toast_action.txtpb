@@ -1,0 +1,8 @@
+toast {
+  id: "t-2"
+  kind: TOAST_KIND_WARNING
+  text: "Hermes ждёт ответа"
+  icon: "task"
+  duration_ms: 60000
+  action { id: "open" label: "Открыть" kind: TOAST_ACTION_KIND_OPEN route: SCREEN_ROUTE_TASK ref: "ab12" }
+}

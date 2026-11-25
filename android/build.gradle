@@ -1,0 +1,5 @@
+// the android-tv app (deploy/android/Dockerfile builds it; android/README.md): agp pinned here, gradle, the jdk, the
+// sdk and ndk r29 pinned in the builder image
+plugins {
+    id 'com.android.application' version '8.13.2' apply false
+}

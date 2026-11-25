@@ -1,0 +1,88 @@
+syntax = "proto3";
+package cadence.v2;
+
+import "cadence/v2/assistant.proto";
+import "cadence/v2/capability.proto";
+import "cadence/v2/media.proto";
+import "cadence/v2/ops.proto";
+import "cadence/v2/rpc.proto";
+import "cadence/v2/screen.proto";
+import "cadence/v2/session.proto";
+import "cadence/v2/stream.proto";
+
+option go_package = "git.shino.boo/devilreef/cadence/pkg/gen/cadence/v2;cadencev2";
+
+message Envelope {
+  oneof body {
+    Hello hello = 1;
+    Welcome welcome = 2;
+    CapabilityReport capability_report = 3;
+    ConfigSet config_set = 4;
+    ConfigApplied config_applied = 5;
+    StateDelta state_delta = 6;
+    SessionStart session_start = 7;
+    MicAudio mic_audio = 8;
+    SessionCancel session_cancel = 9;
+    SessionEvent session_event = 10;
+    SessionClose session_close = 11;
+    StreamStart stream_start = 12;
+    AudioDown audio_down = 13;
+    StreamEnd stream_end = 14;
+    CapabilityCommand capability_command = 15;
+    CommandResult command_result = 16;
+    MediaSessionState media_session_state = 17;
+    RpcRequest rpc_request = 18;
+    RpcResponse rpc_response = 19;
+    RpcEvent rpc_event = 20;
+    RpcCancel rpc_cancel = 21;
+    ScreenContext screen_context = 22;
+    AssistantTurn assistant_turn = 23;
+    VoiceLevel voice_level = 24;
+    Duck duck = 25;
+    MicOpen mic_open = 26;
+    Cards cards = 27;
+    DeviceInfo device_info = 28;
+    TasksSummary tasks_summary = 29;
+    // server -> device (a screen): the household's alarms and the rings it shows
+    AlarmsSummary alarms_summary = 41;
+    // device -> server: the command spotter heard one of its home phrases with no session
+    // running (выключи свет); the server runs it as a direct command, silently
+    WordHeard word_heard = 42;
+    // a device update, self-run by the daemon (ops.proto)
+    OpsStart ops_start = 30;
+    OpsProgress ops_progress = 31;
+    OpsResult ops_result = 32;
+    // 33-39: free for v1. 40: v2's screenshot (display.screen/screenshot, memory-only), not used before
+  }
+}
+
+message Hello {
+  uint32 protocol = 1;
+  string daemon_version = 2;
+  string audiod_version = 3;
+  string board = 4;
+  bytes capabilities_hash = 5;
+  // the device's lan addresses (ipv4, not loopback or link-local), at most 4: where a multiroom group's members reach
+  // it when it leads (media.group). the server keeps them in memory while the link is up
+  repeated string lan_addresses = 6;
+}
+
+message Welcome {
+  string server_version = 1;
+  bool send_full_report = 2;
+  DeviceInfo device_info = 3;
+}
+
+// server -> device: what the owner set for this device (in Welcome, and on change). shown on its screen, never logged
+message DeviceInfo {
+  string name = 1;
+  // empty when no room is set
+  string room_id = 2;
+  string room_name = 3;
+}
+
+// a home phrase the command spotter heard on an idle speaker: one of Configure's command_words
+// vocabulary (a fixed list, never a transcript), which only the server can act on
+message WordHeard {
+  string word = 1;
+}

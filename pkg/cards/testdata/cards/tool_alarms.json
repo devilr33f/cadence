@@ -1,0 +1,37 @@
+{
+ "version": 1,
+ "id": "alarms-91f226490900d85a94",
+ "revision": 1,
+ "fallbackText": "Будильников: 3",
+ "root": {
+  "card": {
+   "title": "Будильники",
+   "icon": "alarm",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "keyvalue": {
+      "items": [
+       {
+        "key": "7:30",
+        "value": "По будням"
+       },
+       {
+        "key": "10:00",
+        "value": "По выходным"
+       },
+       {
+        "key": "6:15",
+        "value": "20.11"
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "keyvalue"
+ ]
+}

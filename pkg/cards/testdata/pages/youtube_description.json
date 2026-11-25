@@ -1,0 +1,59 @@
+{
+ "version": 1,
+ "cards": [
+  {
+   "version": 1,
+   "id": "yt.desc.dQw4w9",
+   "revision": 1,
+   "fallbackText": "Описание видео «Опенинг 2 сезона»",
+   "root": {
+    "card": {
+     "title": "Описание",
+     "subtitle": "Аниме-канал · 3 дня назад",
+     "children": [
+      {
+       "keyvalue": {
+        "items": [
+         {
+          "key": "Просмотры",
+          "value": "1,2 млн"
+         },
+         {
+          "key": "Лайки",
+          "value": "48 тыс."
+         },
+         {
+          "key": "Опубликовано",
+          "value": "11 ноября 2026"
+         }
+        ]
+       }
+      },
+      {
+       "longText": {
+        "text": "Опенинг второго сезона в полном качестве.\n\n0:00 Начало\n1:30 Припев\n\nМузыка: Ким Хён Мин.",
+        "collapsedLines": 6,
+        "reading": true
+       }
+      },
+      {
+       "qr": {
+        "payload": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "caption": "Открыть на телефоне"
+       }
+      }
+     ]
+    }
+   },
+   "features": [
+    "card",
+    "keyvalue",
+    "long_text",
+    "qr"
+   ]
+  }
+ ],
+ "next": {
+  "id": "a:desc:next"
+ }
+}

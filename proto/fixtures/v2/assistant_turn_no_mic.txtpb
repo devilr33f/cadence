@@ -1,0 +1,8 @@
+assistant_turn {
+  turn_id: "turn-5"
+  revision: 1
+  trigger: TRIGGER_BUTTON
+  state: ASSISTANT_STATE_INVOKED
+  mic_source { kind: MIC_SOURCE_KIND_NONE }
+  error_code: "no_microphone"
+}

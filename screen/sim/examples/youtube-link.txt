@@ -1,0 +1,53 @@
+# a YouTube link played from the dashboard: the server's resolving step, its failure, then a music video with its
+# views and audio languages. `make screen-sim-run SCRIPT=screen/sim/examples/youtube-link.txt` (screenshots in ./sim-out).
+# the plays fetch a silent wav from a local server: in an empty directory, write one (python3's wave module, 2 min of
+# zeros as silence.wav) and serve it with `python3 -m http.server 18765 --bind 127.0.0.1`
+
+start --headless --lang ru --size 1280x720
+wait-for route:home
+wait 4000
+
+# the server resolves a link: the screen shows its step at once, then names it once yt-dlp read it
+send {"media_preparing": {"state": "resolving"}}
+wait-for route:resolving
+wait 300
+screenshot sim-out/yt-01-resolving.png
+send {"media_preparing": {"state": "resolving", "title": "Как устроен звук", "subtitle": "Лекторий"}}
+wait 6000
+screenshot sim-out/yt-02-named.png
+
+# the resolve failed: the reason and «Назад»
+send {"media_preparing": {"state": "failed", "code": "sign_in_required"}}
+wait 400
+screenshot sim-out/yt-03-failed.png
+press OK
+wait-for route:home
+wait 4000
+
+# a music.youtube.com link: its audio with the visualizer, the views and the dubbings on the controls
+send {"media_preparing": {"state": "resolving", "title": "A Song", "subtitle": "Artist"}}
+wait-for route:resolving
+send {"media_play": {"url": "http://127.0.0.1:18765/silence.wav", "sessionId": "video-7", "metadata": {"title": "A Song", "artist": "Artist", "album": "LP", "kind": "track", "provider": "youtube_music"}, "view": "visualizer", "views": ["video", "audio", "visualizer"], "renditions": [{"name": "1080p", "height": 1080, "hdr": "HDR10", "selected": true}, {"name": "720p", "height": 720}], "audioChoices": [{"id": "a-en", "language": "en", "label": "English", "original": true}, {"id": "a-ru", "language": "ru", "label": "Русский", "dubbed": true, "selected": true}]}}
+wait-for route:audio 10000
+press OK
+wait 600
+screenshot sim-out/yt-04-audio.png
+route
+
+# the same video in the picture: quality, the server's audio languages and the view on the osd
+send {"media_play": {"url": "http://127.0.0.1:18765/silence.wav", "sessionId": "video-8", "metadata": {"title": "Как устроен звук", "channel": "Лекторий"}, "view": "video", "views": ["video", "audio", "visualizer"], "renditions": [{"name": "2160p60", "height": 2160, "hdr": "HDR10", "selected": true}, {"name": "1080p", "height": 1080}], "audioChoices": [{"id": "a-en", "language": "en", "label": "English", "original": true}, {"id": "a-ru", "language": "ru", "label": "Русский", "dubbed": true, "selected": true}]}}
+wait-for route:player 10000
+wait-for media:playing 10000
+press PLAY_PAUSE
+wait 600
+screenshot sim-out/yt-05-osd.png
+route
+
+# the view chip's sheet (focus: play, +10, the audio languages, the view)
+press RIGHT
+press RIGHT
+press RIGHT
+press OK
+wait 600
+screenshot sim-out/yt-06-views.png
+quit

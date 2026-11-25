@@ -1,0 +1,29 @@
+{
+ "version": 1,
+ "id": "subs-1e8a8047e826130169",
+ "revision": 1,
+ "fallbackText": "Подписки: 1",
+ "root": {
+  "card": {
+   "title": "Подписки",
+   "icon": "bookmark",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "keyvalue": {
+      "items": [
+       {
+        "key": "t3code",
+        "value": "Через ассистента"
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "keyvalue"
+ ]
+}

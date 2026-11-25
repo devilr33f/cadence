@@ -1,0 +1,12 @@
+# server -> device: the server's own fields of a session it owns, nothing the device reports
+media_session_state {
+  session_id: "video-3"
+  actions: ["next", "previous"]
+  item_actions { id: "act-1" kind: MEDIA_ITEM_ACTION_KIND_LIKE label: "Like" icon: "thumb-up" toggled: true enabled: true }
+  item_actions { id: "act-2" kind: MEDIA_ITEM_ACTION_KIND_SUBSCRIBE label: "Subscribe" icon: "bell" enabled: true }
+  up_next { ref: "e:6" title: "Next episode" subtitle: "Episode 6" duration_ms: 1440000 }
+  up_next { ref: "e:7" title: "Episode after" subtitle: "Episode 7" duration_ms: 1440000 }
+  queue_position: 5
+  panels { id: "p-1" kind: MEDIA_PANEL_KIND_DESCRIPTION title: "Description" }
+  playable: PLAYABLE_KIND_STREAM
+}

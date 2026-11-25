@@ -1,0 +1,53 @@
+# cadence-screen on rpi: sdl's kmsdrm driver directly on hdmi, no desktop, wayland compositor or gamescope. mpv's
+# patched ao_cadence sends its audio to the same audiod mixer as the screen's announcements and bluetooth output.
+# the screen is optional: cadenced starts this unit while an hdmi sink is plugged in and stops it when the sink goes
+# (systemctl start/stop --no-block, reset-failed first), so it is never enabled and has no [Install] section. with
+# nothing plugged in sdl cannot start, so a failure restarts it only a few times (the start limit), never in a loop.
+[Unit]
+Description=Cadence HDMI screen (rpi)
+Documentation=https://git.shino.boo/devilreef/cadence
+Requires=cadence.service
+After=cadence.service
+ConditionPathExists=/etc/cadence/config.json
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+Environment=HOME=/var/lib/cadence
+Environment=CADENCE_SCREEN_UI_ASSETS=/opt/cadence/share/ui
+# the visualizer's milkdrop presets (render/viz/milkdrop/milkdrop_sources.h)
+Environment=CADENCE_SCREEN_MILKDROP=/opt/cadence/share/viz/milkdrop
+Environment=CADENCE_SCREEN_SOCKET=/var/lib/cadence/run/screen.sock
+# v4l2m2m: the pi 4's bcm2835 decode block (/dev/video10) takes h264 off the cpu, and raspberry pi os' ffmpeg hands
+# its frames to the gpu as dma-bufs (zero-copy); -copy read every 1080p frame back through the cpu, ~47 ms a frame
+# at 60 fps. mpv's auto-safe picks neither. --mpv-profile fast: mpv's default scalers and dither cost the v3d ~3x
+# (a 1080p60 clip at ~19 fps against 59.5). max-display-fps tells mpv the panel's rate, which the render api cannot
+# measure.
+ExecStart=/opt/cadence/bin/cadence-screen --driver kmsdrm --hwdec v4l2m2m --mpv-profile fast --max-display-fps 60
+Restart=on-failure
+RestartSec=2
+KillMode=control-group
+TimeoutStopSec=10
+UMask=0077
+SupplementaryGroups=video render input
+
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+StateDirectory=cadence
+StateDirectoryMode=0700
+CacheDirectory=cadence
+CacheDirectoryMode=0700
+ConfigurationDirectory=cadence
+ConfigurationDirectoryMode=0700
+ReadWritePaths=/var/lib/cadence /var/cache/cadence

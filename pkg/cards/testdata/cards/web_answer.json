@@ -1,0 +1,70 @@
+{
+ "version": 1,
+ "id": "web.answer.w7",
+ "revision": 1,
+ "fallbackText": "Источники: два сайта о третьем сезоне",
+ "root": {
+  "card": {
+   "title": "Источники",
+   "icon": "globe",
+   "children": [
+    {
+     "pagedList": {
+      "items": [
+       {
+        "link": {
+         "cite": 1,
+         "domain": "shikimori.one",
+         "favicon": {
+          "ref": "img:f6a7b8c9"
+         },
+         "title": "Монолог фармацевта: третий сезон",
+         "snippet": "Студия подтвердила выход третьего сезона в октябре 2026 года.",
+         "time": "2 дня назад",
+         "action": {
+          "id": "a:w:1"
+         }
+        }
+       },
+       {
+        "link": {
+         "cite": 2,
+         "domain": "anime-news.example",
+         "title": "Анонсы осеннего сезона",
+         "snippet": "В списке осенних премьер — продолжение «Монолога фармацевта».",
+         "time": "вчера",
+         "thumbnail": {
+          "ref": "img:a7b8c9d0",
+          "alt": "Постер"
+         },
+         "action": {
+          "id": "a:w:2"
+         }
+        }
+       }
+      ],
+      "more": {
+       "action": {
+        "id": "a:w:more"
+       },
+       "label": "Показать ещё"
+      }
+     }
+    },
+    {
+     "qr": {
+      "payload": "https://shikimori.one/animes/58514",
+      "caption": "Открыть на телефоне"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "link",
+  "link.cite",
+  "paged_list",
+  "qr"
+ ]
+}

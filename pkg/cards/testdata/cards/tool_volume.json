@@ -1,0 +1,27 @@
+{
+ "version": 1,
+ "id": "volume-18e15935fff62d66f1",
+ "revision": 1,
+ "fallbackText": "Громкость: 30 %",
+ "root": {
+  "card": {
+   "title": "Громкость",
+   "icon": "volume",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "meter": {
+      "value": 30,
+      "max": 100,
+      "label": "Уровень",
+      "valueLabel": "30 %"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "meter"
+ ]
+}

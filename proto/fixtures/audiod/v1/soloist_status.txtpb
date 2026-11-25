@@ -1,0 +1,1 @@
+soloist_status { state: SOLOIST_STATE_FAILED code: "auth_failed" version: "1.3.10" build_epoch: 1793000000 exit_code: -1 silent_starts: 2 }

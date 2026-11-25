@@ -1,0 +1,38 @@
+{
+ "version": 1,
+ "id": "timer.kitchen.t1",
+ "revision": 1,
+ "ttlS": 600,
+ "dismissable": true,
+ "fallbackText": "Таймер «Паста»: 8 минут",
+ "root": {
+  "card": {
+   "title": "Таймер",
+   "subtitle": "Паста",
+   "icon": "timer",
+   "children": [
+    {
+     "countdown": {
+      "endsAtMs": "1794652800000",
+      "label": "Осталось",
+      "format": "COUNTDOWN_FORMAT_MM_SS"
+     }
+    }
+   ],
+   "actions": [
+    {
+     "label": "Остановить",
+     "icon": "stop",
+     "action": {
+      "id": "a:t1"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "button",
+  "card",
+  "countdown"
+ ]
+}

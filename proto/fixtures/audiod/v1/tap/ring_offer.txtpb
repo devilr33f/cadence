@@ -1,0 +1,1 @@
+ring_offer { session_id: "video-7" capacity_frames: 8192 rate: 48000 channels: 2 }

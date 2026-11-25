@@ -1,0 +1,311 @@
+name: cadence-dev
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg17@sha256:7d0a41464797aeb9862dfdc0bbf1526b82cfd324cdd8036df19e3545f4a9ccb8
+    environment:
+      POSTGRES_USER: cadence
+      POSTGRES_PASSWORD: cadence-dev
+      POSTGRES_DB: cadence
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "cadence", "-d", "cadence"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  # one random master key per volume, readable only by the server's nonroot user
+  keygen:
+    image: alpine:3.22@sha256:bfe7ceb9f09ec0566c48fb93356e45a47a00be5a1dd14fa5b909e7709c66b034
+    entrypoint: ["sh", "-c", "umask 077; [ -s /keys/master.key ] || head -c 32 /dev/urandom | base64 > /keys/master.key; chown 65532:65532 /keys/master.key"]
+    volumes:
+      - keys:/keys
+
+  server:
+    restart: on-failure
+    build:
+      context: ../..
+      dockerfile: server/Dockerfile
+    environment:
+      DATABASE_URL: postgres://cadence:cadence-dev@postgres:5432/cadence?sslmode=disable
+      CADENCE_MASTER_KEY_FILE: /run/cadence/master.key
+      CADENCE_DEV_FAKES: "1"
+      # the dashboard login of this dev stack: its origin (the e2e sets its own port) and plain-http cookies; dev only,
+      # never in deploy/server
+      CADENCE_PUBLIC_ORIGIN: ${CADENCE_DEV_ORIGIN:-http://127.0.0.1:8080}
+      CADENCE_COOKIE_INSECURE: "1"
+      # seconds per compactAfter step instead of a minute, when set (the e2e's compactions); dev fakes only
+      CADENCE_DEV_COMPACT_SECONDS: ${CADENCE_DEV_COMPACT_SECONDS:-}
+      # seconds a pressed session keeps quiet hours from holding task updates instead of 2 min, when set (the e2e's
+      # quiet-hours case); dev fakes only
+      CADENCE_DEV_AWAKE_SECONDS: ${CADENCE_DEV_AWAKE_SECONDS:-}
+      # this stack's dev ca, for the fake hermes, the fake home assistant and the fake mcp server, in place of the
+      # system bundle file: go still scans /etc/ssl/certs (no SSL_CERT_DIR), so the system roots stay trusted; this
+      # container only, no code path of its own
+      SSL_CERT_FILE: /run/cadence-cdn/ca.crt
+    depends_on:
+      keygen:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      cdn-certs:
+        condition: service_completed_successfully
+    volumes:
+      - keys:/run/cadence:ro
+      - cdn-ca:/run/cadence-cdn:ro
+    # the yt-dlp music player's scratch, as deploy/server mounts it
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+
+  # the dashboard's ssr server, as a deployed server runs it: its image, read-only, the api on this network for its ssr calls
+  dashboard:
+    build:
+      context: ../..
+      dockerfile: deploy/dashboard/Dockerfile
+    environment:
+      CADENCE_API_INTERNAL: http://server:8080
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+  # this stack's one origin, CADENCE_DEV_ORIGIN (M7b-D7): traefik with edge.yml, the split the server compose's traefik labels make,
+  # the server's paths to the server and the rest to the dashboard. it listens on CADENCE_DEV_PORT inside too, so the
+  # e2e's browser, in this container's network namespace, reaches it at the origin the host does. no read timeout on
+  # its entrypoint (traefik v3's default is 60 s): the live feed is a long-lived websocket
+  edge:
+    image: traefik:v3.7.17@sha256:f4bb143d1135a579b630ed491e17ec50f6f7c9c6a30585ff3d385471d2a86f5a
+    command:
+      - --entrypoints.web.address=:${CADENCE_DEV_PORT:-8080}
+      - --entrypoints.web.transport.respondingTimeouts.readTimeout=0
+      - --providers.file.filename=/etc/traefik/edge.yml
+      - --global.checkNewVersion=false
+      - --global.sendAnonymousUsage=false
+      - --log.level=ERROR
+    volumes:
+      - ./edge.yml:/etc/traefik/edge.yml:ro
+    read_only: true
+    # it needs no capability, as the dashboard beside it
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "${CADENCE_DEV_BIND:-127.0.0.1}:${CADENCE_DEV_PORT:-8080}:${CADENCE_DEV_PORT:-8080}"
+
+  # the dashboard's playwright specs (dashboard/e2e), run by deploy/dev/playwright.sh alone (profile e2e, never up): in
+  # the edge's network namespace, so the browser's origin is CADENCE_DEV_ORIGIN as on the host. the owner's password
+  # comes on its stdin; failure screenshots go to build/dashboard-e2e
+  playwright:
+    profiles: [e2e]
+    build:
+      context: ../..
+      dockerfile: deploy/dev/playwright.Dockerfile
+    network_mode: service:edge
+    ipc: host
+    init: true
+    # the specs name what they learned (cookies, a token, a secret) on their output: streamed to the runner, kept by no
+    # log driver (a host's default may be journald, syslog or remote)
+    logging:
+      driver: none
+    user: ${CADENCE_E2E_USER:-0:0}
+    environment:
+      HOME: /tmp
+      CADENCE_E2E_ORIGIN: ${CADENCE_DEV_ORIGIN:-http://127.0.0.1:8080}
+      CADENCE_E2E_OUTPUT: /out
+      # no snapshot of the whole page in a failure's error-context.md, which would hold whatever it showed (a token);
+      # the e2e still greps every artifact for what the specs learned
+      PLAYWRIGHT_NO_COPY_PROMPT: "1"
+    volumes:
+      - ../../dashboard/e2e:/e2e/e2e:ro
+      - ../../build/dashboard-e2e:/out
+
+  # waits for the config.json that `cadenced enroll` writes into its volume. its soloist updater takes builds from the
+  # fake cdn below, verified against this stack's dev ca alone, for the sim's own cpu: both images build for the docker
+  # host's architecture, which CADENCE_DEV_ARCH names (the e2e sets it from the docker server; amd64 when unset)
+  device-sim:
+    build:
+      context: ../..
+      dockerfile: device/Dockerfile.sim
+    entrypoint: ["/cadenced", "--wait-config", "--config", "/var/lib/cadence/config.json"]
+    environment:
+      CADENCE_SIM_SOLOIST_CDN: https://soloist-cdn/soloist_release_${CADENCE_DEV_ARCH:-amd64}.tar.gz
+      CADENCE_SIM_SOLOIST_CDN_CA: /run/cadence-cdn/ca.crt
+      # seconds a timer rings when nothing stops it instead of a minute, when set (the e2e's timer); sim only
+      CADENCE_SIM_TIMER_SECONDS: ${CADENCE_SIM_TIMER_SECONDS:-}
+    depends_on:
+      soloist-cdn:
+        condition: service_started
+    volumes:
+      - sim-data:/var/lib/cadence
+      - cdn-ca:/run/cadence-cdn:ro
+
+  # the multiroom block's second speaker, enrolled by that block alone (until then it waits for its config): the sim
+  # board with audiod, its group clock skewed as a second machine's would be (containers share one kernel clock). the
+  # skew reaches audiod's sync plane only, in the sim's build; no soloist cdn, as that block plays a url alone
+  device-sim-2:
+    build:
+      context: ../..
+      dockerfile: device/Dockerfile.sim
+    entrypoint: ["/cadenced", "--wait-config", "--config", "/var/lib/cadence/config.json"]
+    environment:
+      CADENCE_SIM_CLOCK_OFFSET_MS: "1234"
+      CADENCE_SIM_CLOCK_PPM: "80"
+    volumes:
+      - sim-2-data:/var/lib/cadence
+
+  # the screen sim (sim-tv) with its fake screen in process, joining device-first: it claims on the server while it has
+  # no config (cadenced --claim-server) and runs once the e2e approves its claim as sim-tv-e2e. no audiod, no microphone
+  device-sim-tv:
+    build:
+      context: ../..
+      dockerfile: device/Dockerfile.sim
+    entrypoint: ["/cadenced", "--wait-config", "--config", "/var/lib/cadence/config.json",
+      "--claim-server", "http://server:8080", "--claim-board", "sim-tv", "--claim-data-dir", "/var/lib/cadence"]
+    environment:
+      CADENCE_SIM: ""
+      CADENCE_SIM_TV: "1"
+      CADENCE_SIM_TV_FAKE_SCREEN: "1"
+    depends_on:
+      server:
+        condition: service_started
+    restart: on-failure
+    volumes:
+      - sim-tv-data:/var/lib/cadence
+
+  # the fixtures over plain http, only inside this network: http://media/music.flac for url playback
+  media:
+    image: nginx:1.31.8-alpine-slim@sha256:9c68ad4f28e7dee4b9484a7859bf451da39ef661bcd038ef62e87593fcd91c86
+    volumes:
+      - ./fixtures:/usr/share/nginx/html:ro
+
+  # a dev ca of this stack alone and five leaves from it: the fake cdn's, the fake hermes', the fake home assistant's,
+  # the fake mcp server's and the fake t3 code server's (the last four keys owned by their nonroot user). the ca's key
+  # never leaves this container, the device and the server get the ca's certificate only.
+  # the device build's golang image, pulled already, has the openssl cli
+  cdn-certs:
+    image: golang:1.27-trixie@sha256:af1bfc2614ebb1dbd31af514b78740fd678850e76498762b425ecee4c5c6ea80
+    entrypoint:
+      - sh
+      - -ec
+      - |
+        [ -s /tls/leaf.crt ] && [ -s /hermes-tls/leaf.crt ] && [ -s /ha-tls/leaf.crt ] && [ -s /mcp-tls/leaf.crt ] && [ -s /t3-tls/leaf.crt ] && exit 0
+        cd /tmp
+        openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-256 -nodes -days 365 -subj '/CN=cadence dev cdn ca' \
+          -addext basicConstraints=critical,CA:TRUE -addext keyUsage=critical,keyCertSign -keyout ca.key -out ca.crt
+        # leaf NAME DIR OWNER: a server certificate for DNS:NAME into DIR, its key readable by OWNER alone
+        leaf() {
+          openssl req -newkey ec -pkeyopt ec_paramgen_curve:P-256 -nodes -subj "/CN=$$1" -keyout "$$1.key" -out "$$1.csr"
+          printf 'subjectAltName=DNS:%s\nbasicConstraints=critical,CA:FALSE\nkeyUsage=critical,digitalSignature\nextendedKeyUsage=serverAuth\n' "$$1" >"$$1.ext"
+          openssl x509 -req -in "$$1.csr" -CA ca.crt -CAkey ca.key -days 365 -extfile "$$1.ext" -out "$$1.crt"
+          install -m 600 -o "$$3" -g "$$3" "$$1.key" "$$2/leaf.key"
+          install -m 644 "$$1.crt" "$$2/leaf.crt"
+        }
+        leaf soloist-cdn /tls 0
+        leaf hermes /hermes-tls 65532
+        leaf homeassistant /ha-tls 65532
+        leaf mcp /mcp-tls 65532
+        leaf t3 /t3-tls 65532
+        install -m 644 ca.crt /ca/ca.crt
+    volumes:
+      - cdn-ca:/ca
+      - cdn-tls:/tls
+      - hermes-tls:/hermes-tls
+      - ha-tls:/ha-tls
+      - mcp-tls:/mcp-tls
+      - t3-tls:/t3-tls
+
+  # spotify's cdn for the sim: the fake soloist's release over https, only inside this network:
+  # https://soloist-cdn/soloist_release_<arch>.tar.gz (the docker host's: amd64 or arm64)
+  soloist-cdn:
+    build:
+      context: ../..
+      dockerfile: device/Dockerfile.sim
+      target: fake-cdn
+    depends_on:
+      cdn-certs:
+        condition: service_completed_successfully
+    volumes:
+      - cdn-tls:/etc/cadence-cdn:ro
+
+  # a fake hermes agent server for background tasks: the runs api the server's hermes client speaks, each run scripted
+  # by its input's first word, over https with cdn-certs' leaf for DNS:hermes, only inside this network:
+  # https://hermes:8443. it takes only the dummy bearer key below, which the e2e gives the server as the hermes
+  # instance's secret, and a hold run ends once /tmp/release exists in the container
+  hermes:
+    build:
+      context: ../..
+      dockerfile: deploy/dev/fake-hermes.Dockerfile
+    command: ["-addr", ":8443", "-cert", "/etc/cadence-hermes/leaf.crt", "-key", "/etc/cadence-hermes/leaf.key", "-release", "/tmp/release"]
+    environment:
+      CADENCE_FAKE_HERMES_KEY: cadence-e2e-fake-hermes-key
+    depends_on:
+      cdn-certs:
+        condition: service_completed_successfully
+    volumes:
+      - hermes-tls:/etc/cadence-hermes:ro
+
+  # a fake home assistant: hatest's websocket api with a scripted home (server/tools/fakeha: the hall light, the front
+  # door lock, the hall's temperature) over https with cdn-certs' leaf for DNS:homeassistant, only inside this network:
+  # https://homeassistant:8443. it takes only the dummy token below, which the e2e gives the server as the homeassistant
+  # instance's secret, and appends each service call it answers to /tmp/calls.log as `domain service entity_id`
+  homeassistant:
+    build:
+      context: ../..
+      dockerfile: deploy/dev/fake-ha.Dockerfile
+    command: ["-addr", ":8443", "-cert", "/etc/cadence-ha/leaf.crt", "-key", "/etc/cadence-ha/leaf.key", "-calls", "/tmp/calls.log"]
+    environment:
+      CADENCE_FAKE_HA_TOKEN: cadence-e2e-fake-ha-token
+    depends_on:
+      cdn-certs:
+        condition: service_completed_successfully
+    volumes:
+      - ha-tls:/etc/cadence-ha:ro
+
+  # a fake mcp server: mcptest's fake on the go-sdk's own server in the modern era (server/tools/fakemcp: echo answers
+  # its text, note_add keeps nothing) over https with cdn-certs' leaf for DNS:mcp, only inside this network, at
+  # https://mcp:8443/cadence-e2e-mcp-path. it takes only the dummy bearer token below, which the e2e gives the server as
+  # the mcp instance's authorization secret, appends each call it answers to /tmp/calls.log as the tool's name, and
+  # changes echo's description once /tmp/mutate exists in the container
+  mcp:
+    build:
+      context: ../..
+      dockerfile: deploy/dev/fake-mcp.Dockerfile
+    command: ["-addr", ":8443", "-cert", "/etc/cadence-mcp/leaf.crt", "-key", "/etc/cadence-mcp/leaf.key", "-path", "/cadence-e2e-mcp-path", "-calls", "/tmp/calls.log", "-mutate", "/tmp/mutate"]
+    environment:
+      CADENCE_FAKE_MCP_TOKEN: cadence-e2e-fake-mcp-token
+    depends_on:
+      cdn-certs:
+        condition: service_completed_successfully
+    volumes:
+      - mcp-tls:/etc/cadence-mcp:ro
+
+  # a fake t3 code server: t3codetest's orchestration protocol 2 subset (server/tools/faket3: one project and a thread
+  # per script, each scripted by a message's first word: finish, ask, approve, fail, hold) over https with cdn-certs'
+  # leaf for DNS:t3, only inside this network: https://t3:8443. it takes only the dummy bearer token below, which the e2e
+  # gives the server as the t3code instance's secret, and appends each command it applies to /tmp/calls.log as
+  # `type thread_id`
+  t3:
+    build:
+      context: ../..
+      dockerfile: deploy/dev/fake-t3.Dockerfile
+    command: ["-addr", ":8443", "-cert", "/etc/cadence-t3/leaf.crt", "-key", "/etc/cadence-t3/leaf.key", "-calls", "/tmp/calls.log"]
+    environment:
+      CADENCE_FAKE_T3_TOKEN: cadence-e2e-fake-t3-token
+    depends_on:
+      cdn-certs:
+        condition: service_completed_successfully
+    volumes:
+      - t3-tls:/etc/cadence-t3:ro
+
+volumes:
+  keys:
+  sim-data:
+  sim-2-data:
+  sim-tv-data:
+  cdn-ca:
+  cdn-tls:
+  hermes-tls:
+  ha-tls:
+  mcp-tls:
+  t3-tls:

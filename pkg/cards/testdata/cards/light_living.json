@@ -1,0 +1,53 @@
+{
+ "version": 1,
+ "id": "ha.light.living",
+ "revision": 1,
+ "fallbackText": "Свет в гостиной включён, 70 %",
+ "root": {
+  "card": {
+   "title": "Свет в гостиной",
+   "icon": "light",
+   "tone": "TONE_SUCCESS",
+   "children": [
+    {
+     "row": {
+      "gap": "GAP_M",
+      "children": [
+       {
+        "state": {
+         "kind": "STATE_KIND_ON",
+         "label": "Включён"
+        }
+       },
+       {
+        "meter": {
+         "value": 70,
+         "min": 0,
+         "max": 100,
+         "label": "Яркость",
+         "valueLabel": "70 %"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "toggle": {
+      "label": "Свет",
+      "on": true,
+      "action": {
+       "id": "a:7f3c"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "meter",
+  "row",
+  "state",
+  "toggle"
+ ]
+}

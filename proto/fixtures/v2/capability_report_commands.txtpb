@@ -1,0 +1,11 @@
+capability_report {
+  descriptors {
+    id: "media"
+    version: 1
+    config_schema: "{\"type\":\"object\"}"
+    state_schema: "{\"type\":\"object\"}"
+    commands { key: "pause" value: "{\"type\":\"object\"}" }
+    commands { key: "seek" value: "{\"type\":\"object\",\"properties\":{\"position_ms\":{\"type\":\"integer\"}}}" }
+  }
+  hash: "\x0a\x0b"
+}

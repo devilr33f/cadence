@@ -1,0 +1,86 @@
+plugins {
+    id 'com.android.application'
+}
+
+// everything native is built before gradle runs (deploy/android/Dockerfile): the builder hands its outputs in by
+// property, so this project compiles java and packages, nothing more
+//   cadence.jniLibs   a directory of <abi>/lib*.so (sdl3, cadence-screen's libmain, the daemon's jni library, libmpv
+//                     and the aar's ffmpeg, libc++_shared, and libcadenced.so: cadenced, an executable)
+//   cadence.sdlJar    SDLActivity's classes, from sdl3's aar
+//   cadence.assets    licences and the MANIFEST
+//   cadence.keystore  the debug key, kept outside the repo (password android, alias androiddebugkey)
+//   cadence.version, cadence.versionCode
+def prop = { String name, String fallback = null ->
+    def v = project.findProperty(name)
+    if (v == null && fallback == null) throw new GradleException("-P${name} is required")
+    return v ?: fallback
+}
+
+android {
+    namespace 'dev.cadence.tv'
+    compileSdk 36
+    buildToolsVersion '36.0.0'
+
+    defaultConfig {
+        applicationId 'dev.cadence.tv'
+        minSdk 30
+        // 28: the last level that lets an app exec what it wrote to its own data, which soloist needs (spotify's
+        // build runs from files/cadence beside the runtime the app unpacks there); cadenced itself runs from the
+        // native library dir. the system's own compatibility rules for 28 apply
+        //noinspection ExpiredTargetSdkVersion
+        targetSdk 28
+        versionCode Integer.parseInt(prop('cadence.versionCode', '1'))
+        versionName prop('cadence.version', 'dev')
+        ndk { abiFilters 'armeabi-v7a' }
+    }
+
+    signingConfigs {
+        debugKey {
+            storeFile file(prop('cadence.keystore'))
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            // run-as works, for the owner's look at files/ on the stick; no ssh or adb is opened by the app
+            debuggable true
+            signingConfig signingConfigs.debugKey
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = [file(prop('cadence.jniLibs'))]
+            assets.srcDirs = [file(prop('cadence.assets'))]
+        }
+    }
+
+    packaging {
+        jniLibs {
+            // extracted at install: libcadenced.so is exec'd from the native library dir, the one place a W^X app
+            // may run a file from (S2)
+            useLegacyPackaging = true
+            // built and stripped by the builder; cadenced is a go executable agp must not touch
+            keepDebugSymbols += ['**/*.so']
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    // SDLActivity and its helpers, from the sdl3 aar (its libSDL3.so comes in through cadence.jniLibs)
+    implementation files(prop('cadence.sdlJar'))
+}

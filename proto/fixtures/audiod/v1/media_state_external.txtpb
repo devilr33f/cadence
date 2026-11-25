@@ -1,0 +1,10 @@
+media_state {
+  session_id: "ext-3"
+  source: MEDIA_SOURCE_KIND_VIDEO
+  state: PLAYBACK_STATE_PLAYING
+  position_ms: 61000
+  position_at_ms: 1762600001000
+  rate: 1
+  audio_route: AUDIO_ROUTE_MIXER
+  external_id: "video-7"
+}

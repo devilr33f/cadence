@@ -1,0 +1,68 @@
+{
+ "version": 1,
+ "id": "x.search.p1",
+ "revision": 1,
+ "fallbackText": "Пост @anime_news_ru: третий сезон выйдет в сентябре; читатели уточняют: октябрь 2026",
+ "root": {
+  "card": {
+   "title": "Посты в X",
+   "icon": "x",
+   "children": [
+    {
+     "post": {
+      "author": "Аниме-новости",
+      "handle": "@anime_news_ru",
+      "time": "3 ч",
+      "text": "Третий сезон выйдет уже в сентябре!",
+      "stats": [
+       {
+        "kind": "STAT_KIND_LIKE",
+        "label": "1,9 тыс."
+       },
+       {
+        "kind": "STAT_KIND_REPOST",
+        "label": "212"
+       }
+      ],
+      "source": "X",
+      "replyTo": "@studio",
+      "note": {
+       "label": "Контекст от читателей",
+       "text": "Студия объявила октябрь 2026 года."
+      },
+      "quote": {
+       "author": "Студия",
+       "handle": "@studio",
+       "time": "1 д",
+       "text": "Третий сезон — октябрь 2026."
+      },
+      "action": {
+       "id": "a:x:91"
+      }
+     }
+    },
+    {
+     "post": {
+      "author": "Зритель",
+      "handle": "@viewer",
+      "time": "5 ч",
+      "text": "Ждём!",
+      "repostedBy": "@anime_news_ru",
+      "source": "X",
+      "action": {
+       "id": "a:x:92"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "post",
+  "post.note",
+  "post.quote",
+  "post.reply_to",
+  "post.reposted_by"
+ ]
+}

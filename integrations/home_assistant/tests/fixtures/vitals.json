@@ -1,0 +1,19 @@
+{
+  "cpu": 0.125,
+  "memoryUsedBytes": 412000000,
+  "memoryLimitBytes": 1024000000,
+  "disk": [
+    {
+      "mountpoint": "/data",
+      "freeBytes": 6000000000,
+      "limitBytes": 8000000000
+    },
+    {
+      "mountpoint": "/tmp",
+      "freeBytes": 200000000,
+      "limitBytes": 256000000
+    }
+  ],
+  "temperatureC": 48.5,
+  "at": "2026-11-12T10:00:00Z"
+}

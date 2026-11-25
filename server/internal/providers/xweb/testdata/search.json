@@ -1,0 +1,376 @@
+{
+ "data": {
+  "search_by_raw_query": {
+   "search_timeline": {
+    "timeline": {
+     "instructions": [
+      {
+       "type": "TimelineAddEntries",
+       "entries": [
+        {
+         "entryId": "tweet-101",
+         "sortIndex": "1",
+         "content": {
+          "entryType": "TimelineTimelineItem",
+          "__typename": "TimelineTimelineItem",
+          "itemContent": {
+           "itemType": "TimelineTweet",
+           "__typename": "TimelineTweet",
+           "tweet_results": {
+            "result": {
+             "__typename": "Tweet",
+             "rest_id": "101",
+             "core": {
+              "user_results": {
+               "result": {
+                "__typename": "User",
+                "rest_id": "9",
+                "core": {
+                 "name": "Alice",
+                 "screen_name": "alice"
+                }
+               }
+              }
+             },
+             "views": {
+              "count": "1200",
+              "state": "EnabledWithCount"
+             },
+             "legacy": {
+              "full_text": "short start\u2026 https://t.co/aaa",
+              "created_at": "Thu Nov 12 18:04:05 +0000 2026",
+              "favorite_count": 10,
+              "retweet_count": 3,
+              "reply_count": 2,
+              "quote_count": 1,
+              "entities": {
+               "urls": [
+                {
+                 "url": "https://t.co/aaa",
+                 "expanded_url": "https://example.com/a"
+                }
+               ],
+               "media": []
+              }
+             },
+             "note_tweet": {
+              "is_expandable": true,
+              "note_tweet_results": {
+               "result": {
+                "id": "n1",
+                "text": "A long post about Starship &amp; launches, see https://t.co/bbb",
+                "entity_set": {
+                 "urls": [
+                  {
+                   "url": "https://t.co/bbb",
+                   "expanded_url": "https://example.com/b"
+                  }
+                 ]
+                }
+               }
+              }
+             },
+             "birdwatch_pivot": {
+              "subtitle": {
+               "text": "Readers added context: the launch was delayed."
+              }
+             },
+             "quoted_status_result": {
+              "result": {
+               "__typename": "Tweet",
+               "rest_id": "50",
+               "core": {
+                "user_results": {
+                 "result": {
+                  "__typename": "User",
+                  "rest_id": "9",
+                  "legacy": {
+                   "name": "Bob",
+                   "screen_name": "bob"
+                  }
+                 }
+                }
+               },
+               "views": {
+                "count": "1200",
+                "state": "EnabledWithCount"
+               },
+               "legacy": {
+                "full_text": "the quoted post https://t.co/img",
+                "created_at": "Thu Nov 12 18:04:05 +0000 2026",
+                "favorite_count": 10,
+                "retweet_count": 3,
+                "reply_count": 2,
+                "quote_count": 1,
+                "entities": {
+                 "urls": [],
+                 "media": [
+                  {
+                   "url": "https://t.co/img"
+                  }
+                 ]
+                }
+               }
+              }
+             }
+            }
+           },
+           "tweetDisplayType": "Tweet"
+          }
+         }
+        },
+        {
+         "entryId": "promoted-tweet-999",
+         "sortIndex": "1",
+         "content": {
+          "entryType": "TimelineTimelineItem",
+          "__typename": "TimelineTimelineItem",
+          "itemContent": {
+           "itemType": "TimelineTweet",
+           "__typename": "TimelineTweet",
+           "tweet_results": {
+            "result": {
+             "__typename": "Tweet",
+             "rest_id": "999",
+             "core": {
+              "user_results": {
+               "result": {
+                "__typename": "User",
+                "rest_id": "9",
+                "core": {
+                 "name": "Ads",
+                 "screen_name": "ads"
+                }
+               }
+              }
+             },
+             "views": {
+              "count": "1200",
+              "state": "EnabledWithCount"
+             },
+             "legacy": {
+              "full_text": "buy things",
+              "created_at": "Thu Nov 12 18:04:05 +0000 2026",
+              "favorite_count": 10,
+              "retweet_count": 3,
+              "reply_count": 2,
+              "quote_count": 1,
+              "entities": {
+               "urls": [],
+               "media": []
+              }
+             }
+            }
+           },
+           "tweetDisplayType": "Tweet"
+          }
+         }
+        },
+        {
+         "entryId": "tweet-102",
+         "sortIndex": "1",
+         "content": {
+          "entryType": "TimelineTimelineItem",
+          "__typename": "TimelineTimelineItem",
+          "itemContent": {
+           "itemType": "TimelineTweet",
+           "__typename": "TimelineTweet",
+           "tweet_results": {
+            "result": {
+             "__typename": "TweetWithVisibilityResults",
+             "tweet": {
+              "__typename": "Tweet",
+              "rest_id": "102",
+              "core": {
+               "user_results": {
+                "result": {
+                 "__typename": "User",
+                 "rest_id": "9",
+                 "core": {
+                  "name": "Carol",
+                  "screen_name": "carol"
+                 }
+                }
+               }
+              },
+              "views": {
+               "count": "",
+               "state": "EnabledWithCount"
+              },
+              "legacy": {
+               "full_text": "limited visibility post",
+               "created_at": "Thu Nov 12 18:04:05 +0000 2026",
+               "favorite_count": 10,
+               "retweet_count": 3,
+               "reply_count": 2,
+               "quote_count": 1,
+               "entities": {
+                "urls": [],
+                "media": []
+               }
+              }
+             }
+            }
+           },
+           "tweetDisplayType": "Tweet"
+          }
+         }
+        },
+        {
+         "entryId": "tweet-103",
+         "sortIndex": "1",
+         "content": {
+          "entryType": "TimelineTimelineItem",
+          "__typename": "TimelineTimelineItem",
+          "itemContent": {
+           "itemType": "TimelineTweet",
+           "__typename": "TimelineTweet",
+           "tweet_results": {
+            "result": {
+             "__typename": "Tweet",
+             "rest_id": "103",
+             "core": {
+              "user_results": {
+               "result": {
+                "__typename": "User",
+                "rest_id": "9",
+                "core": {
+                 "name": "Erin",
+                 "screen_name": "erin"
+                }
+               }
+              }
+             },
+             "views": {
+              "count": "1200",
+              "state": "EnabledWithCount"
+             },
+             "legacy": {
+              "full_text": "RT @dave: the original post",
+              "created_at": "Thu Nov 12 18:04:05 +0000 2026",
+              "favorite_count": 10,
+              "retweet_count": 3,
+              "reply_count": 2,
+              "quote_count": 1,
+              "entities": {
+               "urls": [],
+               "media": []
+              },
+              "retweeted_status_result": {
+               "result": {
+                "__typename": "Tweet",
+                "rest_id": "40",
+                "core": {
+                 "user_results": {
+                  "result": {
+                   "__typename": "User",
+                   "rest_id": "9",
+                   "core": {
+                    "name": "Dave",
+                    "screen_name": "dave"
+                   }
+                  }
+                 }
+                },
+                "views": {
+                 "count": "1200",
+                 "state": "EnabledWithCount"
+                },
+                "legacy": {
+                 "full_text": "the original post",
+                 "created_at": "Thu Nov 12 18:04:05 +0000 2026",
+                 "favorite_count": 10,
+                 "retweet_count": 3,
+                 "reply_count": 2,
+                 "quote_count": 1,
+                 "entities": {
+                  "urls": [],
+                  "media": []
+                 }
+                }
+               }
+              }
+             }
+            }
+           },
+           "tweetDisplayType": "Tweet"
+          }
+         }
+        },
+        {
+         "entryId": "tweet-104",
+         "sortIndex": "1",
+         "content": {
+          "entryType": "TimelineTimelineItem",
+          "__typename": "TimelineTimelineItem",
+          "itemContent": {
+           "itemType": "TimelineTweet",
+           "__typename": "TimelineTweet",
+           "tweet_results": {
+            "result": {
+             "__typename": "Tweet",
+             "rest_id": "104",
+             "core": {
+              "user_results": {
+               "result": {
+                "__typename": "User",
+                "rest_id": "9",
+                "core": {
+                 "name": "Frank",
+                 "screen_name": "frank"
+                }
+               }
+              }
+             },
+             "views": {
+              "count": "1200",
+              "state": "EnabledWithCount"
+             },
+             "legacy": {
+              "full_text": "@alice replying here",
+              "created_at": "Thu Nov 12 18:04:05 +0000 2026",
+              "favorite_count": 10,
+              "retweet_count": 3,
+              "reply_count": 2,
+              "quote_count": 1,
+              "entities": {
+               "urls": [],
+               "media": []
+              },
+              "in_reply_to_screen_name": "alice"
+             },
+             "in_reply_to": null
+            }
+           },
+           "tweetDisplayType": "Tweet"
+          }
+         }
+        },
+        {
+         "entryId": "cursor-bottom-0",
+         "sortIndex": "0",
+         "content": {
+          "entryType": "TimelineTimelineCursor",
+          "value": "DAAC",
+          "cursorType": "Bottom"
+         }
+        }
+       ]
+      },
+      {
+       "type": "TimelineReplaceEntry",
+       "entry_id_to_replace": "cursor-top",
+       "entry": {
+        "entryId": "cursor-top-1",
+        "content": {
+         "entryType": "TimelineTimelineCursor",
+         "value": "x"
+        }
+       }
+      }
+     ]
+    }
+   }
+  }
+ }
+}

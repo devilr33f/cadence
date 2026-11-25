@@ -1,0 +1,29 @@
+{
+  "type": "media_state",
+  "deviceId": "0b6f3c52-7d1e-4a8b-9f2c-5e4d3a2b1c0d",
+  "at": "2026-11-12T10:00:00Z",
+  "data": {
+    "sessionId": "url-7f3a",
+    "source": "url",
+    "state": "playing",
+    "positionMs": 42000,
+    "positionAt": "2026-11-12T09:59:58.250Z",
+    "rate": 1,
+    "durationMs": 215000,
+    "volume": 60,
+    "metadata": {
+      "title": "Night Drive",
+      "artist": "The Examples",
+      "album": "Fixtures",
+      "artworkUrl": "https://art.example.com/covers/night-drive.jpg",
+      "artworkHash": "e8a9e916a221d14e3355000e8202acbfe56dafde657def4a863e0b4c3af111f2"
+    },
+    "actions": [
+      "pause",
+      "stop",
+      "seek",
+      "next",
+      "previous"
+    ]
+  }
+}

@@ -1,0 +1,71 @@
+/*
+ * the design tokens (DESIGN.md): every colour is light-dark(light, dark), picked by the root's color-scheme, so the
+ * system's theme needs no script and .light/.dark on the root override it (the build polyfills light-dark() at the
+ * root, so a nested color-scheme does not switch tokens); tokens.test.ts checks the contrast pairs
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* the timetable: paper and ink, the departure-poster yellow as the one accent */
+  --background: light-dark(oklch(0.985 0.003 255), oklch(0.17 0.014 262));
+  --foreground: light-dark(oklch(0.215 0.022 262), oklch(0.945 0.006 255));
+  --card: light-dark(oklch(1 0 0), oklch(0.205 0.016 262));
+  --card-foreground: var(--foreground);
+  --popover: light-dark(oklch(1 0 0), oklch(0.22 0.016 262));
+  --popover-foreground: var(--foreground);
+  --muted: light-dark(oklch(0.955 0.006 255), oklch(0.235 0.016 262));
+  --muted-foreground: light-dark(oklch(0.51 0.02 260), oklch(0.73 0.016 258));
+  --secondary: light-dark(oklch(0.95 0.006 255), oklch(0.26 0.016 262));
+  --secondary-foreground: var(--foreground);
+  --primary: oklch(0.87 0.165 92);
+  --primary-foreground: oklch(0.215 0.022 262);
+  --accent: light-dark(oklch(0.955 0.055 96), oklch(0.29 0.04 95));
+  --accent-foreground: var(--foreground);
+  --border: light-dark(oklch(0.905 0.008 255), oklch(0.29 0.016 262));
+  --input: light-dark(oklch(0.64 0.016 258), oklch(0.52 0.016 258));
+  --ring: light-dark(oklch(0.215 0.022 262), oklch(0.87 0.165 92));
+
+  /* state: text on the page and on the state's own surface; never the only signal (a glyph and a label go with it) */
+  --destructive: light-dark(oklch(0.53 0.19 27), oklch(0.71 0.16 25));
+  --destructive-foreground: light-dark(oklch(1 0 0), oklch(0.2 0.022 262));
+  --destructive-surface: light-dark(oklch(0.96 0.025 25), oklch(0.27 0.06 25));
+  --success: light-dark(oklch(0.5 0.12 152), oklch(0.76 0.14 152));
+  --success-surface: light-dark(oklch(0.96 0.03 152), oklch(0.27 0.05 152));
+  --warning: light-dark(oklch(0.53 0.12 62), oklch(0.8 0.13 70));
+  --warning-surface: light-dark(oklch(0.965 0.04 75), oklch(0.28 0.05 70));
+  --info: light-dark(oklch(0.5 0.13 255), oklch(0.75 0.11 250));
+  --info-surface: light-dark(oklch(0.96 0.025 255), oklch(0.27 0.05 255));
+
+  /* data series, at least 3:1 on the page and on a card */
+  --chart-1: light-dark(oklch(0.55 0.13 255), oklch(0.66 0.13 255));
+  --chart-2: light-dark(oklch(0.58 0.1 195), oklch(0.76 0.1 195));
+  --chart-3: light-dark(oklch(0.63 0.15 55), oklch(0.78 0.14 60));
+  --chart-4: light-dark(oklch(0.52 0.15 300), oklch(0.72 0.13 300));
+  --chart-5: light-dark(oklch(0.58 0.13 145), oklch(0.76 0.14 145));
+  --chart-6: light-dark(oklch(0.56 0.17 355), oklch(0.72 0.15 355));
+
+  /* the rail: the departure board, dark in both themes */
+  --sidebar: light-dark(oklch(0.24 0.024 262), oklch(0.135 0.012 262));
+  --sidebar-foreground: light-dark(oklch(0.83 0.012 258), oklch(0.8 0.012 258));
+  --sidebar-accent: light-dark(oklch(0.31 0.026 262), oklch(0.23 0.02 262));
+  --sidebar-accent-foreground: oklch(0.98 0.003 255);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-border: light-dark(oklch(0.33 0.022 262), oklch(0.24 0.016 262));
+  --sidebar-ring: var(--primary);
+
+  --radius: 0.5rem;
+  --rail-width: 15rem;
+  --header-height: 3.25rem;
+  --row-height: 2.25rem;
+  --content-max: 90rem;
+}
+
+:root.light {
+  color-scheme: light;
+}
+
+:root.dark {
+  color-scheme: dark;
+}

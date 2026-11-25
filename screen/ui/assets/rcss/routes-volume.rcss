@@ -1,0 +1,77 @@
+/* the volume overlay (ui/core/volume-overlay.h): a level-2 upright pill at the right edge of the safe area, clear of the
+   pages' headers and the toasts, the mute icon on top, the level as an ember bar filling from the bottom and the figure
+   under it; it slides in from the edge as a toast rises and fades out quickly. nothing in it takes focus */
+.vol {
+  position: absolute;
+  right: $size.safe-x;
+  top: 50%;
+  margin-top: -200dp;
+  width: 88dp;
+  height: 400dp;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space.s4;
+  padding: $space.s5 0;
+  box-sizing: border-box;
+  background-color: $color.sheet;
+  border-top: 1dp $color.line;
+  border-radius: $radius.l;
+  opacity: 1;
+  transform: translateX(0dp);
+  transition: opacity $motion.enter, transform $motion.enter;
+}
+.vol.hidden {
+  display: none;
+}
+.vol.entering {
+  opacity: 0;
+  transform: translateX(24dp);
+  transition: none;
+}
+.vol.leaving {
+  opacity: 0;
+  transition: opacity $motion.quick-exit;
+}
+.volicon {
+  height: 48dp;
+  color: $color.paper;
+}
+.volicon .icon {
+  font-size: 40dp;
+  line-height: 48dp;
+}
+.voltrack {
+  position: relative;
+  flex: 1;
+  width: $size.line-progress;
+  border-radius: 4dp;
+  background-color: $color.line;
+}
+/* its height is the level, set (or animated over motion.glide) from the overlay */
+.volfill {
+  position: absolute;
+  left: 0dp;
+  bottom: 0dp;
+  width: 100%;
+  height: 0%;
+  border-radius: 4dp;
+  background-color: $color.ember;
+}
+.volnum {
+  $type.figures;
+  text-align: center;
+  color: $color.paper;
+}
+.vol.muted .volfill {
+  background-color: $color.paper-3;
+}
+.vol.muted .volnum, .vol.muted .volicon {
+  color: $color.paper-3;
+}
+.reduced .vol {
+  transition: opacity $motion.reduced;
+}
+.reduced .vol.entering {
+  transform: none;
+}

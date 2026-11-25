@@ -1,0 +1,12 @@
+airplay_config {
+  enabled: true
+  name: "Cadence TV"
+  dir: "/data/cadence/airplay"
+  scratch_dir: "/tmp/cadence-media/airplay"
+  backend: AIRPLAY_BACKEND_LIBAIRPLAY
+  mirroring: true
+  max_width: 1920
+  max_height: 1080
+  h265: true
+  require_pin: true
+}

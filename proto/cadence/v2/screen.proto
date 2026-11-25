@@ -1,0 +1,86 @@
+syntax = "proto3";
+package cadence.v2;
+
+option go_package = "git.shino.boo/devilreef/cadence/pkg/gen/cadence/v2;cadencev2";
+
+// the page a screen shows
+enum ScreenRoute {
+  SCREEN_ROUTE_UNSPECIFIED = 0;
+  SCREEN_ROUTE_HOME = 1;
+  SCREEN_ROUTE_SEARCH = 2;
+  SCREEN_ROUTE_TITLE = 3;
+  SCREEN_ROUTE_EPISODES = 4;
+  // the voiceover and quality picker
+  SCREEN_ROUTE_PICKER = 5;
+  SCREEN_ROUTE_RESOLVING = 6;
+  SCREEN_ROUTE_PLAYER = 7;
+  SCREEN_ROUTE_AUDIO = 8;
+  SCREEN_ROUTE_PANEL = 9;
+  SCREEN_ROUTE_QUEUE = 10;
+  SCREEN_ROUTE_TASKS = 11;
+  SCREEN_ROUTE_TASK = 12;
+  SCREEN_ROUTE_SETTINGS = 13;
+  SCREEN_ROUTE_AMBIENT = 14;
+  SCREEN_ROUTE_ENROLL = 15;
+  SCREEN_ROUTE_AIRPLAY = 16;
+  // v2 (boot and suspend movies): a v1 screen never enters them, and a server never routes to them
+  SCREEN_ROUTE_BOOT = 17;
+  SCREEN_ROUTE_SUSPEND = 18;
+  // the quick panel of what other devices play (devices.panel); Route.ref names the device to focus
+  SCREEN_ROUTE_DEVICES = 19;
+  // the household's alarms, timers and reminders (alarms.act stops, snoozes and cancels); Route.ref names a device
+  SCREEN_ROUTE_ALARMS = 20;
+}
+
+// device -> server: what a screen shows, on every change (debounced 500 ms) and at each turn's start. refs are the
+// opaque ones the server issued to this screen; the device sends no titles. memory-only on the server (10 min, D11),
+// never logged; the model alone reads it
+message ScreenContext {
+  // grows with each context the screen sends, so a late one is dropped
+  uint64 revision = 1;
+  ScreenRoute route = 2;
+  string page_ref = 3;
+  string focused_ref = 4;
+  // at most 24, in reading order
+  repeated string visible_refs = 5;
+  ScreenSelection selection = 6;
+  // the search page's query
+  string query = 7;
+  ScreenPlayer player = 8;
+  bool drawer_open = 9;
+}
+
+// the picker's choices on a title page; each is a ref or an option id the server issued
+message ScreenSelection {
+  string source = 1;
+  string voiceover = 2;
+  string quality = 3;
+  // the episode's label
+  string episode = 4;
+}
+
+message ScreenPlayer {
+  string item_ref = 1;
+  uint64 position_ms = 2;
+  repeated MediaTrack tracks = 3;
+}
+
+enum MediaTrackKind {
+  MEDIA_TRACK_KIND_UNSPECIFIED = 0;
+  MEDIA_TRACK_KIND_VIDEO = 1;
+  MEDIA_TRACK_KIND_AUDIO = 2;
+  MEDIA_TRACK_KIND_SUBTITLE = 3;
+}
+
+// a track of the playing item, as the player lists it
+message MediaTrack {
+  // the player's id, stable while the item plays
+  string id = 1;
+  MediaTrackKind kind = 2;
+  // bcp 47, empty when unknown
+  string language = 3;
+  string label = 4;
+  bool selected = 5;
+  // an external subtitle the server handed over, not one inside the stream
+  bool external = 6;
+}

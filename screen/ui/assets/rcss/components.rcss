@@ -1,0 +1,1221 @@
+/* afterglow's components (design r2 sections 6-10). one focus treatment shared by every focusable: an ember ring
+   and a glow child whose opacity alone transitions (box-shadow cannot animate in rmlui 6.3), a lift by scale, and
+   the cadence line, one element per row that slides. only transform and opacity animate. a template (tokens-gen) */
+
+/* ---------- focus treatment ---------- */
+.ring, .glow {
+  position: absolute;
+  left: -$size.ring-inset;
+  top: -$size.ring-inset;
+  right: -$size.ring-inset;
+  bottom: -$size.ring-inset;
+  border-radius: $radius.ring;
+  opacity: 0;
+  pointer-events: none;
+}
+.ring {
+  border: $size.ring $color.ember;
+  transition: opacity $motion.focus;
+}
+/* the glow: a static, pre-blurred nine-patch 32 dp around the ring (no box-shadow layer to render); only its opacity
+   transitions */
+@spritesheet afterglow-glow {
+  src: "gen:glow";
+  resolution: 1x;
+  glow-outer: 0px 0px 160px 160px;
+  glow-inner: 56px 56px 48px 48px;
+}
+.glow {
+  left: -40dp;
+  top: -40dp;
+  right: -40dp;
+  bottom: -40dp;
+  border-radius: 0dp;
+  decorator: ninepatch(glow-outer, glow-inner, 1);
+  transition: opacity $motion.glow;
+}
+/* round rings get a glow of their own radius (gen:glow:<r>): a pill's 40 dp (a 64 dp button), an icon button's 48
+   and 60 (80 and 104 dp circles). the nine-patch's corners then meet in the middle, so the glow follows the ring all
+   round instead of standing off it as a rounded square */
+@spritesheet afterglow-glow-round {
+  src: "gen:glow:40";
+  resolution: 1x;
+  glow-pill-outer: 0px 0px 160px 160px;
+  glow-pill-inner: 72px 72px 16px 16px;
+}
+@spritesheet afterglow-glow-circle {
+  src: "gen:glow:48";
+  resolution: 1x;
+  glow-circle-outer: 0px 0px 176px 176px;
+  glow-circle-inner: 80px 80px 16px 16px;
+}
+@spritesheet afterglow-glow-circle-l {
+  src: "gen:glow:60";
+  resolution: 1x;
+  glow-circle-l-outer: 0px 0px 200px 200px;
+  glow-circle-l-inner: 92px 92px 16px 16px;
+}
+.f:focus > .ring, .f:focus > .glow,
+.f:focus > .art > .ring, .f:focus > .art > .glow {
+  opacity: 1;
+}
+/* the long-press hold arc (design section 7): 8 sprite frames swapped by the focus manager, from 150 to 500 ms */
+.hold {
+  position: absolute;
+  right: -$space.s5;
+  top: -$space.s5;
+  width: $space.s7;
+  height: $space.s7;
+  image-color: $color.paper;
+  display: none;
+}
+.holding > .hold, .holding > .art > .hold {
+  display: block;
+}
+.hold.a0 { decorator: image("gen:arc:0"); }
+.hold.a1 { decorator: image("gen:arc:1"); }
+.hold.a2 { decorator: image("gen:arc:2"); }
+.hold.a3 { decorator: image("gen:arc:3"); }
+.hold.a4 { decorator: image("gen:arc:4"); }
+.hold.a5 { decorator: image("gen:arc:5"); }
+.hold.a6 { decorator: image("gen:arc:6"); }
+.hold.a7 { decorator: image("gen:arc:7"); }
+
+/* the cadence line: 4 dp ember, rounded ends; the focus manager sets its transform (translate to the focused
+   title, scaleX to its width from a 100 dp base). off: a card's focus is its ring alone (owner) */
+.cline {
+  display: none;
+  position: absolute;
+  left: 0dp;
+  top: 0dp;
+  width: 100dp;
+  height: $size.line;
+  border-radius: $space.s1;
+  background-color: $color.ember;
+  transform-origin: 0% 50%;
+  opacity: 0;
+  transition: transform $motion.glide, opacity $motion.line-fade;
+  pointer-events: none;
+}
+.focus-within > .cline {
+  opacity: 1;
+  transition: transform $motion.glide, opacity $motion.focus;
+}
+.cline.entering {
+  transition: none;
+}
+.held .cline {
+  transition: transform $motion.held, opacity $motion.held;
+}
+
+/* ---------- cards: poster 2:3, poster-jp 1:1.414, wide 16:9, square 1:1, tile ---------- */
+.card {
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  transform: scale(1);
+  transition: transform $motion.focus;
+}
+.card.poster, .card.square, .card.poster-jp, .card.tile { width: $size.poster-w; }
+.card.wide { width: $size.wide-w; }
+.card .art {
+  position: relative;
+  border-radius: $radius.m;
+  background-color: $color.ink-raised;
+}
+.card.poster .art { height: $size.poster-h; }
+.card.poster-jp .art { height: $size.poster-jp-h; }
+.card.wide .art { height: $size.wide-h; }
+.card.square .art { height: $size.square-h; }
+.card.tile .art { height: $size.tile-h; }
+.clip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: $radius.m;
+  overflow: hidden;
+}
+.clip .img {
+  width: 100%;
+  height: 100%;
+  border-radius: $radius.m;
+}
+/* the network image is rounded at decode (its border-radius above): no overflow, so no clip mask a frame */
+.clip.pre {
+  overflow: visible;
+}
+/* rule 2 of artwork: a 1 dp paper hairline inside the art's corner */
+.hair {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border: 1dp $color.hairline;
+  border-radius: $radius.m;
+}
+.card .title {
+  $type.label;
+  color: $color.paper-2;
+  margin-top: $space.s3;
+  height: $size.title-line;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color $motion.focus;
+}
+.card .meta {
+  $type.body;
+  font-size: 24dp;
+  color: $color.paper-2;
+  height: $size.meta-line;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card:focus .title {
+  color: $color.paper;
+  font-weight: 600;
+}
+.card.poster:focus, .card.square:focus, .card.poster-jp:focus, .card.tile:focus {
+  transform: scale($focus.scale-poster);
+}
+.card.wide:focus {
+  transform: scale($focus.scale-wide);
+}
+.card.pressed {
+  transform: scale($focus.scale-pressed);
+  transition: transform $motion.instant;
+}
+/* continue watching: a 6 dp cadence line 10 dp under the art, never on it */
+.card .progress {
+  margin-top: 10dp;
+}
+.card .badges {
+  display: flex;
+  flex-direction: row;
+  gap: $space.s2;
+  margin-top: $space.s2;
+}
+/* the empty state's ghosted card outline (dashed borders are unavailable: 1 dp solid line at 50 %) */
+.card.ghost .art {
+  background-color: $color.transparent;
+  border: 1dp $color.line-half;
+}
+/* "all ->": the last focusable of a row, a card-sized tile with a chevron */
+.card.all .art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: $color.ink-raised;
+}
+.card.all .art .icon {
+  font-size: 48dp;
+  line-height: 56dp;
+  color: $color.paper-2;
+}
+
+/* ---------- rows ---------- */
+.row {
+  position: relative;
+  display: block;
+  margin-bottom: $size.row-gap;
+}
+.row-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+  height: 44dp;
+  margin-bottom: $space.s4;
+}
+.row-header .name {
+  $type.title-m;
+  white-space: nowrap;
+}
+.track {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: $size.gutter;
+  /* the focus manager eases it (Focus::glide: an animation from where it is, cubic out) */
+  transform: translateX(0px);
+}
+.row-state {
+  $type.body;
+  color: $color.paper-2;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+}
+.row-state .icon {
+  font-size: 40dp;
+  line-height: 48dp;
+}
+/* section 9: a provider-down row collapses to its one-line error card */
+.row.down .track {
+  align-items: center;
+}
+
+/* ---------- hero / billboard ---------- */
+.hero {
+  position: relative;
+  height: $size.hero-h;
+  margin-left: -$size.safe-x;
+  margin-right: -$size.safe-x;
+  margin-top: -$size.safe-y;
+  transition: opacity $motion.enter;
+}
+.hero .backdrop {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+.hero .shade {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  decorator: $scrim.hero;
+}
+.hero .body {
+  position: absolute;
+  left: $size.safe-x;
+  bottom: $space.s7;
+  width: 900dp;
+}
+.hero .htitle {
+  $type.display;
+  max-height: 160dp;
+  overflow: hidden;
+}
+.hero .hmeta {
+  $type.body;
+  color: $color.paper-2;
+  margin-top: $space.s3;
+  margin-bottom: $space.s6;
+}
+.hero.collapsed {
+  opacity: 0;
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s3;
+  height: $size.button-h;
+  padding: 0 $size.button-pad;
+  border-radius: 32dp;
+  border: 2dp $color.line;
+  background-color: $color.transparent;
+  color: $color.paper;
+  $type.label;
+  line-height: 60dp;
+  white-space: nowrap;
+  transition: background-color $motion.quick, color $motion.quick, transform $motion.instant;
+}
+.btn .icon {
+  font-size: 32dp;
+  line-height: 60dp;
+}
+.btn:focus {
+  background-color: $color.ember;
+  border-color: $color.ember;
+  color: $color.ink;
+}
+.btn.primary {
+  background-color: $color.ember;
+  border-color: $color.ember;
+  color: $color.ink;
+}
+/* a focused button fills instead of lifting: no ring or glow, except on the primary, which is ember at rest */
+.btn .ring, .btn .glow, .chip .ring, .chip .glow, .key .ring, .key .glow {
+  display: none;
+}
+.btn.primary .ring, .btn.primary .glow {
+  display: block;
+}
+.btn.primary .ring {
+  border-radius: 40dp;
+}
+.btn.primary .glow {
+  decorator: ninepatch(glow-pill-outer, glow-pill-inner, 1);
+}
+.btn.pressed {
+  transform: scale($focus.scale-pressed);
+}
+.btn.loading .icon {
+  display: none;
+}
+.btn .spinner {
+  display: none;
+  width: 32dp;
+  height: 32dp;
+}
+.btn.loading .spinner {
+  display: block;
+}
+.btn:focus .spinner {
+  image-color: $color.ink;
+}
+
+/* icon buttons (transport): 80 dp circles, play/pause 104; focused: paper fill, the word fades in 12 dp below */
+.ibtn {
+  position: relative;
+  display: block;
+  width: $size.icon-button;
+  height: $size.icon-button;
+  border-radius: 40dp;
+  background-color: $color.transparent;
+  color: $color.paper;
+  text-align: center;
+  transition: background-color $motion.quick, color $motion.quick;
+}
+.ibtn.big {
+  width: $size.icon-button-l;
+  height: $size.icon-button-l;
+  border-radius: 52dp;
+}
+.ibtn .icon {
+  font-size: 40dp;
+  line-height: $size.icon-button;
+}
+.ibtn.big .icon {
+  font-size: 52dp;
+  line-height: $size.icon-button-l;
+}
+.ibtn .word {
+  position: absolute;
+  left: -60dp;
+  right: -60dp;
+  top: 100%;
+  margin-top: $space.s3;
+  $type.label;
+  text-align: center;
+  color: $color.paper;
+  opacity: 0;
+  transition: opacity $motion.quick;
+}
+.ibtn:focus {
+  background-color: $color.paper;
+  color: $color.ink;
+}
+/* the ring and its glow are circles around the circle, 8 dp out */
+.ibtn .ring {
+  border-radius: 48dp;
+}
+.ibtn .glow {
+  decorator: ninepatch(glow-circle-outer, glow-circle-inner, 1);
+}
+.ibtn.big .ring {
+  border-radius: 60dp;
+}
+.ibtn.big .glow {
+  decorator: ninepatch(glow-circle-l-outer, glow-circle-l-inner, 1);
+}
+.ibtn:focus .word {
+  opacity: 1;
+}
+
+/* ---------- chips and badges ---------- */
+.chip {
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s2;
+  height: $size.chip-h;
+  padding: 0 $space.s5;
+  border-radius: 24dp;
+  border: 2dp $color.line;
+  $type.label;
+  line-height: 44dp;
+  white-space: nowrap;
+  color: $color.paper;
+  transition: background-color $motion.quick, color $motion.quick;
+}
+.chip .icon {
+  font-size: 28dp;
+  line-height: 44dp;
+}
+.chip:focus {
+  background-color: $color.ember;
+  border-color: $color.ember;
+  color: $color.ink;
+}
+.chip .check {
+  display: none;
+}
+.chip.on .check {
+  display: inline;
+}
+/* the second-level source chip: no fill, a 1 dp line, paper-2, truncates at 240 dp */
+.chip.source {
+  display: inline-block;
+  padding-top: 0;
+  height: $size.badge-h;
+  border: 1dp $color.line;
+  color: $color.paper-2;
+  max-width: 240dp;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 38dp;
+}
+
+.badge {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s2;
+  height: $size.badge-h;
+  padding: 0 $space.s4;
+  border-radius: 20dp;
+  background-color: $color.line;
+  color: $color.paper;
+  $type.badge;
+  line-height: 40dp;
+  white-space: nowrap;
+}
+.badge .mono2 {
+  color: $color.paper-2;
+}
+/* hd, 4k, hdr, «НОВАЯ»: 18 dp caps inside a 28 dp tag, the type scale's one exception */
+.badge.code {
+  height: 28dp;
+  padding: 0 $space.s2;
+  border-radius: $radius.s;
+  $type.badge-code;
+}
+.badge.explicit {
+  height: 28dp;
+  width: 28dp;
+  padding: 0;
+  border-radius: 4dp;
+  $type.badge-code;
+  text-align: center;
+  display: block;
+}
+/* the live dot: the only animated badge, a 1.6 s opacity pulse over 16 dp */
+.badge .dot {
+  display: block;
+  width: 12dp;
+  height: 12dp;
+  border-radius: 6dp;
+  background-color: $tone.danger;
+  animation: $motion.live infinite alternate live-pulse;
+}
+@keyframes live-pulse {
+  from { opacity: 1; }
+  to { opacity: 0.25; }
+}
+
+/* ---------- progress, the cadence line as a bar, scrubber ---------- */
+.progress {
+  position: relative;
+  height: $size.line-progress;
+  border-radius: 3dp;
+  background-color: $color.line;
+  overflow: hidden;
+}
+.progress .fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  border-radius: 3dp;
+  background-color: $color.ember;
+  transform-origin: 0% 50%;
+  transition: transform $motion.enter;
+}
+.progress.indeterminate .fill {
+  width: 25%;
+  animation: 1.4s cubic-in-out infinite indeterminate;
+}
+@keyframes indeterminate {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(400%); }
+}
+.scrubber {
+  position: relative;
+  height: 48dp;
+}
+.scrubber .track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 20dp;
+  height: $size.slider-h;
+  border-radius: 4dp;
+  background-color: $color.line;
+  display: block;
+}
+.scrubber .buffered {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background-color: $color.paper-30;
+  border-radius: 4dp;
+}
+.scrubber .played {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background-color: $color.ember;
+  border-radius: 4dp;
+}
+.scrubber .times {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 36dp;
+  $type.figures;
+  color: $color.paper-2;
+}
+
+/* ---------- spinner (one arc the ui turns each frame while it shows) and skeletons ---------- */
+.spinner {
+  display: block;
+  width: $size.spinner;
+  height: $size.spinner;
+  image-color: $color.paper;
+  decorator: image("gen:spinner:0");
+  transform-origin: 50% 50%;
+}
+.spin-word {
+  $type.body;
+  color: $color.paper-2;
+}
+/* the skeleton: ink-raised at r-m with the real geometry; the ui drives one shared opacity pulse for all */
+.skel {
+  background-color: $color.ink-raised;
+  border-radius: $radius.m;
+}
+/* the skeleton's shimmer: a soft band sweeps every block at once, one step of 16 each 100 ms (Ui::tickSprites
+   swaps the class, as the spinner's frames: the ui redraws 10 times a second while something loads, never more) */
+.skel.s0 { decorator: linear-gradient(100deg, $color.ink-raised -70%, $color.skel-shine -35%, $color.ink-raised 0%); }
+.skel.s1 { decorator: linear-gradient(100deg, $color.ink-raised -59%, $color.skel-shine -24%, $color.ink-raised 11%); }
+.skel.s2 { decorator: linear-gradient(100deg, $color.ink-raised -47%, $color.skel-shine -12%, $color.ink-raised 23%); }
+.skel.s3 { decorator: linear-gradient(100deg, $color.ink-raised -36%, $color.skel-shine -1%, $color.ink-raised 34%); }
+.skel.s4 { decorator: linear-gradient(100deg, $color.ink-raised -25%, $color.skel-shine 10%, $color.ink-raised 45%); }
+.skel.s5 { decorator: linear-gradient(100deg, $color.ink-raised -13%, $color.skel-shine 22%, $color.ink-raised 57%); }
+.skel.s6 { decorator: linear-gradient(100deg, $color.ink-raised -2%, $color.skel-shine 33%, $color.ink-raised 68%); }
+.skel.s7 { decorator: linear-gradient(100deg, $color.ink-raised 9%, $color.skel-shine 44%, $color.ink-raised 79%); }
+.skel.s8 { decorator: linear-gradient(100deg, $color.ink-raised 21%, $color.skel-shine 56%, $color.ink-raised 91%); }
+.skel.s9 { decorator: linear-gradient(100deg, $color.ink-raised 32%, $color.skel-shine 67%, $color.ink-raised 102%); }
+.skel.s10 { decorator: linear-gradient(100deg, $color.ink-raised 43%, $color.skel-shine 78%, $color.ink-raised 113%); }
+.skel.s11 { decorator: linear-gradient(100deg, $color.ink-raised 55%, $color.skel-shine 90%, $color.ink-raised 125%); }
+.skel.s12 { decorator: linear-gradient(100deg, $color.ink-raised 66%, $color.skel-shine 101%, $color.ink-raised 136%); }
+.skel.s13 { decorator: linear-gradient(100deg, $color.ink-raised 77%, $color.skel-shine 112%, $color.ink-raised 147%); }
+.skel.s14 { decorator: linear-gradient(100deg, $color.ink-raised 89%, $color.skel-shine 124%, $color.ink-raised 159%); }
+.skel.s15 { decorator: linear-gradient(100deg, $color.ink-raised 100%, $color.skel-shine 135%, $color.ink-raised 170%); }
+.skel.line {
+  height: 24dp;
+  border-radius: $radius.s;
+  margin-top: $space.s3;
+}
+
+/* ---------- list items, value rows, settings ---------- */
+.list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: $space.s2;
+}
+.item {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s5;
+  height: $size.list-item-h;
+  padding: 0 $space.s5;
+  border-radius: $radius.m;
+  background-color: $color.ink-raised;
+  transform: scale(1);
+  transition: transform $motion.focus, background-color $motion.quick;
+}
+.item:focus {
+  transform: scale($focus.scale-row);
+}
+.item.pressed {
+  transform: scale($focus.scale-pressed);
+}
+.item .lead {
+  width: $size.list-art;
+  height: $size.list-art;
+  border-radius: $radius.s;
+  text-align: center;
+  flex: 0 0 auto;
+}
+.item .lead.icon {
+  font-size: 40dp;
+  line-height: $size.list-art;
+  color: $color.paper-2;
+}
+.item .texts {
+  flex: 1 1 0;
+  overflow: hidden;
+}
+.item .ititle {
+  $type.title-s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.item .imeta {
+  $type.body;
+  font-size: 24dp;
+  color: $color.paper-2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.item .trail {
+  $type.label;
+  color: $color.paper-2;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+.item .trail.icon {
+  font-family: $font.icons;
+  font-weight: 400;
+  font-size: 32dp;
+}
+.item:focus .trail {
+  color: $color.paper;
+}
+
+/* ---------- toggle (display: icon + word; actionable: a 72 x 40 switch with the word beside) ---------- */
+.toggle {
+  position: relative;
+  display: inline-flex;
+  align-self: flex-start;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+  $type.label;
+}
+.switch {
+  position: relative;
+  width: $size.toggle-w;
+  height: $size.toggle-h;
+  border-radius: 20dp;
+  background-color: $color.line;
+  transition: background-color $motion.quick;
+}
+.switch .knob {
+  position: absolute;
+  left: 4dp;
+  top: 4dp;
+  width: 32dp;
+  height: 32dp;
+  border-radius: 16dp;
+  background-color: $color.paper-2;
+  transition: transform $motion.glide;
+}
+.on > .switch, .on .switch {
+  background-color: $color.paper-2;
+}
+.on .switch .knob {
+  transform: translateX(32dp);
+  background-color: $color.ink;
+}
+.toggle.f:focus .switch {
+  background-color: $color.ember;
+}
+.toggle.f:focus .switch .knob {
+  background-color: $color.ink;
+}
+/* section 9's optimistic pending state: a 2 dp paper underline that pulses until the server answers */
+.pending-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -$space.s2;
+  height: 2dp;
+  background-color: $color.paper;
+  opacity: 0;
+}
+.pending > .pending-line {
+  animation: $motion.pulse infinite alternate pending-pulse;
+}
+@keyframes pending-pulse {
+  from { opacity: 0.2; }
+  to { opacity: 1; }
+}
+.refused .icon.state {
+  color: $tone.danger;
+}
+
+/* ---------- slider: track, the cadence line as its fill, a thumb when focused ---------- */
+.slider {
+  position: relative;
+  display: block;
+  padding: $space.s3 0;
+}
+.slider .shead {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  $type.label;
+}
+.slider .svalue {
+  font-family: $font.figures;
+  font-weight: 500;
+}
+.slider .strack {
+  position: relative;
+  margin-top: $space.s3;
+  height: $size.slider-h;
+  border-radius: 4dp;
+  background-color: $color.line;
+  transition: transform $motion.focus;
+}
+.slider:focus .strack {
+  transform: scaleY(1.5);
+}
+.slider .sfill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  border-radius: 4dp;
+  background-color: $color.ember;
+  transform-origin: 0% 50%;
+  transition: transform $motion.quick;
+}
+.slider .thumb {
+  position: absolute;
+  top: -8dp;
+  width: $size.thumb;
+  height: $size.thumb;
+  margin-left: -12dp;
+  border-radius: 12dp;
+  background-color: $color.paper;
+  opacity: 0;
+  transition: opacity $motion.focus;
+}
+.slider:focus .thumb {
+  opacity: 1;
+}
+
+/* ---------- sheets: toast, dialog, bottom sheet, actions sheet (level 2: opaque sheet, r-l, a 1 dp line top edge) ---------- */
+.sheetbox {
+  background-color: $color.sheet;
+  border-top: 1dp $color.line;
+  border-radius: $radius.l;
+}
+#toasts {
+  position: absolute;
+  right: $size.safe-x;
+  bottom: $size.safe-y;
+  width: $size.toast-w;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: $space.s4;
+}
+/* «now playing»: what began to play, top-left, a few seconds; nothing in it takes focus */
+#nowplaying {
+  position: absolute;
+  left: $size.safe-x;
+  top: $size.safe-y;
+}
+.nowplay {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s5;
+  width: 640dp;
+  padding: $space.s4;
+  background-color: $color.sheet;
+  border-top: 1dp $color.line;
+  border-radius: $radius.l;
+  opacity: 1;
+  transform: translateX(0dp);
+  transition: opacity $motion.enter, transform $motion.enter;
+}
+.nowplay.entering {
+  opacity: 0;
+  transform: translateX(-48dp);
+  transition: none;
+}
+.nowplay.leaving {
+  opacity: 0;
+  transform: translateX(-24dp);
+  transition: opacity $motion.quick-exit, transform $motion.quick-exit;
+}
+.nowplay .npart {
+  flex: 0 0 auto;
+  width: 120dp;
+  height: 120dp;
+}
+.nowplay .npimg {
+  width: 100%;
+  height: 100%;
+  border-radius: $radius.m;
+  background-color: $color.ink-raised;
+}
+.nowplay .nptext {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space.s2;
+}
+.nowplay .nplabel {
+  $type.label;
+  color: $color.paper-2;
+}
+.nowplay .nptitle {
+  $type.title-s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nowplay .npline {
+  $type.body;
+  color: $color.paper-2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.toast {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+  max-width: $size.toast-w;
+  padding: $space.s4 $space.s5;
+  background-color: $color.sheet;
+  border-top: 1dp $color.line;
+  border-radius: $radius.l;
+  opacity: 1;
+  transform: translateY(0dp);
+  transition: opacity $motion.enter, transform $motion.enter;
+}
+.toast.entering {
+  opacity: 0;
+  transform: translateY(24dp);
+  transition: none;
+}
+.toast.leaving {
+  opacity: 0;
+  transition: opacity $motion.quick-exit;
+}
+.toast .icon {
+  font-size: 40dp;
+  line-height: 48dp;
+}
+.toast .ttext {
+  $type.body;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+.layer.open {
+  display: block;
+}
+.layer .scrim-sheet, .layer .scrim-duck {
+  opacity: 1;
+  transition: opacity $motion.sheet;
+}
+.layer.entering .scrim-sheet, .layer.entering .scrim-duck {
+  opacity: 0;
+  transition: none;
+}
+.dialog {
+  position: absolute;
+  left: 480dp;
+  width: $size.dialog-w;
+  top: 300dp;
+  padding: $space.s7;
+  background-color: $color.sheet;
+  border-top: 1dp $color.line;
+  border-radius: $radius.l;
+  opacity: 1;
+  transform: translateY(0dp);
+  transition: opacity $motion.sheet, transform $motion.sheet;
+}
+.entering .dialog, .entering .bsheet {
+  opacity: 0;
+  transform: translateY(48dp);
+  transition: none;
+}
+.leaving .dialog, .leaving .bsheet {
+  opacity: 0;
+  transform: translateY(48dp);
+  transition: opacity $motion.sheet-exit, transform $motion.sheet-exit;
+}
+.dialog .dtitle {
+  $type.title-m;
+}
+.dialog .dbody {
+  $type.body;
+  color: $color.paper-2;
+  margin-top: $space.s4;
+}
+.dialog .buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: $space.s5;
+  margin-top: $space.s7;
+}
+.bsheet {
+  position: absolute;
+  left: 444dp;
+  width: $size.sheet-w;
+  bottom: 0dp;
+  padding: $space.s6 $space.s6 $size.safe-y $space.s6;
+  background-color: $color.sheet;
+  border-top: 1dp $color.line;
+  border-top-left-radius: $radius.l;
+  border-top-right-radius: $radius.l;
+  opacity: 1;
+  transform: translateY(0dp);
+  transition: opacity $motion.sheet, transform $motion.sheet;
+}
+.bsheet .stitle {
+  $type.title-s;
+  margin-bottom: $space.s5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* staggered content blocks: 40 ms each, at most 5 */
+.stagger > * {
+  opacity: 1;
+  transition: opacity $motion.enter;
+}
+.entering .stagger > * {
+  opacity: 0;
+  transition: none;
+}
+
+/* ---------- on-screen keyboard: 7 x 5 alphabetical, 88 x 72 dp keys at r-s, key focus is a paper fill ---------- */
+.osk {
+  width: $size.keyboard-w;
+}
+.osk .keys {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: $space.s2;
+}
+.key {
+  position: relative;
+  display: block;
+  width: $size.key-w;
+  height: $size.key-h;
+  border-radius: $radius.s;
+  background-color: $color.ink-raised;
+  $type.title-s;
+  line-height: $size.key-h;
+  text-align: center;
+  color: $color.paper;
+  transition: background-color $motion.instant, color $motion.instant;
+}
+.key.wide2 {
+  width: 184dp;
+}
+.key.wide3 {
+  width: 280dp;
+}
+.key .icon {
+  font-size: 32dp;
+}
+.key.mode {
+  $type.label;
+  line-height: $size.key-h;
+}
+.key.mode.on {
+  color: $color.ember;
+}
+.key:focus {
+  background-color: $color.paper;
+  color: $color.ink;
+}
+.osk .entry {
+  $type.title-m;
+  height: 64dp;
+  margin-bottom: $space.s4;
+  border-bottom: 2dp $color.line;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.osk .caret {
+  color: $color.ember;
+}
+
+/* ---------- clock and weather tile: figures-l time, body date, weather icon + temperature ---------- */
+.clock {
+  text-align: right;
+}
+.clock .time {
+  $type.figures-l;
+}
+.clock .date {
+  $type.body;
+  color: $color.paper-2;
+}
+.clock .weather {
+  $type.figures;
+  color: $color.paper-2;
+}
+.clock .weather .icon {
+  font-size: 28dp;
+}
+
+/* ---------- empty / error state block ---------- */
+.state-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space.s4;
+}
+/* its own icon alone: a button inside keeps its button's size and colour */
+.state-block > .icon {
+  font-size: 72dp;
+  line-height: 80dp;
+  color: $color.paper-2;
+}
+.state-block .stitle {
+  $type.title-m;
+}
+.state-block .sbody {
+  $type.body;
+  color: $color.paper-2;
+}
+
+/* ---------- subtitles: cut in and out, never fade ---------- */
+.subtitles {
+  position: absolute;
+  left: 240dp;
+  width: 1440dp;
+  bottom: 120dp;
+  text-align: center;
+}
+.subtitles span {
+  $type.subtitle;
+  background-color: $scrim.subtitle;
+  padding: 0 $space.s3;
+}
+
+/* ---------- the ghost hand-off (design section 8) ---------- */
+
+/* ---------- reduced motion ("Меньше движения"): transforms become 120 ms opacity cross-fades, no focus scale ---------- */
+.reduced .card:focus, .reduced .item:focus, .reduced .card.pressed, .reduced .item.pressed, .reduced .btn.pressed {
+  transform: none;
+}
+.reduced .card, .reduced .item, .reduced .track, .reduced .vscroll, .reduced .cline, .reduced .toast,
+.reduced .dialog, .reduced .bsheet, .reduced .switch .knob, .reduced .progress .fill, .reduced .slider .sfill {
+  transition: opacity $motion.reduced;
+}
+.reduced .entering .dialog, .reduced .entering .bsheet, .reduced .toast.entering {
+  transform: none;
+}
+
+/* ---------- error card: what failed, as it is (rml.h's errorCard) ---------- */
+.errcard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space.s5;
+  max-width: 1080dp;
+  padding: $space.s6 $space.s7;
+  border-radius: $radius.l;
+  border: 1dp $color.hairline;
+  background-color: $color.ink-raised;
+}
+.errcard .etext {
+  display: flex;
+  flex-direction: column;
+  gap: $space.s2;
+}
+.errcard .ehead {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s3;
+  $type.label;
+  color: $color.paper-2;
+}
+.errcard .edot {
+  width: 10dp;
+  height: 10dp;
+  border-radius: 5dp;
+  background-color: $tone.warning;
+}
+.errcard .etitle {
+  $type.title-m;
+  color: $color.paper;
+}
+.errcard .eplain {
+  $type.body;
+  color: $color.paper;
+}
+.errcard .ehint {
+  $type.body;
+  color: $color.paper-2;
+}
+.errcard .ereason {
+  $type.code;
+  font-size: 28dp;
+  line-height: 36dp;
+  color: $color.paper;
+}
+.errcard .edetail {
+  $type.code;
+  font-size: 22dp;
+  color: $color.paper-3;
+}
+.errcard .eactions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: $space.s4;
+}
+/* buttons keep their words whole: a row that is too narrow wraps them */
+.errcard .eactions .btn {
+  flex: 0 0 auto;
+}
+/* one feed of many: a single line in its row, the actions at its end */
+.errcard.einline {
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s6;
+  max-width: 1400dp;
+  padding: $space.s4 $space.s5;
+  border-radius: $radius.m;
+}
+.errcard.einline .ehead .eplain {
+  margin-left: $space.s3;
+}
+.errcard.einline .edetail {
+  font-size: 20dp;
+}

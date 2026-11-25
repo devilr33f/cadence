@@ -1,0 +1,9 @@
+media_session_state {
+  session_id: "video-3"
+  actions: ["next", "previous"]
+  item_actions { id: "act-1" kind: MEDIA_ITEM_ACTION_KIND_LIKE label: "Like" icon: "thumb-up" toggled: true enabled: true }
+  up_next { ref: "e:6" title: "Next episode" subtitle: "Episode 6" duration_ms: 1440000 badges { kind: MEDIA_BADGE_KIND_NEW label: "New" } }
+  queue_position: 5
+  panels { id: "p-1" kind: MEDIA_PANEL_KIND_COMMENTS title: "Comments" count_label: "1 204" }
+  playable: PLAYABLE_KIND_STREAM
+}

@@ -1,0 +1,9 @@
+media_session_state {
+  session_id: "sess-m1"
+  source: MEDIA_SOURCE_STREAM
+  state: PLAYBACK_STATE_PLAYING
+  metadata { title: "Song title" kind: MEDIA_KIND_TRACK provider { id: "spotify" name: "Spotify" } }
+  audio_route: AUDIO_ROUTE_MIXER
+  playable: PLAYABLE_KIND_MATCH
+  played_via { id: "youtube_music" name: "YouTube Music" }
+}

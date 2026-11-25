@@ -1,0 +1,240 @@
+syntax = "proto3";
+package cadence.screen.v1;
+
+import "cadence/screen/v1/media.proto";
+import "cadence/screen/v1/ui.proto";
+import "cadence/v2/assistant.proto";
+import "cadence/v2/media.proto";
+import "cadence/v2/rpc.proto";
+import "cadence/v2/screen.proto";
+
+option go_package = "git.shino.boo/devilreef/cadence/pkg/gen/cadence/screen/v1;screenv1";
+
+// cadenced <-> cadence-screen, one frame per message: SOCK_SEQPACKET on linux, an abstract unix socket (or in-process)
+// on android. the screen sends Hello first; cadenced answers Ready, then either side sends at will. messages of
+// cadence.v2 pass through cadenced unchanged (rpc, screen context, assistant turns, cards). audiod's tap (pcm, bands,
+// mirror frames) is a direct audiod -> screen socket of its own (cadence.audiod.v1.TapEnvelope), never this one
+message Envelope {
+  oneof body {
+    Hello hello = 1;
+    Ready ready = 2;
+    LinkStatus link_status = 3;
+    ClaimState claim_state = 4;
+    EnrollCode enroll_code = 5;
+    ServerAddress server_address = 6;
+    ScreenStatus screen_status = 7;
+    CapabilityConfig capability_config = 8;
+    LogLine log_line = 9;
+    Route route = 10;
+    Toast toast = 11;
+    VoiceState voice_state = 12;
+    DisplayPower display_power = 13;
+    InputEvent input_event = 14;
+    TextInput text_input = 15;
+    MediaPlay media_play = 16;
+    MediaCommand media_command = 17;
+    MediaState media_state = 18;
+    CommandResult command_result = 19;
+    PlaybackGate playback_gate = 20;
+    SetLevel set_level = 21;
+    SetEq set_eq = 22;
+    Mute mute = 23;
+    MirrorStart mirror_start = 24;
+    MirrorStop mirror_stop = 25;
+    AirplayPin airplay_pin = 26;
+    cadence.v2.Duck duck = 27;
+    cadence.v2.ScreenContext screen_context = 28;
+    cadence.v2.AssistantTurn assistant_turn = 29;
+    cadence.v2.VoiceLevel voice_level = 30;
+    cadence.v2.Cards cards = 31;
+    cadence.v2.RpcRequest rpc_request = 32;
+    cadence.v2.RpcResponse rpc_response = 33;
+    cadence.v2.RpcEvent rpc_event = 34;
+    cadence.v2.RpcCancel rpc_cancel = 35;
+    // cadenced -> screen: the server's own fields of a session (item actions, up next, queue position, panels, its
+    // transport), as the link's MediaSessionState carries them server -> device; the screen merges them by session_id
+    // into the session its player (or audiod's music) plays, and a later one replaces an earlier one whole
+    cadence.v2.MediaSessionState media_session_state = 36;
+    cadence.v2.TasksSummary tasks_summary = 37;
+    MicChoice mic_choice = 38;
+    PlayerStats player_stats = 39;
+    VolumeState volume_state = 40;
+    MediaPreparing media_preparing = 41;
+    // screen -> cadenced: the state of a capability the screen applies itself (media.mpv's applied and refused keys)
+    CapabilityState capability_state = 42;
+    // cadenced -> screen: the media session audiod renders (airplay, soloist, a url), which the screen shows in audio
+    // mode; the screen's own player's sessions never come here
+    NowPlaying now_playing = 43;
+    // screen -> cadenced: a transport action on the session NowPlaying named
+    NowPlayingCommand now_playing_command = 44;
+    // cadenced -> screen: the household's alarms and the rings it shows, as the link's AlarmsSummary carries them
+    cadence.v2.AlarmsSummary alarms_summary = 45;
+    // 46-49: free for v1. 50: v2's screenshot (the screen answers a capture), not used before
+  }
+}
+
+enum Platform {
+  PLATFORM_UNSPECIFIED = 0;
+  PLATFORM_ANDROID = 1;
+  PLATFORM_LINUX = 2;
+}
+
+message Display {
+  uint32 width = 1;
+  uint32 height = 2;
+  // refresh rate in millihertz (59940)
+  uint32 refresh_mhz = 3;
+  // hdr formats the display takes: hdr10, hlg, dolby_vision
+  repeated string hdr = 4;
+}
+
+// screen -> cadenced, first: what this screen can do; cadenced builds display.screen's state and the device profile
+// (screen, maxHeight, codecs) from it
+message Hello {
+  uint32 protocol = 1;
+  string version = 2;
+  Platform platform = 3;
+  Display display = 4;
+  // mpv hwdec names that work here (mediacodec, v4l2m2m-copy, ...)
+  repeated string hwdec = 5;
+  // video codecs it decodes in hardware: h264, hevc, vp9, av1
+  repeated string video_codecs = 6;
+  // the largest height it plays smoothly
+  uint32 max_video_height = 7;
+  // the cadence.cards.v1 versions it renders
+  repeated uint32 card_versions = 8;
+  // it can show airplay mirroring (decodes the tap's mirror frames)
+  bool mirroring = 9;
+  // a usb microphone is attached
+  bool local_mic = 10;
+  // every card feature it draws, as a card names them in its features: the primitives ("text", "slider") and the
+  // optional fields ("post.quote"; pkg/cards.Known lists them all), so the server knows which cards fall back to
+  // their fallback_text here. empty from a screen before it: assume every feature of its card_versions
+  repeated string card_features = 11;
+}
+
+// cadenced -> screen, the answer to Hello and again on change
+message Ready {
+  string daemon_version = 1;
+  // empty until enrolled
+  string device_id = 2;
+  string device_name = 3;
+  string room_id = 4;
+  string room_name = 5;
+  // bcp 47 from the device's language setting (en, ru)
+  string language = 6;
+  // where audiod serves its tap (an abstract name starts with @); empty = no tap
+  string tap_path = 7;
+  // the playback gate as it stands (rule 7), as a PlaybackGate would say it
+  bool gate_open = 8;
+}
+
+enum LinkState {
+  LINK_STATE_UNSPECIFIED = 0;
+  // no token yet: the screen shows the claim
+  LINK_STATE_UNENROLLED = 1;
+  LINK_STATE_CONNECTING = 2;
+  LINK_STATE_ONLINE = 3;
+  LINK_STATE_OFFLINE = 4;
+  // the server refused the token: removed from cadence (design §22)
+  LINK_STATE_REMOVED = 5;
+}
+
+// cadenced -> screen, on change
+message LinkStatus {
+  LinkState state = 1;
+  // the origin cadenced links to (scheme://host[:port], no path, as its config's serverUrl names it), set whatever
+  // the state once enrolled: the screen fetches images through the server's proxy there (/api/v1/images/...)
+  string server_url = 2;
+  // a token for OFFLINE: no_network, unreachable, tls, ...
+  string code = 3;
+  string server_version = 4;
+}
+
+enum ClaimPhase {
+  CLAIM_PHASE_UNSPECIFIED = 0;
+  CLAIM_PHASE_PENDING = 1;
+  CLAIM_PHASE_APPROVED = 2;
+  CLAIM_PHASE_DECLINED = 3;
+  CLAIM_PHASE_EXPIRED = 4;
+  CLAIM_PHASE_FAILED = 5;
+}
+
+// cadenced -> screen: the claim cadenced holds open with the server (POST /v2/claim); a fresh code replaces an expired
+// one by itself
+message ClaimState {
+  ClaimPhase phase = 1;
+  // 6 characters, no 0/O or 1/I
+  string code = 2;
+  // the dashboard url the qr encodes
+  string url = 3;
+  // unix ms on the device clock
+  int64 expires_at_ms = 4;
+  // a token for FAILED
+  string error_code = 5;
+}
+
+// screen -> cadenced: the 8-character dashboard code typed as the fallback (design §22)
+message EnrollCode {
+  string code = 1;
+}
+
+// screen -> cadenced: a new server address from the settings, kept by cadenced
+message ServerAddress {
+  string url = 1;
+}
+
+enum ScreenPower {
+  SCREEN_POWER_UNSPECIFIED = 0;
+  SCREEN_POWER_ON = 1;
+  SCREEN_POWER_AMBIENT = 2;
+  // the wake lock released, or the display in cec standby or dpms off
+  SCREEN_POWER_SLEEP = 3;
+}
+
+// screen -> cadenced, on change: display.screen's state comes from it (and Hello). no refs, nothing private
+message ScreenStatus {
+  ScreenPower power = 1;
+  cadence.v2.ScreenRoute route = 2;
+  bool drawer_open = 3;
+  Display display = 4;
+}
+
+// cadenced -> screen: the config of a capability the screen applies (display.screen, media.video, input.remote) as the
+// server set it, already validated by cadenced
+message CapabilityConfig {
+  string capability = 1;
+  string json = 2;
+}
+
+// screen -> cadenced, after its CapabilityConfig and after every later change of it: what the screen did with the
+// config (media.mpv: which keys it applied, which wait for the next file, which it refused). ids and tokens only
+// (rule 8); cadenced validates the json against the capability's state schema before it publishes it
+message CapabilityState {
+  string capability = 1;
+  string json = 2;
+}
+
+enum LogLevel {
+  LOG_LEVEL_UNSPECIFIED = 0;
+  LOG_LEVEL_DEBUG = 1;
+  LOG_LEVEL_INFO = 2;
+  LOG_LEVEL_WARN = 3;
+  LOG_LEVEL_ERROR = 4;
+}
+
+// screen -> cadenced: a line of the screen's own (source cadence-screen) or of a library in it (mpv, projectm); as
+// audiod's LogLine, cut lines say so and cadenced redacts secrets. ids, codes, numbers and timings only (rule 8)
+message LogLine {
+  string source = 1;
+  LogLevel level = 2;
+  string text = 3;
+  bool truncated = 4;
+  bool continued = 5;
+}
+
+// the answer to a request_id'd message; code is empty when ok, else a token (unsupported, invalid, gated, busy, failed)
+message CommandResult {
+  string request_id = 1;
+  string code = 2;
+}

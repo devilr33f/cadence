@@ -1,0 +1,1 @@
+session_control { request_id: "c-1" session_id: "sess-v1" duck { active: true level: 0.2 ramp_ms: 200 reason: DUCK_REASON_ASSISTANT } }

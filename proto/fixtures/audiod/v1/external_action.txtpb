@@ -1,0 +1,1 @@
+external_action { id: "sess-v1" action: MEDIA_ACTION_PAUSE reason: "displaced" }

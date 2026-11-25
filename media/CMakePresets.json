@@ -1,0 +1,143 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {"major": 3, "minor": 25, "patch": 0},
+  "configurePresets": [
+    {
+      "name": "distro",
+      "hidden": true,
+      "description": "one preset per deploy/distros manifest, named as it, with its media options (dist.test.sh holds them equal); the builders pass the same values on their command lines",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/../build/media/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CADENCE_MEDIA_TESTS": "OFF"
+      }
+    },
+    {
+      "name": "yandex-pickle",
+      "inherits": "distro",
+      "description": "pickle's audiod (deploy/builder/device.Dockerfile, in debian bookworm arm64 with ffmpeg in /opt/ffmpeg)",
+      "cacheVariables": {
+        "CADENCE_MEDIA_AIRPLAY": "shairport",
+        "CADENCE_MEDIA_AUDIO_BACKEND": "alsa",
+        "CADENCE_MEDIA_URL": "ON",
+        "CADENCE_MEDIA_STATIC": "ON",
+        "CADENCE_MEDIA_SOLOIST_JAIL": "ON",
+        "CADENCE_MEDIA_SIM": "OFF",
+        "CADENCE_SCREEN": "OFF"
+      }
+    },
+    {
+      "name": "yandex-midi",
+      "inherits": "distro",
+      "description": "midi's audiod (deploy/builder/build-midi-audiod.sh, zig for glibc 2.30, in device.Dockerfile's midi-cross stage)",
+      "toolchainFile": "${sourceDir}/../deploy/builder/zig-armhf.cmake",
+      "cacheVariables": {
+        "CADENCE_MEDIA_AIRPLAY": "shairport",
+        "CADENCE_MEDIA_AUDIO_BACKEND": "alsa",
+        "CADENCE_MEDIA_URL": "ON",
+        "CADENCE_MEDIA_STATIC": "ON",
+        "CADENCE_MEDIA_SOLOIST_JAIL": "ON",
+        "CADENCE_MEDIA_SIM": "OFF",
+        "CADENCE_SCREEN": "OFF"
+      }
+    },
+    {
+      "name": "yandex-micro",
+      "inherits": "distro",
+      "description": "micro's audiod (deploy/builder/device.Dockerfile's zig cross build): alsa, no airplay or soloist",
+      "toolchainFile": "${sourceDir}/../deploy/builder/zig-armhf.cmake",
+      "cacheVariables": {
+        "CADENCE_MEDIA_AIRPLAY": "off",
+        "CADENCE_MEDIA_AUDIO_BACKEND": "alsa",
+        "CADENCE_MEDIA_URL": "ON",
+        "CADENCE_MEDIA_STATIC": "ON",
+        "CADENCE_MEDIA_SOLOIST": "OFF",
+        "CADENCE_MEDIA_SIM": "OFF",
+        "CADENCE_SCREEN": "OFF"
+      }
+    },
+    {
+      "name": "vk-capsula-mini",
+      "inherits": "distro",
+      "description": "the vk capsula mini's audiod (deploy/builder/build-vk-audiod.sh, zig for aarch64 glibc 2.28, in device.Dockerfile's vk-cross stage): no soloist, no airplay, the keyword engine on tensorflow lite micro",
+      "toolchainFile": "${sourceDir}/../deploy/builder/zig-aarch64.cmake",
+      "cacheVariables": {
+        "CADENCE_MEDIA_AIRPLAY": "off",
+        "CADENCE_MEDIA_AUDIO_BACKEND": "alsa",
+        "CADENCE_MEDIA_URL": "ON",
+        "CADENCE_MEDIA_STATIC": "ON",
+        "CADENCE_MEDIA_KWS": "ON",
+        "CADENCE_MEDIA_SOLOIST": "OFF",
+        "CADENCE_MEDIA_SIM": "OFF",
+        "CADENCE_SCREEN": "OFF"
+      }
+    },
+    {
+      "name": "sim",
+      "inherits": "distro",
+      "description": "the sim image's audiod (device/Dockerfile.sim): file backends, soloist unjailed, airplay's bus and a fake shairport without avahi or nqptp",
+      "cacheVariables": {
+        "CADENCE_MEDIA_AIRPLAY": "shairport",
+        "CADENCE_MEDIA_AIRPLAY_LAN": "OFF",
+        "CADENCE_MEDIA_FAKE_SHAIRPORT": "ON",
+        "CADENCE_MEDIA_FAKE_SOLOIST": "ON",
+        "CADENCE_MEDIA_AUDIO_BACKEND": "sim",
+        "CADENCE_MEDIA_URL": "ON",
+        "CADENCE_MEDIA_STATIC": "ON",
+        "CADENCE_MEDIA_SOLOIST_JAIL": "OFF",
+        "CADENCE_MEDIA_SIM": "ON",
+        "CADENCE_SCREEN": "OFF"
+      }
+    },
+    {
+      "name": "sim-tv",
+      "inherits": "distro",
+      "description": "the screen sim's audiod (planned): file backends, libairplay, no url source",
+      "cacheVariables": {
+        "CADENCE_MEDIA_AIRPLAY": "uxplay",
+        "CADENCE_MEDIA_AUDIO_BACKEND": "sim",
+        "CADENCE_MEDIA_URL": "OFF",
+        "CADENCE_MEDIA_SOLOIST_JAIL": "OFF",
+        "CADENCE_MEDIA_SIM": "ON",
+        "CADENCE_SCREEN": "ON"
+      }
+    },
+    {
+      "name": "rpi",
+      "inherits": "distro",
+      "description": "the pi's audiod (deploy/builder/rpi.Dockerfile): alsa on hdmi or bluealsa, libairplay on trixie's openssl, libplist and avahi-client, no url source",
+      "cacheVariables": {
+        "CADENCE_MEDIA_AIRPLAY": "uxplay",
+        "CADENCE_AIRPLAY_DNSSD_AVAHI": "ON",
+        "CADENCE_MEDIA_AUDIO_BACKEND": "alsa",
+        "CADENCE_MEDIA_URL": "OFF",
+        "CADENCE_MEDIA_STATIC": "ON",
+        "CADENCE_MEDIA_AO_RING": "ON",
+        "CADENCE_MEDIA_SOLOIST": "OFF",
+        "CADENCE_MEDIA_SIM": "OFF",
+        "CADENCE_SCREEN": "ON"
+      }
+    },
+    {
+      "name": "android-tv",
+      "inherits": "distro",
+      "description": "the android app's audiod (stream F; android/native builds it in process with these options, the airplay receiver off until audiod has its libairplay side): aaudio, libairplay on build/libairplay/android-armeabi-v7a's openssl and libplist, no url source, soloist plain (unjailed, through the runtime's loader: the app ships the arm64 runtime in its data); needs ANDROID_NDK_ROOT (ndk r29) and the dependencies' prefix in CADENCE_ANDROID_DEPS",
+      "toolchainFile": "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
+      "cacheVariables": {
+        "ANDROID_ABI": "armeabi-v7a",
+        "ANDROID_PLATFORM": "android-30",
+        "CADENCE_MEDIA_AIRPLAY": "uxplay",
+        "CADENCE_AIRPLAY_DEPS": "prefix",
+        "CADENCE_AIRPLAY_OPENSSL_ROOT": "$env{CADENCE_ANDROID_DEPS}/openssl",
+        "CADENCE_AIRPLAY_PLIST_SOURCE": "$env{CADENCE_ANDROID_DEPS}/libplist",
+        "CADENCE_MEDIA_AUDIO_BACKEND": "aaudio",
+        "CADENCE_MEDIA_SOLOIST": "ON",
+        "CADENCE_MEDIA_SOLOIST_JAIL": "OFF",
+        "CADENCE_MEDIA_URL": "OFF",
+        "CADENCE_MEDIA_SIM": "OFF",
+        "CADENCE_SCREEN": "ON"
+      }
+    }
+  ]
+}

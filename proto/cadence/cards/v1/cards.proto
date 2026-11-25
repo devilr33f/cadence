@@ -1,0 +1,515 @@
+syntax = "proto3";
+package cadence.cards.v1;
+
+option go_package = "git.shino.boo/devilreef/cadence/pkg/gen/cadence/cards/v1;cardsv1";
+
+// Cadence Cards, vocabulary version 1 (TV design r2 section 17): a closed set of display primitives the server sends and
+// a screen draws from its own tokens. The device knows no integration, only how to draw a primitive and send back an
+// opaque action id. Go (pkg/cards: builders, the limit validator and the features list) and C++ (nanopb, media/gen;
+// cards.options) are generated from this file.
+//
+// Field numbers are stable: a field or a oneof member is never renumbered or reused; a removed one is reserved.
+// Forward compatibility: a decoder skips fields it does not know, so a card names in `features` every primitive and
+// optional field it uses, and a device that lacks one draws `fallback_text` instead of the card. Over a limit, an
+// empty Node, an unknown enum value or a failed check: the device draws a plain card of `fallback_text` with an
+// "unavailable on this screen" meta line, counts it, logs nothing more and never crashes.
+//
+// Every string arrives localized; numbers, units, dates and counts arrive formatted ("22 °C", "1,2 млн"). The device
+// formats only a countdown. Text from third parties (titles, posts, snippets, task output) is content, never the
+// assistant's voice, and never reaches a log. Length limits below are in Unicode code points.
+
+// Card is one card: a tool result pushed into the assistant drawer, or one card of a panel Page. `id` is stable per
+// subject; a higher `revision` with the same `id` replaces the card in place, a lower or equal one is ignored.
+message Card {
+  // the vocabulary version: 1. a change of an existing field's meaning is version 2, and a screen advertises the
+  // versions it renders in its hello so the server can downgrade
+  uint32 version = 1;
+  // [A-Za-z0-9][A-Za-z0-9._:-]{0,127}
+  string id = 2;
+  uint32 revision = 3;
+  // seconds the card stays; 0 = no expiry
+  uint32 ttl_s = 4;
+  bool dismissable = 5;
+  // required, at most 280: what the device shows when it cannot draw the card
+  string fallback_text = 6;
+  // always a `card` node
+  Node root = 7;
+  // every primitive the card uses by its oneof name ("text", "slider") and every optional field from the feature
+  // table ("post.quote", "long_text.tail"), sorted, no repeats; computed by pkg/cards
+  repeated string features = 8;
+}
+
+// Page is a panel page (comments, a description, the tasks list): at most 20 cards and the action that loads the
+// next page, unset on the last.
+message Page {
+  uint32 version = 1;
+  repeated Card cards = 2;
+  Action next = 3;
+  // the server's opaque id for the page (as a card's id), which an ActionRequest of its next action names
+  string id = 4;
+}
+
+// Action is an opaque, server-issued id (at most 128: [A-Za-z0-9][A-Za-z0-9._:~-]{0,127}). On OK the device sends it
+// with the card's id and revision and marks the element pending; the server answers with the card's next revision,
+// or a refusal the device shows as a toast and rolls back. `confirm`, when set (at most 160), is the question the
+// device asks first: always set for sensitive devices (locks, alarms, gates, garage doors) and task approvals.
+message Action {
+  string id = 1;
+  string confirm = 2;
+}
+
+// ActionRequest is what a screen sends when the remote acts on a card. `value` comes only from a slider (number) or
+// choices (one id, or ids when multiple). A page's next action names the page by `page_id` and no card; a server
+// still takes one with neither id for one release (a screen before page ids sent an empty `card_id`).
+message ActionRequest {
+  string card_id = 1;
+  uint32 revision = 2;
+  string action_id = 3;
+  ActionValue value = 4;
+  // the Page's id, for its next action alone
+  string page_id = 5;
+}
+
+// CardActionResult is the server's answer to an ActionRequest: the card's next revision (its new state), the page an
+// action opened or a page's next action loaded, or a refusal the device shows on the card and rolls back.
+message CardActionResult {
+  oneof result {
+    Card card = 1;
+    Page page = 2;
+    ActionRefusal refusal = 3;
+  }
+}
+
+message ActionRefusal {
+  // a token: unknown, expired, invalid, denied, unavailable, not_supported, failed
+  string reason = 1;
+  // the refusal in the screen's language, at most 160
+  string toast = 2;
+  // the card as the server holds it, which the device rolls back to; unset when the action has no card or none is
+  // left
+  Card card = 3;
+}
+
+message ActionValue {
+  oneof kind {
+    double number = 1;
+    string id = 2;
+    IdList ids = 3;
+  }
+}
+
+message IdList {
+  repeated string ids = 1;
+}
+
+// Node is one primitive. `card` is the root's alone; every other member may nest below it, at most 4 levels deep.
+message Node {
+  oneof kind {
+    CardBlock card = 1;
+    Row row = 2;
+    Column column = 3;
+    Grid grid = 4;
+    Text text = 5;
+    LongText long_text = 6;
+    Icon icon = 7;
+    Image image = 8;
+    State state = 9;
+    Value value = 10;
+    Meter meter = 11;
+    Progress progress = 12;
+    Countdown countdown = 13;
+    Steps steps = 14;
+    Toggle toggle = 15;
+    Button button = 16;
+    KeyValue keyvalue = 17;
+    Badge badge = 18;
+    MediaTile media_tile = 19;
+    PagedList paged_list = 20;
+    Divider divider = 21;
+    Sparkline sparkline = 22;
+    Link link = 23;
+    Post post = 24;
+    Slider slider = 25;
+    Qr qr = 26;
+    Code code = 27;
+    Choices choices = 28;
+  }
+}
+
+// Tone is a token. TONE_ACCENT is the primary button's alone: no node carries it.
+enum Tone {
+  TONE_UNSPECIFIED = 0;
+  TONE_NEUTRAL = 1;
+  TONE_ACCENT = 2;
+  TONE_SUCCESS = 3;
+  TONE_WARNING = 4;
+  TONE_DANGER = 5;
+  TONE_INFO = 6;
+}
+
+enum Gap {
+  GAP_UNSPECIFIED = 0;
+  GAP_S = 1;
+  GAP_M = 2;
+  GAP_L = 3;
+}
+
+enum TextStyle {
+  TEXT_STYLE_UNSPECIFIED = 0;
+  TEXT_STYLE_TITLE = 1;
+  TEXT_STYLE_BODY = 2;
+  TEXT_STYLE_META = 3;
+  TEXT_STYLE_FIGURES = 4;
+}
+
+enum Aspect {
+  ASPECT_UNSPECIFIED = 0;
+  // 1:1
+  ASPECT_SQUARE = 1;
+  // 2:3
+  ASPECT_POSTER = 2;
+  // 16:9
+  ASPECT_WIDE = 3;
+  ASPECT_AVATAR = 4;
+}
+
+enum StateKind {
+  STATE_KIND_UNSPECIFIED = 0;
+  STATE_KIND_ON = 1;
+  STATE_KIND_OFF = 2;
+  STATE_KIND_OPEN = 3;
+  STATE_KIND_CLOSED = 4;
+  STATE_KIND_LOCKED = 5;
+  STATE_KIND_UNLOCKED = 6;
+  STATE_KIND_UNAVAILABLE = 7;
+  STATE_KIND_UNKNOWN = 8;
+}
+
+enum Trend {
+  TREND_UNSPECIFIED = 0;
+  TREND_UP = 1;
+  TREND_DOWN = 2;
+  TREND_FLAT = 3;
+}
+
+enum CountdownFormat {
+  COUNTDOWN_FORMAT_UNSPECIFIED = 0;
+  COUNTDOWN_FORMAT_MM_SS = 1;
+  COUNTDOWN_FORMAT_HH_MM_SS = 2;
+}
+
+enum StepStatus {
+  STEP_STATUS_UNSPECIFIED = 0;
+  STEP_STATUS_PENDING = 1;
+  STEP_STATUS_RUNNING = 2;
+  STEP_STATUS_DONE = 3;
+  STEP_STATUS_FAILED = 4;
+}
+
+enum BadgeKind {
+  BADGE_KIND_UNSPECIFIED = 0;
+  BADGE_KIND_LIVE = 1;
+  BADGE_KIND_PREMIERE = 2;
+  BADGE_KIND_HD = 3;
+  BADGE_KIND_4K = 4;
+  BADGE_KIND_HDR = 5;
+  BADGE_KIND_CC = 6;
+  BADGE_KIND_EXPLICIT = 7;
+  BADGE_KIND_NEW = 8;
+  BADGE_KIND_PROVIDER = 9;
+}
+
+enum StatKind {
+  STAT_KIND_UNSPECIFIED = 0;
+  STAT_KIND_REPLY = 1;
+  STAT_KIND_REPOST = 2;
+  STAT_KIND_LIKE = 3;
+  STAT_KIND_VIEW = 4;
+}
+
+// ImageRef names an image the server's image proxy serves by hash (img:[A-Za-z0-9_-]{1,96}); the device never
+// fetches a third-party URL. `alt` at most 120. `aspect` is required where the image is a media tile's.
+message ImageRef {
+  string ref = 1;
+  string alt = 2;
+  Aspect aspect = 3;
+}
+
+// CardBlock is the root: a sheet-level block with a 4 dp tone stripe, icon and title. `actions` are buttons at its
+// foot (at most 4).
+message CardBlock {
+  // required, at most 80
+  string title = 1;
+  // at most 80
+  string subtitle = 2;
+  // a bundled icon: [a-z][a-z0-9_]{0,31}
+  string icon = 3;
+  Tone tone = 4;
+  repeated Node children = 5;
+  repeated Button actions = 6;
+}
+
+message Row {
+  repeated Node children = 1;
+  Gap gap = 2;
+}
+
+message Column {
+  repeated Node children = 1;
+  Gap gap = 2;
+}
+
+// Grid has 2 to 4 fixed columns and spatial navigation with column memory.
+message Grid {
+  repeated Node children = 1;
+  uint32 columns = 2;
+  Gap gap = 3;
+}
+
+// Text: required, at most 280, in a required style.
+message Text {
+  string text = 1;
+  TextStyle style = 2;
+  Tone tone = 3;
+}
+
+// LongText is up to 8000, focusable: OK expands it and down scrolls. `tail` (feature long_text.tail) marks a live tail:
+// a new revision appends below without moving focus or scroll, and a "new below" pill appears.
+message LongText {
+  string text = 1;
+  // 0 = the device's default, else 3 to 10
+  uint32 collapsed_lines = 2;
+  bool reading = 3;
+  bool tail = 4;
+}
+
+message Icon {
+  string name = 1;
+  // 0 = the device's choice, else 32 or 48 (dp)
+  uint32 size = 2;
+  Tone tone = 3;
+}
+
+// Image: `ref` (as ImageRef's), `aspect` and `alt` (at most 120) are all required.
+message Image {
+  string ref = 1;
+  string alt = 2;
+  Aspect aspect = 3;
+}
+
+// State is an icon and a word, never colour alone. `label` required, at most 40.
+message State {
+  string label = 1;
+  StateKind kind = 2;
+  Tone tone = 3;
+}
+
+// Value is a figure the server formatted: `value` required, at most 24; `unit` at most 12; `label` at most 40.
+message Value {
+  string value = 1;
+  string unit = 2;
+  string label = 3;
+  Trend trend = 4;
+}
+
+// Meter is read-only: min < max, min <= value <= max; `label` and `value_label` required, at most 40.
+message Meter {
+  double value = 1;
+  double min = 2;
+  double max = 3;
+  string label = 4;
+  string value_label = 5;
+}
+
+// Progress is a fraction 0 to 1, or indeterminate; one is required.
+message Progress {
+  oneof amount {
+    double fraction = 1;
+    bool indeterminate = 2;
+  }
+  string label = 3;
+}
+
+// Countdown ticks on the device, so a timer card needs no revision a second.
+message Countdown {
+  // epoch milliseconds
+  int64 ends_at_ms = 1;
+  string label = 2;
+  // unset = mm:ss
+  CountdownFormat format = 3;
+}
+
+// Steps: 1 to 12 items, each label required (at most 80) with a status.
+message Steps {
+  repeated Step items = 1;
+}
+
+message Step {
+  string label = 1;
+  StepStatus status = 2;
+}
+
+// Toggle without an action is a display-only word, with one a switch.
+message Toggle {
+  string label = 1;
+  bool on = 2;
+  Action action = 3;
+}
+
+// Button is a pill; one button per card may be primary, the only accent a card shows.
+message Button {
+  string label = 1;
+  string icon = 2;
+  Action action = 3;
+  bool primary = 4;
+}
+
+// KeyValue: 1 to 12 rows, key at most 40, value at most 80.
+message KeyValue {
+  repeated KeyValueItem items = 1;
+}
+
+message KeyValueItem {
+  string key = 1;
+  string value = 2;
+}
+
+// Badge: `text` at most 24 (a provider badge's name).
+message Badge {
+  BadgeKind kind = 1;
+  string text = 2;
+}
+
+// MediaTile draws wide or poster by its image's aspect. `secondary` lists the long-press actions (at most 4).
+message MediaTile {
+  ImageRef image = 1;
+  string title = 2;
+  string subtitle = 3;
+  repeated Badge badges = 4;
+  Action action = 5;
+  repeated LabeledAction secondary = 6;
+}
+
+message LabeledAction {
+  Action action = 1;
+  string label = 2;
+  string icon = 3;
+}
+
+// PagedList holds posts, media tiles or links (at most 20 a page) and a "show more" row. It is one focus region that
+// scrolls its items.
+message PagedList {
+  repeated Node items = 1;
+  LabeledAction more = 2;
+}
+
+message Divider {}
+
+// Sparkline: 2 to 64 points.
+message Sparkline {
+  repeated double points = 1;
+  string label = 2;
+}
+
+// Link is a web result. OK never opens a browser: its action answers a panel page of the cleaned text and a qr.
+// `cite` (feature link.cite) numbers it 1 to 99 as the reply's [n] markers do; 0 = none.
+message Link {
+  // required, at most 64
+  string domain = 1;
+  ImageRef favicon = 2;
+  // required, at most 120
+  string title = 3;
+  // at most 240
+  string snippet = 4;
+  // a time label, at most 40
+  string time = 5;
+  ImageRef thumbnail = 6;
+  Action action = 7;
+  uint32 cite = 8;
+}
+
+// Post is an X post, or a comment (a post without handle or media). `quote` (feature post.quote) is one level deep:
+// a quoted post's own quote is empty. `note` (feature post.note) is a community note, a block of its own.
+message Post {
+  // required, at most 80
+  string author = 1;
+  string handle = 2;
+  ImageRef avatar = 3;
+  string time = 4;
+  // required, at most 500
+  string text = 5;
+  ImageRef media = 6;
+  repeated PostStat stats = 7;
+  // the source badge's text ("X"), at most 24
+  string source = 8;
+  Action action = 9;
+  Note note = 10;
+  Post quote = 11;
+  // "@x", feature post.reply_to
+  string reply_to = 12;
+  // "@y", feature post.reposted_by
+  string reposted_by = 13;
+}
+
+message PostStat {
+  StatKind kind = 1;
+  string label = 2;
+}
+
+message Note {
+  string label = 1;
+  string text = 2;
+}
+
+// Slider moves by `step` on left and right (held: x5 after 3 repeats), shows the value at once and sends one action
+// with the new value 600 ms after the last key; a refusal rolls it back to the server's.
+message Slider {
+  double value = 1;
+  double min = 2;
+  double max = 3;
+  double step = 4;
+  string unit = 5;
+  string label = 6;
+  string value_label = 7;
+  Action action = 8;
+  // a playback position (feature slider.timeline): value and max are seconds, value_label is ignored and the device
+  // draws "m:ss / m:ss" (h:mm:ss past an hour); while nothing moves it, the value runs from the anchor as a Countdown
+  // ticks, so a playing session's card needs no revision a second. no action: shown, not focusable
+  SliderTimeline timeline = 9;
+}
+
+message SliderTimeline {
+  // epoch milliseconds at which value held
+  int64 anchor_at_ms = 1;
+  // seconds of value per second of time: 1 playing, 0 paused or buffering
+  double rate = 2;
+}
+
+// Qr is drawn by the device from `payload` (at most 512); no image comes from the server.
+message Qr {
+  string payload = 1;
+  string caption = 2;
+}
+
+// Code is monospace text (at most 4000) that wraps and never truncates silently: a task approval's command.
+message Code {
+  string text = 1;
+  string label = 2;
+}
+
+// Choices: single sends value id from one button per option; multiple sends value ids from check-chips and a submit
+// button, `min` (0 = 1) to `max` (0 = every option) of them.
+message Choices {
+  repeated Choice options = 1;
+  bool multiple = 2;
+  uint32 min = 3;
+  uint32 max = 4;
+  Action action = 5;
+  string submit_label = 6;
+}
+
+message Choice {
+  // [A-Za-z0-9][A-Za-z0-9._:-]{0,63}
+  string id = 1;
+  string label = 2;
+}

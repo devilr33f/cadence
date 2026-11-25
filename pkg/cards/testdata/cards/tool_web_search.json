@@ -1,0 +1,61 @@
+{
+ "version": 1,
+ "id": "web-65272d1deb825764e7",
+ "revision": 1,
+ "fallbackText": "Результаты поиска: 3",
+ "root": {
+  "card": {
+   "title": "Результаты поиска",
+   "icon": "search",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "pagedList": {
+      "items": [
+       {
+        "link": {
+         "domain": "reuters.com",
+         "title": "Anthropic weighs an IPO as early as next year",
+         "snippet": "The AI company has held early talks with banks…",
+         "time": "14.11.2026",
+         "action": {
+          "id": "a:1"
+         },
+         "cite": 1
+        }
+       },
+       {
+        "link": {
+         "domain": "techcrunch.com",
+         "title": "What an Anthropic IPO would mean for compute",
+         "snippet": "Compute spending is the biggest line in the budget.",
+         "action": {
+          "id": "a:2"
+         },
+         "cite": 2
+        }
+       },
+       {
+        "link": {
+         "domain": "ft.com",
+         "title": "AI labs and the public markets",
+         "snippet": "Investors ask how the labs will pay for training runs.",
+         "action": {
+          "id": "a:3"
+         },
+         "cite": 3
+        }
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "link",
+  "link.cite",
+  "paged_list"
+ ]
+}

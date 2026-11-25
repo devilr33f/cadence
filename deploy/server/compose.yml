@@ -1,0 +1,99 @@
+name: cadence-v2
+
+# lives in the stack's directory on the server (README.md's ~/cadence-v2), beside any v1 stack; see README.md
+# the .env next to this file sets CADENCE_V2_PUBLIC_HOST and CADENCE_REVISION (no secrets); both images are tagged with
+# that revision
+services:
+  cadence-v2:
+    image: cadence-server:${CADENCE_REVISION:?set CADENCE_REVISION in .env}
+    restart: unless-stopped
+    env_file: config/cadence.env
+    environment:
+      CADENCE_MASTER_KEY_FILE: /run/secrets/master.key
+      # a cookie request from the dashboard must come from this origin (csrf)
+      CADENCE_PUBLIC_ORIGIN: https://${CADENCE_V2_PUBLIC_HOST:?set CADENCE_V2_PUBLIC_HOST in .env}
+      # the custom wake word's negative features (cc by-nc-sa), fetched there from the dashboard, never shipped
+      CADENCE_WAKEWORD_NEGATIVES: /var/lib/cadence/wakeword/negatives.bin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./config/master.key:/run/secrets/master.key:ro
+      - cadence-v2-wakeword:/var/lib/cadence/wakeword
+    # bounded: every refused upgrade on the public endpoint logs a line
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    read_only: true
+    # the yt-dlp music player's scratch: a run's cookies file (mode 600, removed after it) and yt-dlp's and deno's caches
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.cadence-v2.loadbalancer.server.port=8080
+      # the server keeps its own paths on the host and the dashboard (below) takes the rest: the admin api and its live
+      # feed, the device api (link, enroll, otlp) and its health. deploy/dev/edge.yml routes the same paths, which
+      # deploy/dev/dashboard-deploy.test.sh holds equal to this rule
+      - traefik.http.routers.cadence-v2.rule=Host(`${CADENCE_V2_PUBLIC_HOST:?set CADENCE_V2_PUBLIC_HOST in .env}`) && (PathPrefix(`/api/`) || PathPrefix(`/v2/`) || Path(`/healthz`))
+      - traefik.http.routers.cadence-v2.priority=100
+      - traefik.http.routers.cadence-v2.entrypoints=web-secure
+      - traefik.http.routers.cadence-v2.service=cadence-v2@docker
+      - traefik.http.routers.cadence-v2.tls=true
+
+  # the dashboard (M7b-D7): node ssr on the same host, every path the server does not take. it has no secrets of its
+  # own: its ssr calls reach cadence-v2 on the project network with the reader's cookie, and the browser calls the host
+  cadence-dashboard:
+    image: cadence-dashboard:${CADENCE_REVISION:?set CADENCE_REVISION in .env}
+    restart: unless-stopped
+    environment:
+      CADENCE_API_INTERNAL: http://cadence-v2:8080
+    depends_on:
+      - cadence-v2
+    # bounded: a line per request
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.cadence-dashboard.loadbalancer.server.port=3000
+      - traefik.http.routers.cadence-dashboard.rule=Host(`${CADENCE_V2_PUBLIC_HOST:?set CADENCE_V2_PUBLIC_HOST in .env}`)
+      - traefik.http.routers.cadence-dashboard.priority=1
+      - traefik.http.routers.cadence-dashboard.entrypoints=web-secure
+      - traefik.http.routers.cadence-dashboard.service=cadence-dashboard@docker
+      - traefik.http.routers.cadence-dashboard.tls=true
+
+  postgres:
+    image: pgvector/pgvector:pg17@sha256:7d0a41464797aeb9862dfdc0bbf1526b82cfd324cdd8036df19e3545f4a9ccb8
+    restart: unless-stopped
+    env_file: config/postgres.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    volumes:
+      - cadence-v2-db:/var/lib/postgresql/data
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    labels:
+      - traefik.enable=false
+
+volumes:
+  cadence-v2-db:
+  cadence-v2-wakeword:

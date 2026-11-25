@@ -1,0 +1,48 @@
+{
+ "version": 1,
+ "id": "ha-e9377c0790525a1300",
+ "revision": 1,
+ "fallbackText": "Bedroom: Обогрев и охлаждение",
+ "root": {
+  "card": {
+   "title": "Bedroom",
+   "icon": "thermostat",
+   "tone": "TONE_SUCCESS",
+   "children": [
+    {
+     "row": {
+      "children": [
+       {
+        "value": {
+         "value": "21",
+         "unit": "°C",
+         "label": "Сейчас"
+        }
+       },
+       {
+        "state": {
+         "label": "Обогрев и охлаждение",
+         "kind": "STATE_KIND_ON"
+        }
+       }
+      ],
+      "gap": "GAP_L"
+     }
+    },
+    {
+     "value": {
+      "value": "20–24",
+      "unit": "°C",
+      "label": "Поддерживать"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "row",
+  "state",
+  "value"
+ ]
+}

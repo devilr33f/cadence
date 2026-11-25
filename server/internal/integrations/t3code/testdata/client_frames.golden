@@ -1,0 +1,6 @@
+{"_tag":"Request","id":1,"tag":"orchestration.subscribeShell","payload":{},"headers":[]}
+{"_tag":"Request","id":2,"tag":"orchestration.subscribeThread","payload":{"afterSequence":41,"threadId":"thread-1"},"headers":[]}
+{"_tag":"Ack","requestId":2}
+{"_tag":"Interrupt","requestId":2}
+{"_tag":"Ping"}
+{"_tag":"Eof"}

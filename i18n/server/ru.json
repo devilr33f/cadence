@@ -1,0 +1,19 @@
+{
+  "card.on_sources": "{count, plural, one {на # источнике} few {на # источниках} many {на # источниках} other {на # источника}}",
+  "card.torrent_summary": "серии {from}–{to} · {quality} · {size} · {seeds, plural, one {# сид} few {# сида} many {# сидов} other {# сида}}",
+  "notice.episode_missing": "серии {n} нет",
+  "notice.ha_unreachable": "Не получилось достучаться до Home Assistant",
+  "notice.host_unreachable": "Хост недоступен",
+  "notice.no_seeds": "нет сидов",
+  "notice.not_on_sources": "нет на источниках",
+  "notice.unavailable_on_screen": "недоступно на этом экране",
+  "step.read_page": "Читаю страницу видео…",
+  "step.read_sources": "{count, plural, one {Читаю # источник} few {Читаю # источника} many {Читаю # источников} other {Читаю # источника}}",
+  "step.search_in": "Ищу в {provider}",
+  "step.watching": "Смотрю",
+  "step.web_search": "Ищу в сети: {query}",
+  "task.state": "{state, select, running {Работает} waiting {Ждёт ответа} done {Готово} failed {Ошибка} cancelled {Отменена} other {Неизвестно}}",
+  "time.left": "осталось {left}",
+  "toast.saved": "Сохранено",
+  "toast.voiceover_switched": "Озвучка: {name} · позиция сохранена"
+}

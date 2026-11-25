@@ -1,0 +1,353 @@
+syntax = "proto3";
+
+// multiroom playback between devices: a group's leader audiod streams timestamped audio to its members' audiods over
+// tcp on the lan. the group clock (leader CLOCK_MONOTONIC, which every t_ns here speaks) is a separate udp exchange on
+// the same port number (media/lib/src/sync/clock-wire.h: fixed binary, not this file).
+//
+// framing: every message is a big-endian u32 length, then that many bytes of Envelope, then a 16-byte tag: the first
+// 16 bytes of hmac-sha256(key, u64 counter big-endian || envelope bytes), the counter per direction. the handshake
+// (Challenge and Welcome from the leader, counters 0 and 1; Hello from the member, counter 0) is tagged under the
+// group key itself. every message after Welcome, in both directions, is tagged under session_key =
+// hmac-sha256(group_key, "cadence-sync-session" || leader_nonce || member_nonce), the counters starting again at 0.
+// a bad tag, a counter out of order or a message over 64 KiB closes the connection. audio is authenticated, not
+// encrypted: it is music on the owner's lan (the plan's accepted risk)
+//
+// handshake: leader sends Challenge on accept; member answers Hello; leader answers Welcome or Goodbye{reason}.
+package cadence.sync.v1;
+
+option go_package = "git.shino.boo/devilreef/cadence/pkg/gen/cadence/sync/v1;syncv1";
+
+message Envelope {
+  oneof body {
+    Challenge challenge = 1;
+    Hello hello = 2;
+    Welcome welcome = 3;
+    Goodbye goodbye = 4;
+    // leader -> member
+    Format format = 5;
+    Frame frame = 6;
+    Pause pause = 7;
+    Flush flush = 8;
+    Duck duck = 9;
+    Metadata metadata = 10;
+    // member -> leader
+    Join join = 11;
+    Ready ready = 12;
+    Status status = 13;
+    Control control = 14;
+    DuckRequest duck_request = 15;
+    // acoustic calibration: leader -> member, then member -> leader
+    CalibrateStart calibrate_start = 16;
+    CalibrateArrivals calibrate_arrivals = 17;
+    // member -> leader: the recording is complete and its analysis is running
+    CalibrateProgress calibrate_progress = 18;
+    // opt-in ultrasonic tracking: leader -> member, then member -> leader (version 3 only)
+    TrackCycle track_cycle = 19;
+    TrackArrivals track_arrivals = 20;
+  }
+}
+
+// leader -> member, first: 16 random bytes
+message Challenge {
+  bytes nonce = 1;
+  uint32 protocol = 2;
+}
+
+// member -> leader. mac = hmac-sha256(group_key, "cadence-sync-hello" || leader_nonce || member_nonce || member_id)
+message Hello {
+  uint32 protocol = 1;
+  string group_id = 2;
+  // the member's device id
+  string member_id = 3;
+  bytes nonce = 4;
+  bytes mac = 5;
+}
+
+// leader -> member. mac = hmac-sha256(group_key, "cadence-sync-welcome" || member_nonce || leader_nonce)
+message Welcome {
+  bytes mac = 1;
+  // the group latency in force: what every Frame's t_ns already includes
+  uint32 latency_ms = 2;
+}
+
+// either side, then close. reason is a token: wrong_group, unknown_member, bad_mac, protocol, replaced, leaving,
+// not_leader, overloaded
+message Goodbye {
+  string reason = 1;
+}
+
+enum Codec {
+  CODEC_UNSPECIFIED = 0;
+  // 48 kHz stereo, 20 ms frames
+  CODEC_OPUS = 1;
+  // 48 kHz stereo s16le interleaved, 20 ms frames (a wired pair)
+  CODEC_PCM_S16 = 2;
+}
+
+// leader -> member: what an epoch's frames are. sent at every epoch start and right after Welcome
+message Format {
+  uint32 epoch = 1;
+  Codec codec = 2;
+  uint32 rate = 3;
+  uint32 channels = 4;
+  // per frame, per channel
+  uint32 frame_samples = 5;
+}
+
+// one frame of audio. t_ns: leader CLOCK_MONOTONIC when its first sample is to be heard (latency included). frames of
+// an epoch are contiguous: frame seq + 1 starts frame_samples after seq. media_ms: the source's position of the
+// frame's first sample, 0 for a live source
+message Frame {
+  uint32 epoch = 1;
+  uint64 seq = 2;
+  sint64 t_ns = 3;
+  bytes data = 4;
+  uint64 media_ms = 5;
+}
+
+// leader -> member: stop at t_ns (leader clock): the sample due at t_ns is the first not heard (a 10 ms fade before
+// it). frames of the epoch after it are dropped; the next audio is a new epoch
+message Pause {
+  uint32 epoch = 1;
+  sint64 t_ns = 2;
+}
+
+// leader -> member: drop every frame of an epoch before this one now (a seek, a new track, a stop): fade out at once
+message Flush {
+  uint32 epoch = 1;
+}
+
+// leader -> member: the group's duck, any member's wake ducks every member. active false ends it
+message Duck {
+  bool active = 1;
+}
+
+// leader -> member: what is playing, for the member's own media state (memory only, D11). sent on change and after
+// Welcome
+message Metadata {
+  string title = 1;
+  string artist = 2;
+  string album = 3;
+  string artwork_url = 4;
+  uint64 duration_ms = 5;
+  // the leader's session state: true while playing
+  bool playing = 6;
+}
+
+// member -> leader: send me the frames whose t_ns is at or after from_ns (of the current epoch), from the backlog, then
+// live. a member sends it after Welcome and after every rejoin (fade, clear, catch up)
+message Join {
+  sint64 from_ns = 1;
+}
+
+// member -> leader: buffered up to buffered_to_ns of epoch, clock synced: it can start
+message Ready {
+  uint32 epoch = 1;
+  sint64 buffered_to_ns = 2;
+}
+
+enum MemberState {
+  MEMBER_STATE_UNSPECIFIED = 0;
+  MEMBER_STATE_SYNCING = 1;
+  MEMBER_STATE_BUFFERING = 2;
+  MEMBER_STATE_PLAYING = 3;
+  MEMBER_STATE_REJOINING = 4;
+  MEMBER_STATE_IDLE = 5;
+}
+
+// member -> leader, every 2 s: numbers only (rule 8)
+message Status {
+  MemberState state = 1;
+  bool synced = 2;
+  uint32 clock_error_us = 3;
+  uint32 queue_ms = 4;
+  sint32 steer_ppm = 5;
+  uint32 rejoins = 6;
+  uint32 underruns = 7;
+  // the playout's smoothed placement error, heard minus due
+  sint32 placement_error_us = 8;
+  // coded calibration version; 0/1 is a legacy chirp-only peer. sent at once on Welcome (and every two seconds), so
+  // even a member idle until its calibration has advertised it before the leader chooses a plan
+  uint32 calibration_version = 9;
+  // speaker, hdmi, bluetooth or other; bluetooth outputs skip ultrasonic slots
+  string output_kind = 10;
+}
+
+enum ControlAction {
+  CONTROL_ACTION_UNSPECIFIED = 0;
+  CONTROL_ACTION_PAUSE = 1;
+  CONTROL_ACTION_RESUME = 2;
+  CONTROL_ACTION_STOP = 3;
+  CONTROL_ACTION_NEXT = 4;
+  CONTROL_ACTION_PREVIOUS = 5;
+  CONTROL_ACTION_SEEK = 6;
+}
+
+// member -> leader: a transport press or command on a member acts on the group's session, which the leader owns
+message Control {
+  ControlAction action = 1;
+  uint64 position_ms = 2;
+}
+
+// member -> leader: this member's own duck (its wake session), which the leader ors into the group's Duck
+message DuckRequest {
+  bool active = 1;
+}
+
+// leader -> member: an acoustic calibration (the owner's, from the dashboard; never a voice turn, rule 7). every member
+// plays its chirp (a log sweep, -20 dBFS of the music input plus its slot's gain_db, at most -6 dBFS: under the
+// device's own level, never above it) at each of its slots' t_ns through its group playout, placed as music is, in the
+// playout epoch named here (the next music epoch comes after it), its trim left out. every member records its
+// microphones over [from_ns, to_ns) (leader time), in memory only and freed after (rule 8), and answers
+// CalibrateArrivals
+message CalibrateStart {
+  uint32 id = 1;
+  uint32 epoch = 2;
+  // rounds x members slots, round-major: round r's member k is slots[r * members + k], the members in the same order
+  // every round (the leader first)
+  repeated CalibrateSlot slots = 3;
+  sint64 from_ns = 4;
+  sint64 to_ns = 5;
+  // a listener calibration from a leader before rounds: play the slots' chirps, record nothing and answer nothing.
+  // a listener calibration now records and answers as mics mode does (its result is fetched later)
+  bool play_only = 6;
+  // how many times every member chirps; 0 is 1 (a leader before rounds)
+  uint32 rounds = 7;
+  // the sweep; absent: the one before rounds (1-6 kHz, 100 ms, 5 ms fades)
+  ChirpShape chirp = 8;
+  // the leader takes CalibrateProgress: an older one drops a link that sends an envelope it does not know
+  bool accepts_progress = 9;
+  // present for calibration version 2: gold-coded probes instead of the identical legacy chirps
+  ProbeShape probe = 10;
+  // per member output-latency prior and how far either side of it an arrival may fall, us
+  repeated CalibratePrior priors = 11;
+  // direct-path arrivals closer than this belong together, us; 0 = 2000
+  uint32 tolerance_us = 12;
+  // version 3: one ultrasonic round after the audible slots, for the per-member capability check
+  UltrasonicRound ultrasonic = 13;
+}
+
+// one 18..20.5 khz gold-code slot per capable member; omitted outputs (bluetooth) are unsupported and play nothing
+message UltrasonicRound {
+  ProbeShape probe = 1;
+  repeated CalibrateSlot slots = 2;
+}
+
+message CalibrateSlot {
+  string member_id = 1;
+  sint64 t_ns = 2;
+  // the owner's boost for a member heard faintly before: 0..14 dB over -20 dBFS (at most -6 dBFS)
+  uint32 gain_db = 3;
+  // the gold code of this slot's coded probe; ignored for a legacy chirp
+  uint32 code = 4;
+}
+
+// one member's output-latency prior for a coded calibration
+message CalibratePrior {
+  string member_id = 1;
+  sint32 prior_us = 2;
+  uint32 prior_span_us = 3;
+}
+
+enum ProbeKind {
+  PROBE_KIND_UNSPECIFIED = 0;
+  PROBE_KIND_GOLD = 1;
+}
+
+// a coded probe's band and raised-cosine fades; amplitude stays the implicit -20 dBFS plus each slot's gain_db
+message ProbeShape {
+  ProbeKind kind = 1;
+  uint32 band_lo_hz = 2;
+  uint32 band_hi_hz = 3;
+  uint32 fade_us = 4;
+}
+
+// an exponential sweep from f0_hz to f1_hz, raised-cosine fades
+message ChirpShape {
+  uint32 f0_hz = 1;
+  uint32 f1_hz = 2;
+  uint32 duration_us = 3;
+  uint32 fade_us = 4;
+}
+
+enum ArrivalCode {
+  ARRIVAL_CODE_UNSPECIFIED = 0;
+  ARRIVAL_CODE_OK = 1;
+  // the recording did not cover the slot's search window
+  ARRIVAL_CODE_NOT_COVERED = 2;
+  // nothing stood far enough above the correlation's floor: a missed or too quiet chirp
+  ARRIVAL_CODE_WEAK = 3;
+  // heard, but too few rounds agreed (or they spread too far)
+  ARRIVAL_CODE_UNSTABLE = 4;
+  // coded probes: this member's own code was not found, never another member's arrival
+  ARRIVAL_CODE_MISSED = 5;
+  // ultrasonic: this recorder is not 48 khz, or this output cannot carry the band
+  ARRIVAL_CODE_UNSUPPORTED = 6;
+}
+
+// one slot's chirp as the member heard it: when its direct path arrived (leader time), numbers only
+// with rounds, the arrivals of the member's every slot are combined: t_ns is the median of (arrival - slot) over the
+// rounds kept, added to its first slot's t_ns; code ok only when enough rounds agree (ARRIVAL_CODE_UNSTABLE else)
+message CalibrateArrival {
+  string from_member_id = 1;
+  ArrivalCode code = 2;
+  sint64 t_ns = 3;
+  // 0..1, from the correlation peak over its floor
+  float confidence = 4;
+  // the standard deviation of the rounds kept around their median, ns
+  uint32 spread_ns = 5;
+  // the rounds kept (heard ok on its microphones and within the outlier gate)
+  uint32 rounds = 6;
+  // coded probes: this source's arrival less this recorder's own in the same recording and round, ns
+  sint64 relative_ns = 7;
+  bool has_relative = 8;
+  uint32 relative_spread_ns = 9;
+  // robust standard error and its two-sided 95% interval half-width, ns
+  uint32 sigma_ns = 10;
+  uint32 ci95_ns = 11;
+}
+
+// member -> leader: what it heard of every slot. code is empty when it recorded, else a token why it could not:
+// busy (another source holds its speaker), gated (its volume does not hold yet), no_capture (no microphone, or the
+// capture failed), muted, epoch (an epoch already past the calibration's)
+message CalibrateArrivals {
+  uint32 id = 1;
+  string code = 2;
+  repeated CalibrateArrival arrivals = 3;
+  // the microphone channels it analysed
+  uint32 channels = 4;
+  // version 3: the same recorder's arrivals of the ultrasonic round (unsupported when it is not 48 khz)
+  repeated CalibrateArrival ultrasonic = 5;
+}
+
+enum CalibrateStage {
+  CALIBRATE_STAGE_UNSPECIFIED = 0;
+  // the whole window was recorded and handed to the analysis worker
+  CALIBRATE_STAGE_RECORDED = 1;
+}
+
+// member -> leader: analysis may outlive the usual answer wait. analysis_budget_ms is how long past the recording
+// window the member may take; the leader caps it at 30 s. older members send nothing and keep the usual wait
+message CalibrateProgress {
+  uint32 id = 1;
+  CalibrateStage stage = 2;
+  uint32 analysis_budget_ms = 3;
+}
+
+// leader -> member, version 3 and opt-in only: one ultrasonic slot per tracked member in the music epoch. every
+// participant records only this cycle at its native capture rate, analyses it and drops the samples (rule 8)
+message TrackCycle {
+  uint32 id = 1;
+  uint32 epoch = 2;
+  repeated CalibrateSlot slots = 3;
+  sint64 from_ns = 4;
+  sint64 to_ns = 5;
+}
+
+// member -> leader: relative arrivals of one cycle. code is empty, no_capture, muted, unsupported, busy or unsynced
+message TrackArrivals {
+  uint32 id = 1;
+  string code = 2;
+  repeated CalibrateArrival arrivals = 3;
+  uint32 channels = 4;
+}

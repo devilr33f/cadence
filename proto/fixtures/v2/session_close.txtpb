@@ -1,0 +1,6 @@
+session_close {
+  session_id: "s-1"
+  follow_up_allowed: true
+  code: "tts_failed"
+  failure { code: "tts_failed" stage: "tts" provider: "tts-main" waited_ms: 120 }
+}

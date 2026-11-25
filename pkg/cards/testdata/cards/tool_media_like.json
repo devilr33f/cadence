@@ -1,0 +1,25 @@
+{
+ "version": 1,
+ "id": "item-action-dc581908da5c4fc4b1",
+ "revision": 1,
+ "fallbackText": "Нравится",
+ "root": {
+  "card": {
+   "title": "Готово",
+   "icon": "like",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Нравится",
+      "kind": "STATE_KIND_ON"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state"
+ ]
+}

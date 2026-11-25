@@ -1,0 +1,73 @@
+{
+ "version": 1,
+ "id": "catalog-play-e913bd616e8c219884",
+ "revision": 2,
+ "fallbackText": "Поднятие уровня в одиночку · Серия 3 · Я привык к этому · Играет — Bedroom TV",
+ "root": {
+  "card": {
+   "title": "Поднятие уровня в одиночку",
+   "subtitle": "Серия 3 · Я привык к этому",
+   "icon": "tv",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "row": {
+      "children": [
+       {
+        "image": {
+         "ref": "img:AbCdEfGhIjKlMnOpQrStUv01",
+         "alt": "Поднятие уровня в одиночку",
+         "aspect": "ASPECT_POSTER"
+        }
+       },
+       {
+        "column": {
+         "children": [
+          {
+           "state": {
+            "label": "Играет",
+            "kind": "STATE_KIND_ON"
+           }
+          },
+          {
+           "keyvalue": {
+            "items": [
+             {
+              "key": "Экран",
+              "value": "Bedroom TV"
+             },
+             {
+              "key": "Источник",
+              "value": "torrplayer · anime365"
+             },
+             {
+              "key": "Озвучка",
+              "value": "AniLibria"
+             },
+             {
+              "key": "Качество",
+              "value": "1080p"
+             }
+            ]
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       }
+      ],
+      "gap": "GAP_M"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "column",
+  "image",
+  "keyvalue",
+  "row",
+  "state"
+ ]
+}

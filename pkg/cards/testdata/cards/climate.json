@@ -1,0 +1,64 @@
+{
+ "version": 1,
+ "id": "ha.climate.bedroom",
+ "revision": 3,
+ "fallbackText": "Спальня: 21,5 °C, цель 22 °C",
+ "root": {
+  "card": {
+   "title": "Климат в спальне",
+   "icon": "thermostat",
+   "tone": "TONE_INFO",
+   "children": [
+    {
+     "row": {
+      "gap": "GAP_L",
+      "children": [
+       {
+        "value": {
+         "value": "21,5",
+         "unit": "°C",
+         "label": "Сейчас",
+         "trend": "TREND_UP"
+        }
+       },
+       {
+        "value": {
+         "value": "22",
+         "unit": "°C",
+         "label": "Цель"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "state": {
+      "kind": "STATE_KIND_ON",
+      "label": "Обогрев"
+     }
+    },
+    {
+     "slider": {
+      "label": "Цель",
+      "value": 22,
+      "min": 16,
+      "max": 28,
+      "step": 0.5,
+      "unit": "°C",
+      "valueLabel": "22 °C",
+      "action": {
+       "id": "a:c1"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "row",
+  "slider",
+  "state",
+  "value"
+ ]
+}

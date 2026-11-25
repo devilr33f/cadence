@@ -1,0 +1,24 @@
+{
+ "version": 1,
+ "id": "call-a2c4dd01baa7d37828",
+ "revision": 1,
+ "fallbackText": "Меняю громкость",
+ "root": {
+  "card": {
+   "title": "Меняю громкость",
+   "icon": "volume",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "progress": {
+      "indeterminate": true
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "progress"
+ ]
+}

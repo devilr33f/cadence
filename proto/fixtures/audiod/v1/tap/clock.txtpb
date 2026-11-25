@@ -1,0 +1,1 @@
+clock { media_ns: 5000000000 mono_ns: 123456789000 latency_ns: 42000000 }

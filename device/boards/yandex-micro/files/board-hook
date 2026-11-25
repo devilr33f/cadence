@@ -1,0 +1,141 @@
+# shellcheck shell=sh
+# yandex-micro keeps the stock files but suspends every vendor executable before
+# cadenced starts and whenever one returns. Only the framebuffer and init's
+# reversible cadence-run entry are changed by installation.
+LEDS=${CADENCE_LEDS:-/sys/class/leds}
+PROC=${CADENCE_PROC:-/proc}
+KILL=${CADENCE_KILL:-kill}
+SLEEP=${CADENCE_SLEEP:-sleep}
+LS=${CADENCE_LS:-ls}
+VENDOR=/system/vendor/quasar
+BT_PLAYER=/usr/bin/bluealsa-aplay
+BT_AGENT=/usr/bin/just-works-bluez-agent
+held=
+
+board_blank() {
+    for brightness in "$LEDS"/micro:*:ring*/brightness; do
+        [ ! -w "$brightness" ] || echo 0 > "$brightness"
+    done
+}
+
+vendor_exe() {
+    exe=$(readlink "$PROC/$1/exe" 2> /dev/null) || return 1
+    case $exe in
+        "$VENDOR/"*) return 0 ;;
+    esac
+    return 1
+}
+
+launcher() {
+    vendor_exe "$1" || return 1
+    case ${exe##*/} in
+        quasar_launcher2 | 'quasar_launcher2 (deleted)') return 0 ;;
+    esac
+    return 1
+}
+
+vendor_pids() {
+    links=$("$LS" -l "$PROC"/[0-9]*/exe 2> /dev/null)
+    case $links in
+        *" -> "*)
+            printf '%s\n' "$links" | sed -n "s|.* $PROC/\([0-9][0-9]*\)/exe -> $VENDOR/.*|\1|p"
+            return 0
+            ;;
+    esac
+    for dir in "$PROC"/[0-9]*; do
+        if vendor_exe "${dir##*/}"; then echo "${dir##*/}"; fi
+    done
+}
+
+signal_vendor() {
+    vendor_exe "$2" || return 0
+    "$KILL" "-$1" "$2" 2> /dev/null || true
+}
+
+stop_stock() {
+    count=0
+    for pid in $(vendor_pids); do
+        count=$((count + 1))
+        if launcher "$pid"; then signal_vendor TERM "$pid"; fi
+    done
+    for pid in $(vendor_pids); do
+        launcher "$pid" || signal_vendor TERM "$pid"
+    done
+    polls=0
+    while [ -n "$(vendor_pids)" ] && [ "$polls" -lt 5 ]; do
+        "$SLEEP" 1
+        polls=$((polls + 1))
+    done
+    for pid in $(vendor_pids); do
+        signal_vendor KILL "$pid"
+    done
+    [ -z "$(vendor_pids)" ] || "$SLEEP" 1
+    [ -z "$(vendor_pids)" ]
+}
+
+bt_exe() {
+    exe=$(readlink "$PROC/$1/exe" 2> /dev/null) || return 1
+    [ "$exe" = "$BT_PLAYER" ] || [ "$exe" = "$BT_AGENT" ]
+}
+
+bt_pids() {
+    links=$("$LS" -l "$PROC"/[0-9]*/exe 2> /dev/null)
+    case $links in
+        *" -> "*)
+            printf '%s\n' "$links" | sed -n -e "s|.* $PROC/\([0-9][0-9]*\)/exe -> $BT_PLAYER\$|\1|p" \
+                -e "s|.* $PROC/\([0-9][0-9]*\)/exe -> $BT_AGENT\$|\1|p"
+            return 0
+            ;;
+    esac
+    for dir in "$PROC"/[0-9]*; do
+        if bt_exe "${dir##*/}"; then echo "${dir##*/}"; fi
+    done
+}
+
+stop_bt() {
+    bt=0
+    for pid in $(bt_pids); do
+        bt_exe "$pid" || continue
+        bt=$((bt + 1))
+        "$KILL" -TERM "$pid" 2> /dev/null || true
+    done
+    [ "$bt" -gt 0 ] || return 0
+    "$SLEEP" 1
+    for pid in $(bt_pids); do
+        if bt_exe "$pid"; then "$KILL" -KILL "$pid" 2> /dev/null || true; fi
+    done
+    if [ -n "$(bt_pids)" ]; then
+        note "event=board_control_failed code=bluetooth reason=still_running"
+        return 0
+    fi
+    note "event=bluetooth_stock_stopped count=$bt"
+}
+
+board_prestart() {
+    if ! stop_stock; then
+        note "event=board_control_failed code=suspend reason=stock_still_running"
+        return 1
+    fi
+    note "event=stock_suspended count=$count"
+    stop_bt
+    return 0
+}
+
+# shellcheck disable=SC2034 # cadence-run reads reapply
+board_watch() {
+    stop_bt
+    if [ -z "$(vendor_pids)" ]; then
+        [ -z "$held" ] || reapply=1
+        held=
+        return 0
+    fi
+    if ! stop_stock; then
+        held=1
+        note "event=board_control_failed code=suspend reason=stock_still_running"
+        return 1
+    fi
+    held=
+    reapply=1
+    [ "$count" -eq 0 ] || note "event=stock_resuspended count=$count"
+    return 0
+}

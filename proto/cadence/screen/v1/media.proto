@@ -1,0 +1,374 @@
+syntax = "proto3";
+package cadence.screen.v1;
+
+import "cadence/v2/media.proto";
+import "cadence/v2/screen.proto";
+
+option go_package = "git.shino.boo/devilreef/cadence/pkg/gen/cadence/screen/v1;screenv1";
+
+enum MediaPurpose {
+  MEDIA_PURPOSE_UNSPECIFIED = 0;
+  // a video or audio session the user plays
+  MEDIA_PURPOSE_CONTENT = 1;
+  // idle's aerial clips: muted, never a session, yields to anything
+  MEDIA_PURPOSE_AMBIENT = 2;
+  // v2 (boot and suspend movies): never sent by a v1 cadenced
+  MEDIA_PURPOSE_BOOT = 3;
+}
+
+enum SubtitleFormat {
+  SUBTITLE_FORMAT_UNSPECIFIED = 0;
+  SUBTITLE_FORMAT_SRT = 1;
+  SUBTITLE_FORMAT_VTT = 2;
+  SUBTITLE_FORMAT_ASS = 3;
+}
+
+message Subtitle {
+  string url = 1;
+  // bcp 47
+  string language = 2;
+  string label = 3;
+  SubtitleFormat format = 4;
+  bool is_default = 5;
+}
+
+enum SkipKind {
+  SKIP_KIND_UNSPECIFIED = 0;
+  SKIP_KIND_OPENING = 1;
+  SKIP_KIND_ENDING = 2;
+  SKIP_KIND_RECAP = 3;
+  SKIP_KIND_PREVIEW = 4;
+}
+
+// a span the player offers to skip (or skips, with auto-skip on)
+message Skip {
+  SkipKind kind = 1;
+  uint64 start_ms = 2;
+  uint64 end_ms = 3;
+}
+
+// cadenced -> screen: media.video/play. the screen starts it paused (or at volume 0) until the playback gate is open
+// (rule 7); urls and headers are never logged
+message MediaPlay {
+  string request_id = 1;
+  string session_id = 2;
+  MediaPurpose purpose = 3;
+  string url = 4;
+  // a separate audio stream (youtube's split renditions)
+  string audio_url = 5;
+  // request headers for url and audio_url; empty for most, as the server's relay or torrplayer's proxy needs none
+  map<string, string> headers = 6;
+  repeated Subtitle subtitles = 7;
+  uint64 start_ms = 8;
+  cadence.v2.MediaMetadata metadata = 9;
+  bool live = 10;
+  repeated Skip skips = 11;
+  cadence.v2.PlayableKind playable = 12;
+  // what the server's music or video service can do next (next, previous); the screen offers no other transport
+  repeated string actions = 13;
+  // the qualities the server holds for this item, highest first, so the screen can list them; picking one is
+  // media.video/select_track {kind: video, id: name}, which the server answers by playing that rendition (empty for
+  // a single rendition or a non-server source)
+  repeated Rendition renditions = 14;
+  // how the screen shows it; unspecified: by the metadata's kind (a track is the audio page)
+  MediaView view = 15;
+  // the views the server can switch the item between (a music video: video, audio, visualizer); switching is rpc
+  // media.video {sessionId, view}; empty for none
+  repeated MediaView views = 16;
+  // the audio languages the server holds for the item (youtube's original and its dubbings), so the screen can list
+  // them; picking one is rpc media.video {sessionId, audio: id}; empty for one language or a non-server source
+  repeated AudioChoice audio_choices = 17;
+  // a follower's play (multiroom P4): the item another screen of this multiroom group plays. its picture follows the
+  // group's stream (audiod's tap GroupClock), it plays no audio (the sound is the device's GROUP session), and its
+  // transport goes to the group (NowPlayingCommand on the GROUP session); empty for any other play
+  string follow_group_id = 18;
+}
+
+// how the screen shows a server item: the player's picture, or the audio page (the sleeve and the cover) with the
+// visualizer off or on
+enum MediaView {
+  MEDIA_VIEW_UNSPECIFIED = 0;
+  MEDIA_VIEW_VIDEO = 1;
+  MEDIA_VIEW_AUDIO = 2;
+  MEDIA_VIEW_VISUALIZER = 3;
+}
+
+// one audio language of the item as the server names it (server/internal/video): never a url
+message AudioChoice {
+  // a-ru, a-en, a-und
+  string id = 1;
+  // bcp 47, short; und for none
+  string language = 2;
+  // the language's name as the source gives it (Russian); empty for none
+  string label = 3;
+  // the video's own language
+  bool original = 4;
+  // a dubbing (youtube's automatic ones among them)
+  bool dubbed = 5;
+  // the one playing
+  bool selected = 6;
+}
+
+// cadenced -> screen, no answer: the server resolves an item it will play here (a link sent from the dashboard), so the
+// screen shows its resolving step at once: the title and the art as soon as known, then the play that follows (any
+// new session), or the failure
+message MediaPreparing {
+  PrepareState state = 1;
+  string title = 2;
+  // the channel or the artist
+  string subtitle = 3;
+  string artwork_url = 4;
+  // a failure's code (unplayable, sign_in_required, player_failed, ...)
+  string code = 5;
+  // a resolve's live stage (cookies, extract, challenge, formats, pick, wait_available, relay), or a collection's
+  // songs read before its first resolves (album, playlist, artist)
+  string stage = 6;
+  int64 elapsed_ms = 7;
+  // wait_available's countdown; -1 while no countdown runs
+  int64 remaining_ms = 8;
+  // pick's chosen rendition and audio; numeric and codec tokens only
+  uint32 height = 9;
+  string vcodec = 10;
+  string acodec = 11;
+  uint32 audio_tracks = 12;
+  bool done = 13;
+  bool failed = 14;
+}
+
+enum PrepareState {
+  PREPARE_STATE_UNSPECIFIED = 0;
+  PREPARE_STATE_RESOLVING = 1;
+  PREPARE_STATE_FAILED = 2;
+}
+
+// one quality of a video as the server names it (server/internal/video): never a url
+message Rendition {
+  // the height and, where two share it, the fps: 1080p, 720p60
+  string name = 1;
+  uint32 height = 2;
+  // 0 = unknown
+  uint32 fps = 3;
+  // the video codec first, then the audio one when known: h264, vp9, av1, hevc; aac, opus
+  repeated string codecs = 4;
+  // the one url plays
+  bool selected = 5;
+  // its dynamic range when not SDR: HDR10, HLG, DV
+  string hdr = 6;
+}
+
+enum MediaAction {
+  MEDIA_ACTION_UNSPECIFIED = 0;
+  MEDIA_ACTION_PAUSE = 1;
+  MEDIA_ACTION_RESUME = 2;
+  MEDIA_ACTION_STOP = 3;
+  MEDIA_ACTION_SEEK = 4;
+  MEDIA_ACTION_NEXT = 5;
+  MEDIA_ACTION_PREVIOUS = 6;
+  // media.video/select_track: track_id, empty to turn a subtitle off
+  MEDIA_ACTION_SELECT_TRACK = 7;
+}
+
+// cadenced -> screen
+message MediaCommand {
+  string request_id = 1;
+  MediaAction action = 2;
+  uint64 position_ms = 3;
+  string track_id = 4;
+  // the track kind select_track turns off when track_id is empty
+  cadence.v2.MediaTrackKind track_kind = 5;
+}
+
+// screen -> cadenced, on change; an empty session_id with state IDLE means none. cadenced makes the link's
+// MediaSessionState from it, with the server's own fields (item actions, up next, panels) kept as the server sent them
+message MediaState {
+  string session_id = 1;
+  cadence.v2.PlaybackState state = 2;
+  uint64 position_ms = 3;
+  // unix ms on the device clock
+  int64 position_at_ms = 4;
+  float rate = 5;
+  // 0 = live or unknown
+  uint64 duration_ms = 6;
+  repeated cadence.v2.MediaTrack tracks = 7;
+  cadence.v2.AudioRoute audio_route = 8;
+  repeated cadence.v2.AudioControl audio_controls = 9;
+  uint32 control_latency_ms = 10;
+  // a token when playback failed: decode, network, unsupported. a screen before gated also sent "gated" here, which
+  // cadenced still reads as gated for one release
+  string error_code = 11;
+  // how far ahead the player has buffered
+  uint64 buffered_ms = 12;
+  MediaPurpose purpose = 13;
+  // the playback gate holds the session (rule 7): state stays PAUSED (or the level at 0) until it opens
+  bool gated = 14;
+  // the session finished (its end, an error, a stop): this is its last state, with state IDLE and error_code when it
+  // failed; the next state names another session or none
+  bool ended = 15;
+  // how full the cache is towards resuming while the player waits for it (mpv's cache-buffering-state), 0-100;
+  // absent while it does not wait
+  optional uint32 buffering_percent = 16;
+  // the first real picture is on screen (or an audio-only session is past its startup hold)
+  bool picture_ready = 17;
+}
+
+// screen -> cadenced, every 10 s while a content session plays or waits for its cache: the player's i/o, rendering
+// and sync figures for system.metrics. numbers and a decoder token only (rule 8); counts are the item's, from 0 at
+// each new item
+message PlayerStats {
+  string session_id = 1;
+  // what the cache reads from the source now, bytes/s (mpv's cache-speed)
+  uint64 cache_speed_bps = 2;
+  // the demuxer's raw input rate, bytes/s
+  uint64 input_rate_bps = 3;
+  // bytes cached ahead of the position, and in all
+  uint64 cache_ahead_bytes = 4;
+  uint64 cache_total_bytes = 5;
+  // how far ahead the cache reaches (demuxer-cache-duration)
+  uint64 buffered_ms = 6;
+  // the source's reads that restarted: seeks below the demuxer, and byte-level ones (a torrent's re-reads)
+  uint64 low_level_seeks = 7;
+  uint64 byte_level_seeks = 8;
+  // the demuxer ran dry since it last read
+  bool underrun = 9;
+  // frames dropped at the output and in the decoder
+  uint64 frame_drops = 10;
+  uint64 decoder_drops = 11;
+  // frames the output showed late
+  uint64 vo_delayed_frames = 12;
+  // the video's fps as decoded, and the display's
+  float estimated_vf_fps = 13;
+  float display_fps = 14;
+  // audio minus video, ms
+  float avsync_ms = 15;
+  // the hardware decoder in use (mpv's hwdec-current: mediacodec, vaapi, ...), "no" for software, empty when unknown
+  string hwdec = 16;
+}
+
+// cadenced -> screen: whether the persisted level holds (rule 7); while closed the player stays paused or at 0
+message PlaybackGate {
+  bool open = 1;
+}
+
+// cadenced -> screen: the session's level for a DIRECT route player (and mpv's stock ao until ao_cadence lands);
+// a MIXER session is levelled in audiod and never gets one
+message SetLevel {
+  string request_id = 1;
+  // 0-100, the persisted device level
+  uint32 level = 2;
+  uint32 ramp_ms = 3;
+}
+
+enum EqType {
+  EQ_TYPE_UNSPECIFIED = 0;
+  EQ_TYPE_PEAKING = 1;
+  EQ_TYPE_LOW_SHELF = 2;
+  EQ_TYPE_HIGH_SHELF = 3;
+  EQ_TYPE_LOW_PASS = 4;
+  EQ_TYPE_HIGH_PASS = 5;
+}
+
+message EqBand {
+  EqType type = 1;
+  float freq_hz = 2;
+  float gain_db = 3;
+  float q = 4;
+}
+
+// cadenced -> screen: the eq of a DIRECT route player; a preset token or bands, never both
+message SetEq {
+  string request_id = 1;
+  string preset = 2;
+  float preamp_db = 3;
+  repeated EqBand bands = 4;
+}
+
+message Mute {
+  string request_id = 1;
+  bool muted = 2;
+}
+
+// cadenced -> screen: the device's level in force, whoever set it (the remote's keys, a voice turn, the dashboard or
+// home assistant, an airplay sender, android's own volume), after cadenced applied it; muted is the system stream's
+// mute where the level is the system's (android), else false. the screen shows its volume overlay for each one with
+// show set; the one sent as the screen attaches carries show false (the state, nothing changed)
+message VolumeState {
+  uint32 level = 1;
+  bool muted = 2;
+  bool show = 3;
+}
+
+enum MirrorCodec {
+  MIRROR_CODEC_UNSPECIFIED = 0;
+  MIRROR_CODEC_H264 = 1;
+  MIRROR_CODEC_H265 = 2;
+}
+
+// cadenced -> screen: airplay mirroring began; the frames come on audiod's tap with this session_id. it displaces
+// video playback as any new session does
+message MirrorStart {
+  string session_id = 1;
+  MirrorCodec codec = 2;
+  uint32 width = 3;
+  uint32 height = 4;
+  // the sender's name for the connect toast ("iPhone Маши"): memory-only, never logged
+  string client_name = 5;
+}
+
+// cadenced -> screen: mirroring ended. screen -> cadenced too, with request_id and no reason: the user asks to end the
+// session it shows (the stop key's dialog); cadenced answers CommandResult (no_session when session_id is not the
+// active one), and this MirrorStop with reason stopped follows once audiod let the sender go
+message MirrorStop {
+  string session_id = 1;
+  // a token: sender (the sender ended it), stopped (the airplay session was stopped: media.player/stop, a voice
+  // «стоп», the stop key), displaced (another session took the screen), failed, disabled (media.screencast off)
+  string reason = 2;
+  // screen -> cadenced only
+  string request_id = 3;
+}
+
+// cadenced -> screen: the pin a sender asks for (design §23); active false hides it
+message AirplayPin {
+  bool active = 1;
+  // 4 digits; never logged
+  string pin = 2;
+  string client_name = 3;
+  // unix ms on the device clock
+  int64 expires_at_ms = 4;
+}
+
+// cadenced -> screen: the device's media session when audiod renders it (an airplay cast, soloist's spotify connect, a
+// url), after each change and to a screen that connects; an empty session_id (state IDLE) means none, or one the
+// screen's own player renders. what it says is memory-only (D11): never logged, on either side
+message NowPlaying {
+  string session_id = 1;
+  // AIRPLAY, SOLOIST, URL, STREAM
+  cadence.v2.MediaSource source = 2;
+  cadence.v2.PlaybackState state = 3;
+  uint64 position_ms = 4;
+  // unix ms on the device clock
+  int64 position_at_ms = 5;
+  // 0 = live or unknown
+  uint64 duration_ms = 6;
+  string title = 7;
+  string artist = 8;
+  string album = 9;
+  // the sending device's name as it gave it (an airplay sender's "iPhone Маши"); empty when unknown
+  string sender = 10;
+  // the transport the session takes (pause, resume, stop, seek, next, previous)
+  repeated MediaAction actions = 11;
+  // the cover as a local file cadenced wrote for the screen (readable by it, replaced by the next cover), and its
+  // sha256 hex; both empty while there is none
+  string artwork_path = 12;
+  string artwork_sha256 = 13;
+  // two dominant colours of the cover, 0xRRGGBB: the page's tint; 0 when there is no cover
+  uint32 color_a = 14;
+  uint32 color_b = 15;
+}
+
+// screen -> cadenced: the user's transport action on the NowPlaying session (the audio page's controls); dropped when
+// session_id is no longer the session. no answer: the next NowPlaying says what happened
+message NowPlayingCommand {
+  string session_id = 1;
+  MediaAction action = 2;
+  uint64 position_ms = 3;
+}

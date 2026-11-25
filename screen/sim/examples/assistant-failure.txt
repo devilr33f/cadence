@@ -1,0 +1,16 @@
+# failed assistant turns: the real stage and code, with retry as the one action.
+# `build/screen-sim/sim run screen/sim/examples/assistant-failure.txt` (screenshots in sim-out/failure)
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+hold BACK 800
+wait-for drawer
+send {"assistant_turn": {"turnId": "failed-llm-timeout", "state": "resting", "transcript": "Что сейчас идёт в кино?", "errorCode": "timeout", "failure": {"code": "timeout", "stage": "llm", "step": 1, "provider": "gateway-main", "model": "vendor/model-x", "waitedMs": 10001, "limitMs": 10000}}}
+wait 800
+screenshot sim-out/failure/01-llm-timeout.png
+send {"assistant_turn": {"turnId": "failed-llm-http", "state": "resting", "transcript": "Какая завтра погода?", "errorCode": "provider_error", "failure": {"code": "provider_error", "stage": "llm", "step": 1, "provider": "gateway-main", "model": "vendor/model-x", "httpStatus": 502, "waitedMs": 184}}}
+wait 800
+screenshot sim-out/failure/02-provider-http.png
+send {"assistant_turn": {"turnId": "failed-tool-timeout", "state": "resting", "transcript": "Какая завтра погода?", "errorCode": "timeout", "failure": {"code": "timeout", "stage": "tool", "step": 2, "tool": "weather", "waitedMs": 10000, "limitMs": 10000}}}
+wait 800
+screenshot sim-out/failure/03-tool-timeout.png
+quit

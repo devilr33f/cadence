@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cadence:///distros/manifest.json",
+  "title": "Cadence distro manifest",
+  "$comment": "one file per distro, <name>.json beside this schema (TV plan W0-C item 7 and its Dependencies table). data only: no build reads these yet; stream E's make dist DISTRO=<name> will. pkg/distros' test checks every manifest against this schema and against the repo (the files, images and hashes it names). a planned distro may leave a pin as pending, naming what decides it; a shipping one may not",
+  "type": "object",
+  "properties": {
+    "$schema": {"const": "./schema.json"},
+    "name": {"type": "string", "pattern": "^[a-z][a-z0-9-]{1,31}$", "$comment": "equals the file name"},
+    "board": {"type": "string", "pattern": "^[a-z][a-z0-9-]{1,31}$", "$comment": "the board package (device/boards/<board>) and its enroll board id"},
+    "kind": {"enum": ["speaker", "screen"]},
+    "status": {"enum": ["shipping", "planned"]},
+    "os": {"enum": ["linux", "android"]},
+    "arch": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"enum": ["amd64", "arm64", "armhf", "armeabi-v7a", "arm64-v8a"]}
+    },
+    "package": {
+      "type": "object",
+      "properties": {
+        "format": {"enum": ["tarball", "deb", "apk", "image"]},
+        "output": {"type": "string", "minLength": 1, "$comment": "the artifact, {version} and {arch} substituted"}
+      },
+      "required": ["format", "output"],
+      "additionalProperties": false
+    },
+    "builder": {
+      "type": "object",
+      "properties": {
+        "dockerfile": {"type": "string", "minLength": 1},
+        "image": {"$ref": "#/$defs/image", "$comment": "the build's base image, as the dockerfile pins it"},
+        "platform": {"type": "string", "pattern": "^linux/(amd64|arm64|arm/v7)$"},
+        "command": {"type": "string", "minLength": 1, "$comment": "how the artifact is built today"}
+      },
+      "required": ["dockerfile"],
+      "additionalProperties": false
+    },
+    "runtime": {
+      "type": "object",
+      "$comment": "what the artifact may need on the device",
+      "properties": {
+        "libc": {"enum": ["glibc", "bionic", "static"]},
+        "glibcMax": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+$"},
+        "openssl": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+$"},
+        "loader": {"type": "string", "pattern": "^/"},
+        "minSdk": {"type": "integer", "minimum": 21},
+        "targetSdk": {"type": "integer", "minimum": 21},
+        "ndk": {"type": "string", "pattern": "^r[0-9]+[a-z]?$"}
+      },
+      "required": ["libc"],
+      "additionalProperties": false
+    },
+    "serverUrl": {
+      "$comment": "the server the app build starts with (the claim flow's address), editable in the TV's settings; null asks on first run. the owner's build sets it, never this repo",
+      "oneOf": [{"type": "null"}, {"type": "string", "format": "uri", "pattern": "^https://"}]
+    },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "$comment": "what the artifact ships; packaging advertises only these capabilities",
+      "items": {
+        "enum": ["cadenced", "cadence-audiod", "cadence-screen", "soloist-runtime", "airplay-runtime", "libairplay",
+          "ca-bundle", "cadence-run", "board-hook", "fake-soloist", "fake-shairport", "android-app"]
+      }
+    },
+    "media": {
+      "type": "object",
+      "$comment": "media/CMakeLists.txt's options for this distro (CADENCE_MEDIA_*), and the screen's",
+      "properties": {
+        "url": {"type": "boolean"},
+        "airplay": {"enum": ["shairport", "uxplay", "fake", "off"]},
+        "audioBackend": {"enum": ["alsa", "aaudio", "sim"]},
+        "soloistJail": {"type": "boolean"},
+        "staticLink": {"type": "boolean"},
+        "screen": {"type": "boolean"},
+        "video": {"enum": ["mpv-render", "mpv-surface", "off"]}
+      },
+      "required": ["url", "airplay", "audioBackend", "screen"],
+      "additionalProperties": false
+    },
+    "dependencies": {"type": "array", "items": {"$ref": "#/$defs/dependency"}}
+  },
+  "required": ["name", "board", "kind", "status", "os", "arch", "package", "builder", "runtime", "serverUrl", "components",
+    "media", "dependencies"],
+  "additionalProperties": false,
+  "allOf": [
+    {"if": {"properties": {"os": {"const": "android"}}}, "then": {"properties": {"runtime": {"required": ["minSdk", "targetSdk", "ndk"]}}}},
+    {"if": {"properties": {"kind": {"const": "speaker"}}}, "then": {"properties": {"serverUrl": {"type": "null"}}}}
+  ],
+  "$defs": {
+    "image": {"type": "string", "pattern": "^[a-z0-9./_-]+:[A-Za-z0-9._-]+@sha256:[0-9a-f]{64}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "pending": {"type": "string", "minLength": 1, "$comment": "what decides the pin: planned distros only"},
+    "dependency": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.+_-]{0,63}$"},
+        "source": {"enum": ["system", "vcpkg", "prebuilt", "submodule", "tarball"]},
+        "use": {"enum": ["build", "runtime", "both"]},
+        "license": {"type": "string", "minLength": 1},
+        "note": {"type": "string", "minLength": 1},
+        "pinsFile": {"type": "string", "minLength": 1, "$comment": "a repo file holding this dependency's pins"},
+        "pending": {"$ref": "#/$defs/pending"},
+
+        "distro": {"enum": ["debian-bookworm", "debian-trixie", "raspberry-pi-os-trixie"]},
+        "packages": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.+-]+$"}},
+        "snapshot": {"type": "string", "pattern": "^[0-9]{8}T[0-9]{6}Z$"},
+        "image": {"$ref": "#/$defs/image"},
+
+        "port": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+        "baseline": {"$ref": "#/$defs/commit"},
+        "triplet": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+
+        "url": {"type": "string", "pattern": "^https://"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "sha256ByHost": {"type": "object", "additionalProperties": {"$ref": "#/$defs/sha256"}, "minProperties": 1},
+        "version": {"type": "string", "minLength": 1},
+        "coordinate": {"type": "string", "pattern": "^[a-zA-Z0-9._-]+:[a-zA-Z0-9._-]+:[a-zA-Z0-9._-]+$"},
+        "script": {"type": "string", "minLength": 1, "$comment": "the build script that fetches it, which holds the same hash"},
+
+        "path": {"type": "string", "minLength": 1},
+        "repository": {"type": "string", "pattern": "^https://"},
+        "commit": {"$ref": "#/$defs/commit"},
+        "patches": {"type": "string", "minLength": 1}
+      },
+      "required": ["name", "source", "use"],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {"properties": {"source": {"const": "system"}}},
+          "then": {
+            "required": ["distro", "packages"],
+            "anyOf": [{"required": ["snapshot"]}, {"required": ["image"]}, {"required": ["pinsFile"]}, {"required": ["pending"]}]
+          }
+        },
+        {
+          "if": {"properties": {"source": {"const": "vcpkg"}}},
+          "then": {"required": ["port", "triplet"], "anyOf": [{"required": ["baseline"]}, {"required": ["pending"]}]}
+        },
+        {
+          "if": {"properties": {"source": {"const": "prebuilt"}}},
+          "then": {
+            "required": ["version"],
+            "anyOf": [
+              {"required": ["url", "sha256"]},
+              {"required": ["coordinate", "sha256"]},
+              {"required": ["url", "sha256ByHost"]},
+              {"required": ["pending"]}
+            ]
+          }
+        },
+        {
+          "if": {"properties": {"source": {"const": "submodule"}}},
+          "then": {"required": ["path", "repository"], "anyOf": [{"required": ["commit"]}, {"required": ["pending"]}]}
+        },
+        {
+          "if": {"properties": {"source": {"const": "tarball"}}},
+          "then": {
+            "$comment": "an upstream source tarball we build, kept for the speakers' existing builds (ffmpeg, openssl)",
+            "required": ["version"],
+            "anyOf": [{"required": ["url", "sha256", "script"]}, {"required": ["pinsFile"]}, {"required": ["pending"]}]
+          }
+        }
+      ]
+    }
+  }
+}

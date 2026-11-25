@@ -1,0 +1,39 @@
+{
+ "version": 1,
+ "id": "alarm.bedroom.a1",
+ "revision": 1,
+ "fallbackText": "Будильник на 7:30 по будням",
+ "root": {
+  "card": {
+   "title": "Будильник",
+   "icon": "alarm",
+   "children": [
+    {
+     "row": {
+      "gap": "GAP_M",
+      "children": [
+       {
+        "value": {
+         "value": "7:30",
+         "label": "Пн–Пт"
+        }
+       },
+       {
+        "state": {
+         "kind": "STATE_KIND_ON",
+         "label": "Включён"
+        }
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "row",
+  "state",
+  "value"
+ ]
+}

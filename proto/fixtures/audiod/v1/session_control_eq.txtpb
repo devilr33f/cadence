@@ -1,0 +1,1 @@
+session_control { request_id: "c-3" session_id: "sess-v1" set_eq { eq { preamp_db: -3 bands { type: EQ_TYPE_LOW_SHELF freq_hz: 100 gain_db: 4 q: 0.7 } } } }

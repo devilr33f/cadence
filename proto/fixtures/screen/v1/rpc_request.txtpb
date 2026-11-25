@@ -1,0 +1,1 @@
+rpc_request { id: "s-1" method: "card.action" json: "{\"cardId\":\"c-1\",\"revision\":2,\"actionId\":\"toggle\"}" }

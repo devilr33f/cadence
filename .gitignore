@@ -1,0 +1,35 @@
+node_modules/
+dist/
+.tanstack/
+coverage/
+*.log
+
+.env
+.env.*
+!.env.example
+*.env
+
+.worktrees/
+.superpowers/
+docs/plans/
+docs/superpowers/
+# local build and deploy notes for the owner's own setup
+/docs.local/
+research_notes/
+reports/
+/build/
+/bin/
+# the screen sim's walkthrough example writes its screenshots here
+/sim-out/
+
+# python (the home assistant component; make ha-test writes none of these)
+__pycache__/
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# the android app (deploy/android/Dockerfile builds it; a local gradle run writes these)
+/android/.gradle/
+/android/build/
+/android/app/build/
+/android/local.properties

@@ -1,0 +1,11 @@
+capability_report {
+  descriptors {
+    id: "led.ring"
+    version: 1
+    config_schema: "{\"type\":\"object\"}"
+    state_schema: "{\"type\":\"object\"}"
+  }
+  hash: "\x0a\x0b\x0c\x0d"
+  part: 1
+  parts: 3
+}

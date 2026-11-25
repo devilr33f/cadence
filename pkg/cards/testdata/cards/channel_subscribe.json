@@ -1,0 +1,51 @@
+{
+ "version": 1,
+ "id": "yt.channel.uc42",
+ "revision": 1,
+ "fallbackText": "Канал «Аниме-разборы», 312 тыс. подписчиков",
+ "root": {
+  "card": {
+   "title": "Аниме-разборы",
+   "subtitle": "312 тыс. подписчиков",
+   "icon": "channel",
+   "children": [
+    {
+     "row": {
+      "gap": "GAP_M",
+      "children": [
+       {
+        "image": {
+         "ref": "img:d4e5f6a7",
+         "aspect": "ASPECT_AVATAR",
+         "alt": "Аниме-разборы"
+        }
+       },
+       {
+        "text": {
+         "style": "TEXT_STYLE_BODY",
+         "text": "Разборы сезонов и интервью со студиями."
+        }
+       }
+      ]
+     }
+    },
+    {
+     "toggle": {
+      "label": "Подписаться",
+      "on": false,
+      "action": {
+       "id": "a:ch:sub"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "image",
+  "row",
+  "text",
+  "toggle"
+ ]
+}

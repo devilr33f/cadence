@@ -1,0 +1,247 @@
+syntax = "proto3";
+package cadence.v2;
+
+import "cadence/cards/v1/cards.proto";
+import "cadence/v2/session.proto";
+
+option go_package = "git.shino.boo/devilreef/cadence/pkg/gen/cadence/v2;cadencev2";
+
+enum AssistantState {
+  ASSISTANT_STATE_UNSPECIFIED = 0;
+  ASSISTANT_STATE_INVOKED = 1;
+  ASSISTANT_STATE_LISTENING = 2;
+  ASSISTANT_STATE_THINKING = 3;
+  ASSISTANT_STATE_SPEAKING = 4;
+  ASSISTANT_STATE_FOLLOW_UP = 5;
+  ASSISTANT_STATE_RESTING = 6;
+  ASSISTANT_STATE_DISMISSED = 7;
+}
+
+enum MicSourceKind {
+  MIC_SOURCE_KIND_UNSPECIFIED = 0;
+  // no cadence microphone serves this screen's room (design §16's no-microphone state)
+  MIC_SOURCE_KIND_NONE = 1;
+  // a speaker in the room listens
+  MIC_SOURCE_KIND_SPEAKER = 2;
+  // the screen's own microphone (usb)
+  MIC_SOURCE_KIND_LOCAL = 3;
+}
+
+message MicSource {
+  MicSourceKind kind = 1;
+  // the speaker's device id; empty unless kind is SPEAKER
+  string device_id = 2;
+  // the speaker is not linked now (design §21's offline state)
+  bool offline = 3;
+  // the speaker's name as the owner set it, for the drawer's «Слушает: Кухня»; empty unless kind is SPEAKER. shown,
+  // never logged
+  string device_name = 4;
+}
+
+enum StepStatus {
+  STEP_STATUS_UNSPECIFIED = 0;
+  STEP_STATUS_RUNNING = 1;
+  STEP_STATUS_DONE = 2;
+  STEP_STATUS_FAILED = 3;
+}
+
+// a tool step: one per tool call, labelled server-side in the screen's language. its label is the title of the call's
+// card in the call's current state («Ищу музыку «Кино»», then «Ищу музыку · 4 результата»), replaced in place
+message AssistantStep {
+  string id = 1;
+  string label = 2;
+  StepStatus status = 3;
+  // the call's one card (in cards, or a Cards frame of the turn), replaced in place by its id as the call goes from
+  // running to done or failed; empty while the call shows none. a screen that holds the card in its chat draws it in
+  // the step's place, one that shows it in its showcase keeps the line and points to it
+  string card_id = 4;
+}
+
+// the live partial transcript: stable words then the ones the recognizer may still change
+message Transcript {
+  string stable = 1;
+  string unstable = 2;
+}
+
+// a word of the reply: its span in text (unicode code points, end exclusive) and when it sounds, from the start of the
+// reply's audio
+message WordTiming {
+  uint32 text_start = 1;
+  uint32 text_end = 2;
+  uint32 start_ms = 3;
+  uint32 end_ms = 4;
+}
+
+// the [n] markers in a reply's text and the card each points to
+message Citation {
+  uint32 n = 1;
+  string card_id = 2;
+}
+
+message AssistantReply {
+  string text = 1;
+  // only when the tts provider gives them; else the device reveals 3 words a second
+  repeated WordTiming words = 2;
+  repeated Citation citations = 3;
+}
+
+// server -> screen: the whole live state of a turn, sent again on each change (a later one replaces an earlier one for
+// the same turn_id). shown on the screen of the room the turn's device is in; text is the assistant's and the user's,
+// shown, never logged (rule 8)
+message AssistantTurn {
+  string turn_id = 1;
+  // grows with each state sent for the turn
+  uint32 revision = 2;
+  // the device whose microphone or press started the turn
+  string origin_device_id = 3;
+  // wake opens the drawer without focus (design §16); a press with it
+  Trigger trigger = 4;
+  AssistantState state = 5;
+  MicSource mic_source = 6;
+  Transcript transcript = 7;
+  repeated AssistantStep steps = 8;
+  AssistantReply reply = 9;
+  // validated by the server before it sends (pkg/cards); typed since W0-C2, wire-compatible with the serialized cards
+  // the field carried as bytes before
+  repeated cadence.cards.v1.Card cards = 10;
+  // how long the follow-up window stays open, meaningful in FOLLOW_UP
+  uint32 follow_up_window_ms = 11;
+  // a token when the turn failed (not_heard, offline, upstream); the screen shows its state block
+  string error_code = 12;
+  // this turn begins after a conversation reset: the screen clears its earlier chat rounds with a short fade, then
+  // shows this turn's reply as the first line. the stored history is untouched (D8)
+  bool conversation_reset = 13;
+  // the real codes-only failure; error_code stays for older screens
+  TurnFailure failure = 14;
+}
+
+// server -> device: microphone and reply levels of a turn shown on a screen, about 25 a second while it listens or
+// speaks
+message VoiceLevel {
+  string turn_id = 1;
+  // 0-255, the listening microphone's level
+  uint32 mic = 2;
+  // 0-255, the reply's output level
+  uint32 output = 3;
+}
+
+enum DuckReason {
+  DUCK_REASON_UNSPECIFIED = 0;
+  DUCK_REASON_ASSISTANT = 1;
+  DUCK_REASON_ANNOUNCEMENT = 2;
+  DUCK_REASON_ALARM = 3;
+}
+
+// server -> device: lower the device's own mix while a turn in its room listens or speaks; the device applies it, so a
+// duck never raises a level (rule 7). active false ends it
+message Duck {
+  bool active = 1;
+  // 0-1 of the current level; 0.2 for the assistant
+  float level = 2;
+  uint32 ramp_ms = 3;
+  DuckReason reason = 4;
+  // the turn that asked; a later Duck for the same turn replaces it
+  string turn_id = 5;
+  // one media session, empty = every session on the device
+  string session_id = 6;
+}
+
+// server -> speaker: open the microphone for a press on a screen in this room; the speaker starts a SessionStart with
+// trigger BUTTON (a press, so a pressed session for policy) and session_id as given, by which the server knows the
+// screen that asked
+message MicOpen {
+  string session_id = 1;
+  // the screen whose press asked
+  string origin_device_id = 2;
+}
+
+// server -> device: cards outside a turn's state, or a new revision of cards already shown (live state, item 12). the
+// device replaces each card by its id when the revision is newer
+message Cards {
+  // the turn id or rpc id the cards belong to
+  string context_id = 1;
+  // validated by the server before it sends (pkg/cards); wire-compatible with the bytes it was before W0-C2
+  repeated cadence.cards.v1.Card cards = 2;
+}
+
+// server -> device: the household's background tasks as the screen's indicator counts them (design §20's tasks
+// badge), sent at the link's start and on each change. counts only: what a task is comes from tasks.list
+message TasksSummary {
+  // running now
+  uint32 running = 1;
+  // waiting for an answer (a clarify or an approval): the badge's attention state
+  uint32 waiting = 2;
+  // ended (done, failed or cancelled) since the screen last opened the tasks page, at most the list's last finished
+  uint32 finished = 3;
+  // grows with each summary sent, so a late one is dropped
+  uint64 revision = 4;
+}
+
+// server -> device (a screen): the household's alarms, timers and reminders as screens show them (the alarms page, the
+// home strip's next alarm and running timers) and the rings this screen shows. sent at the link's start and on each
+// change of a device's alarms state; a reminder's label is the owner's own setting, shown on screens (owner,
+// 2026-11-16), never logged
+message AlarmsSummary {
+  // every device that reports alarms, this screen's first, then its room's, then by name
+  repeated AlarmsDevice devices = 1;
+  // the rings this screen shows: its own (own: a tv wakes its display for it alone) and its room's devices'; another
+  // device's ring shows only on a screen that is awake (owner, 2026-11-16)
+  repeated AlarmRing ringing = 2;
+  // grows with each summary sent, so a late one is dropped
+  uint64 revision = 3;
+}
+
+// one device's alarms, timers and reminders, each kind by when it rings next
+message AlarmsDevice {
+  string device_id = 1;
+  // the owner's name for it and its room's, "" for none
+  string name = 2;
+  string room_name = 3;
+  // the device is this screen
+  bool here = 4;
+  // the device is in this screen's room
+  bool same_room = 5;
+  repeated AlarmItem items = 6;
+  // the minutes a snooze puts a ring off on this device (its alarms setting; 9 by default)
+  uint32 snooze_minutes = 7;
+}
+
+// an alarm, a timer or a reminder
+message AlarmItem {
+  // alarm, timer or reminder (a kind a newer device reports is shown by its label and next)
+  string kind = 1;
+  string id = 2;
+  // a reminder's label, "" for an alarm or a timer
+  string label = 3;
+  // an alarm's or a reminder's HH:MM in the device's zone, "" for a timer
+  string time = 4;
+  // mon..sun of a repeating one, empty for a one-time one
+  repeated string days = 5;
+  // when it rings next (a snooze included; a timer's end), unix ms; 0 while unknown
+  int64 next_unix_ms = 6;
+  // a timer's length in seconds
+  uint32 seconds = 7;
+  // it is snoozed: next is the snooze's end
+  bool snoozed = 8;
+}
+
+// a ring that sounds now
+message AlarmRing {
+  string device_id = 1;
+  string device_name = 2;
+  string room_name = 3;
+  // alarm, timer or reminder
+  string kind = 4;
+  string id = 5;
+  // a reminder's label, "" for none
+  string label = 6;
+  // an alarm's HH:MM, a timer's length as the device set it, "" for none
+  string time = 7;
+  uint32 seconds = 8;
+  // when the server first heard it ring, unix ms
+  int64 started_unix_ms = 9;
+  // the ring is this screen's own: a tv wakes its display for it, never for another device's
+  bool own = 10;
+  // the minutes «snooze» puts it off
+  uint32 snooze_minutes = 11;
+}

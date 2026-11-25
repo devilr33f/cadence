@@ -1,0 +1,47 @@
+[
+  {
+    "id": "9c1d2e3f-4a5b-4c6d-8e7f-0a1b2c3d4e5f",
+    "name": "Kitchen",
+    "kind": "group",
+    "preferredLeader": "0b6f3c52-7d1e-4a8b-9f2c-5e4d3a2b1c0d",
+    "leaderId": "0b6f3c52-7d1e-4a8b-9f2c-5e4d3a2b1c0d",
+    "clockLeaderId": "0b6f3c52-7d1e-4a8b-9f2c-5e4d3a2b1c0d",
+    "active": false,
+    "latencyMs": 1000,
+    "bitrateKbps": 256,
+    "pcm": false,
+    "waitMs": 3000,
+    "autoLatency": true,
+    "autoBitrate": true,
+    "autoWait": true,
+    "followVideo": true,
+    "trackingEnabled": false,
+    "tracking": {
+      "state": "off",
+      "members": []
+    },
+    "tuning": {
+      "latencyMs": 1000,
+      "bitrateKbps": 0,
+      "waitMs": 0
+    },
+    "members": [
+      {
+        "deviceId": "0b6f3c52-7d1e-4a8b-9f2c-5e4d3a2b1c0d",
+        "channel": "both",
+        "trimMs": 0,
+        "trimUs": 0,
+        "online": true
+      },
+      {
+        "deviceId": "5a9e7f10-2c3d-4e5f-8a6b-7c8d9e0f1a2b",
+        "channel": "both",
+        "trimMs": 0,
+        "trimUs": 0,
+        "online": false
+      }
+    ],
+    "createdAt": "2026-11-12T10:00:00Z",
+    "updatedAt": "2026-11-12T10:00:00Z"
+  }
+]

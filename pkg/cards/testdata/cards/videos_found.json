@@ -1,0 +1,89 @@
+{
+ "version": 1,
+ "id": "videos-found-b8fa46aef403bf7697",
+ "revision": 1,
+ "fallbackText": "Результаты поиска: 3",
+ "root": {
+  "card": {
+   "title": "Нашлось на YouTube",
+   "icon": "film",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "pagedList": {
+      "items": [
+       {
+        "mediaTile": {
+         "image": {
+          "ref": "img:AbCdEfGhIjKlMnOpQrStUv01",
+          "alt": "YT Probably Stolen 9",
+          "aspect": "ASPECT_WIDE"
+         },
+         "title": "YT Probably Stolen 9",
+         "subtitle": "Купли Барамидзе · 133 тыс. просмотров · 46:00",
+         "action": {
+          "id": "a:1"
+         }
+        }
+       },
+       {
+        "mediaTile": {
+         "image": {
+          "ref": "img:none",
+          "alt": "Прямой эфир",
+          "aspect": "ASPECT_WIDE"
+         },
+         "title": "Прямой эфир",
+         "subtitle": "Купли Барамидзе · Прямой эфир",
+         "action": {
+          "id": "a:2"
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "column": {
+      "children": [
+       {
+        "column": {
+         "children": [
+          {
+           "column": {
+            "children": [
+             {
+              "text": {
+               "text": "Купли Барамидзе",
+               "style": "TEXT_STYLE_BODY"
+              }
+             },
+             {
+              "text": {
+               "text": "@kuplinov · 3,9 млн подписчиков · 2,4 тыс. видео",
+               "style": "TEXT_STYLE_META"
+              }
+             }
+            ],
+            "gap": "GAP_S"
+           }
+          }
+         ],
+         "gap": "GAP_M"
+        }
+       }
+      ],
+      "gap": "GAP_M"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "column",
+  "media_tile",
+  "paged_list",
+  "text"
+ ]
+}

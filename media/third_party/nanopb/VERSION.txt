@@ -1,0 +1,4 @@
+nanopb 0.4.9.1 runtime, vendored unmodified from
+https://github.com/nanopb/nanopb/archive/refs/tags/0.4.9.1.tar.gz
+sha256 4575944a468718ef25f05eb01d994364650b581563089a9841986bb1e460eac3
+license: zlib (LICENSE.txt)

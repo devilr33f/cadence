@@ -1,0 +1,10 @@
+hello {
+  protocol: 1
+  version: "0.2.0"
+  platform: PLATFORM_LINUX
+  display { width: 1920 height: 1080 refresh_mhz: 60000 }
+  video_codecs: ["h264", "hevc"]
+  max_video_height: 1080
+  card_versions: [1]
+  card_features: ["button", "card", "long_text", "long_text.tail", "post", "post.quote", "text", "toggle"]
+}

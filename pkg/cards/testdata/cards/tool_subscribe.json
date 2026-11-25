@@ -1,0 +1,48 @@
+{
+ "version": 1,
+ "id": "sub-f0c3088b64d790bb5a",
+ "revision": 1,
+ "fallbackText": "Подписка: Оформлена, t3code",
+ "root": {
+  "card": {
+   "title": "Подписка",
+   "icon": "bookmark",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Оформлена",
+      "kind": "STATE_KIND_ON"
+     }
+    },
+    {
+     "keyvalue": {
+      "items": [
+       {
+        "key": "Откуда",
+        "value": "t3code"
+       },
+       {
+        "key": "События",
+        "value": "done, question"
+       },
+       {
+        "key": "Как",
+        "value": "Объявлять"
+       },
+       {
+        "key": "До",
+        "value": "Следующей остановки"
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "keyvalue",
+  "state"
+ ]
+}

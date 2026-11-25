@@ -1,0 +1,48 @@
+{
+ "version": 1,
+ "id": "ha-d955d4f1bf3945377a",
+ "revision": 1,
+ "fallbackText": "Kettle: Выключен",
+ "root": {
+  "card": {
+   "title": "Kettle",
+   "icon": "kettle",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "value": {
+      "value": "65",
+      "unit": "°C",
+      "label": "Сейчас"
+     }
+    },
+    {
+     "state": {
+      "label": "Выключен",
+      "kind": "STATE_KIND_OFF"
+     }
+    },
+    {
+     "slider": {
+      "value": 100,
+      "min": 40,
+      "max": 100,
+      "step": 1,
+      "unit": "°C",
+      "label": "Нагревать до",
+      "valueLabel": "100 °C",
+      "action": {
+       "id": "a:1"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "slider",
+  "state",
+  "value"
+ ]
+}

@@ -1,0 +1,9 @@
+media_settings {
+  duck_mode: DUCK_MODE_MUFFLE
+  eq {
+    preamp_db: -3
+    bands { type: EQ_TYPE_LOW_SHELF freq_hz: 80 gain_db: 4.5 q: 0.7 }
+    bands { type: EQ_TYPE_PEAKING freq_hz: 1000 gain_db: -2 q: 1.4 }
+  }
+  viz { enabled: true source: VIZ_SOURCE_ALL }
+}

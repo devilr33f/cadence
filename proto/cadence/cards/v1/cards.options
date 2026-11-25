@@ -1,0 +1,5 @@
+# nanopb options for cadence-screen (media/gen). cards are recursive (Node children, Post.quote) and variable in size,
+# so every field is a pointer field: the screen builds with PB_ENABLE_MALLOC and frees a card with pb_release. audiod
+# never includes cards. pkg/cards' validator bounds what the server sends (depth, nodes, bytes); the device enforces
+# the same limits after decoding
+cadence.cards.v1.* type:FT_POINTER

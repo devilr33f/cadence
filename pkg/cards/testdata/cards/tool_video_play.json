@@ -1,0 +1,32 @@
+{
+ "version": 1,
+ "id": "video-play-33002ef2e16a340bc9",
+ "revision": 1,
+ "fallbackText": "Видео: Включаю",
+ "root": {
+  "card": {
+   "title": "Видео",
+   "icon": "film",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Включаю",
+      "kind": "STATE_KIND_ON"
+     }
+    },
+    {
+     "text": {
+      "text": "1080p",
+      "style": "TEXT_STYLE_BODY"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state",
+  "text"
+ ]
+}

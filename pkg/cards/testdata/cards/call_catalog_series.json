@@ -1,0 +1,53 @@
+{
+ "version": 1,
+ "id": "call-8aa2faf45489efc560",
+ "revision": 1,
+ "fallbackText": "Фрирен 2 сезон",
+ "root": {
+  "card": {
+   "title": "Фрирен 2 сезон",
+   "icon": "film",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "column": {
+      "children": [
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "Серия 1 · Конец приключения",
+            "style": "TEXT_STYLE_BODY"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       },
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "Серия 2",
+            "style": "TEXT_STYLE_BODY"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       }
+      ],
+      "gap": "GAP_M"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "column",
+  "text"
+ ]
+}

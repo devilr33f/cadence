@@ -1,0 +1,16 @@
+# SDL3 from its official android aar, unpacked at CADENCE_SDL3_AAR (prefab's layout: the aar's own cmake/ config
+# wants an installed tree): SDL3::SDL3 is libSDL3.so for the abi, with SDL3-Headers' include/
+set(CADENCE_SDL3_AAR "" CACHE PATH "the sdl3 aar, unpacked")
+set(_lib "${CADENCE_SDL3_AAR}/prefab/modules/SDL3-shared/libs/android.${ANDROID_ABI}/libSDL3.so")
+set(_inc "${CADENCE_SDL3_AAR}/prefab/modules/SDL3-Headers/include")
+if(NOT EXISTS "${_lib}" OR NOT EXISTS "${_inc}/SDL3/SDL.h")
+  set(SDL3_FOUND FALSE)
+  set(SDL3_NOT_FOUND_MESSAGE "no sdl3 aar for ${ANDROID_ABI} at CADENCE_SDL3_AAR=${CADENCE_SDL3_AAR}")
+  return()
+endif()
+if(NOT TARGET SDL3::SDL3)
+  add_library(SDL3::SDL3 SHARED IMPORTED)
+  set_target_properties(SDL3::SDL3 PROPERTIES IMPORTED_LOCATION "${_lib}" INTERFACE_INCLUDE_DIRECTORIES "${_inc}")
+endif()
+set(SDL3_FOUND TRUE)
+set(SDL3_VERSION 3.4.20)

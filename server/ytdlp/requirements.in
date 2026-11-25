@@ -1,0 +1,10 @@
+# yt-dlp and its default extras but mutagen (GPL-2.0, which only writes tags into downloaded files, which the server
+# never writes); yt-dlp-ejs holds the javascript that deno runs for youtube's challenges
+yt-dlp==2026.10.26
+yt-dlp-ejs
+brotli
+certifi
+pycryptodomex
+requests
+urllib3
+websockets

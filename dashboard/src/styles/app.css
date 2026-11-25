@@ -1,0 +1,8 @@
+/* classes are collected from src only: the design preview has its own stylesheet */
+@import 'tailwindcss' source('..');
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@import './fonts.css';
+@import './tokens.css';
+@import './theme.css';
+@import './base.css';

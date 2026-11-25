@@ -1,0 +1,12 @@
+media_play {
+  request_id: "q-5"
+  session_id: "video-7"
+  purpose: MEDIA_PURPOSE_CONTENT
+  url: "https://cadence.example/v2/stream/tok/1"
+  audio_url: "https://cadence.example/v2/stream/tok/0"
+  metadata { title: "A film" kind: MEDIA_KIND_VIDEO }
+  playable: PLAYABLE_KIND_STREAM
+  renditions { name: "1080p" height: 1080 fps: 30 codecs: ["vp9", "opus"] }
+  renditions { name: "720p60" height: 720 fps: 60 codecs: ["h264"] selected: true }
+  renditions { name: "720p30" height: 720 fps: 30 codecs: ["h264"] }
+}

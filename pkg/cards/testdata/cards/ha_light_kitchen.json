@@ -1,0 +1,42 @@
+{
+ "version": 1,
+ "id": "ha-3f2a461f865d89bab9",
+ "revision": 1,
+ "fallbackText": "Kitchen light: Включено",
+ "root": {
+  "card": {
+   "title": "Kitchen light",
+   "icon": "light",
+   "tone": "TONE_SUCCESS",
+   "children": [
+    {
+     "toggle": {
+      "label": "Включено",
+      "on": true,
+      "action": {
+       "id": "a:1"
+      }
+     }
+    },
+    {
+     "slider": {
+      "value": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Яркость",
+      "valueLabel": "50 %",
+      "action": {
+       "id": "a:2"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "slider",
+  "toggle"
+ ]
+}

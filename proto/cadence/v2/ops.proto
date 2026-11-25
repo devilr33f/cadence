@@ -1,0 +1,33 @@
+syntax = "proto3";
+package cadence.v2;
+
+option go_package = "git.shino.boo/devilreef/cadence/pkg/gen/cadence/v2;cadencev2";
+
+// server -> device: run the update plan named by run_id. The daemon fetches the resolved plan and
+// its files over https with its own token (GET /v2/device-plan/{id} and /v2/device-artifact/{id}/{path},
+// the ring-sound pattern), so the link carries control alone, never a file.
+message OpsStart {
+  string run_id = 1;
+}
+
+// device -> server: one step of a run the daemon executes itself (OpsStart). state is running,
+// done, failed or skipped; error_code "" when none (fetch, hash_mismatch, exit, timeout,
+// refused_busy). tail is the step's output, capped.
+message OpsProgress {
+  string run_id = 1;
+  uint32 index = 2;
+  string state = 3;
+  int32 exit_code = 4;
+  string error_code = 5;
+  bytes tail = 6;
+}
+
+// device -> server: a self-run's outcome. A plan whose last step restarts the daemon may end the
+// link before this arrives; the server then closes the run when the device relinks and its hello
+// names the run's target version.
+message OpsResult {
+  string run_id = 1;
+  // "" when ok, else the failing step's error code
+  string code = 2;
+  bytes tail = 3;
+}

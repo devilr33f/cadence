@@ -1,0 +1,35 @@
+{
+ "version": 1,
+ "id": "timers-7937a84bddd5c1e88d",
+ "revision": 1,
+ "ttlS": 5160,
+ "dismissable": true,
+ "fallbackText": "Таймеров: 2",
+ "root": {
+  "card": {
+   "title": "Таймеры",
+   "icon": "timer",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "countdown": {
+      "endsAtMs": "1794657912000",
+      "label": "10 мин",
+      "format": "COUNTDOWN_FORMAT_MM_SS"
+     }
+    },
+    {
+     "countdown": {
+      "endsAtMs": "1794662700000",
+      "label": "1 ч 30 мин",
+      "format": "COUNTDOWN_FORMAT_HH_MM_SS"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "countdown"
+ ]
+}

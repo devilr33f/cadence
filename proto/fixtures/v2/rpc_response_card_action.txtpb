@@ -1,0 +1,1 @@
+rpc_response { id: "r-9" status: "ok" json: "{\"revision\":2}" card_action { card { version: 1 id: "c-1" revision: 2 fallback_text: "Свет в гостиной: выкл" root { card { title: "Свет в гостиной" children { toggle { label: "Свет" on: false action { id: "a:t:2" } } } } } features: "card" features: "toggle" } } }

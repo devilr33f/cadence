@@ -1,0 +1,1003 @@
+/* stream i3's layers and routes (design r2 sections 16, 20-24): the assistant drawer, the tasks panels, enrollment,
+   room and microphone, airplay, settings. a template (tokens-gen): every colour, size and duration is a token */
+
+/* a layer document: transparent over the page, its parts placed absolutely */
+.layerdoc {
+  background-color: $color.transparent;
+}
+
+/* ---------- the drawer: a 760 dp sheet on the right over a flat 55 % duck (two layers, never more) ---------- */
+.dlayer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+.dlayer.open {
+  display: block;
+}
+.dduck {
+  opacity: 1;
+  transition: opacity $motion.duck;
+}
+.dlayer.entering .dduck {
+  opacity: 0;
+  transition: none;
+}
+.dlayer.leaving .dduck {
+  opacity: 0;
+  transition: opacity $motion.duck-exit;
+}
+.drawer {
+  position: absolute;
+  right: 0dp;
+  top: 0dp;
+  width: $size.drawer-w;
+  height: 100%;
+  background-color: $color.sheet;
+  border-top-left-radius: $radius.l;
+  border-bottom-left-radius: $radius.l;
+  opacity: 1;
+  transform: translateX(0dp);
+  transition: opacity $motion.sheet, transform $motion.sheet;
+}
+.dlayer.entering .drawer {
+  opacity: 0;
+  transform: translateX(48dp);
+  transition: none;
+}
+.dlayer.leaving .drawer {
+  opacity: 0;
+  transform: translateX(48dp);
+  transition: opacity $motion.sheet-exit, transform $motion.sheet-exit;
+}
+.dhead {
+  position: absolute;
+  left: 60dp;
+  right: 60dp;
+  top: $size.safe-y;
+  height: 36dp;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.dname {
+  $type.title-s;
+  color: $color.paper-2;
+}
+.dstatus {
+  $type.label;
+  color: $color.paper-2;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+}
+/* the listening microphone's name by the status: the speaker («Bedroom») or the tv's own */
+.dstatus .dmic {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s2;
+}
+.dstatus .dmic .icon {
+  font-size: 28dp;
+  line-height: 32dp;
+}
+/* the body is a chat: a list anchored to the viewport's bottom that grows upward (the newest on the foot), clipped
+   at the top under a fade into the sheet. each item moves by its own transform and opacity (chat-view.cpp): older
+   rounds shrink toward their bottom corner and dim; layout runs only when an item changes */
+.dscroll {
+  position: absolute;
+  left: 60dp;
+  right: 60dp;
+  top: 118dp;
+  bottom: 180dp;
+  overflow: hidden;
+  /* the list overflows upward and by transforms, which rmlui's scroll size never counts: clip regardless */
+  clip: always;
+}
+.dfade {
+  position: absolute;
+  left: 60dp;
+  right: 60dp;
+  top: 118dp;
+  height: 160dp;
+  z-index: 1;
+  decorator: $scrim.chat-top;
+}
+.chat {
+  position: absolute;
+  left: 0dp;
+  right: 0dp;
+  bottom: 0dp;
+  display: block;
+  /* the clip edge sits on the line's top (y 900), so a new item rising from below shows almost whole */
+  padding-bottom: 28dp;
+}
+.ci {
+  display: block;
+  margin-top: $space.s4;
+  transform-origin: 0% 100%;
+}
+/* the user's words: a bubble on the right, a round's start (more room above it) */
+.ci.user {
+  /* a block that right-aligns an inline-block bubble: rmlui's flex sized a bubble whose words just overflow its
+     max-width by their one-line width, so its last word wrapped out of it */
+  display: block;
+  text-align: right;
+  margin-top: $space.s7;
+  transform-origin: 100% 100%;
+}
+.ucap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s3;
+  $type.label;
+  color: $color.paper-2;
+}
+.ucap .icon {
+  font-size: 32dp;
+}
+.ububble {
+  display: inline-block;
+  text-align: left;
+  max-width: 560dp;
+  margin-top: $space.s3;
+  padding: $space.s3 $space.s5;
+  background-color: $color.line;
+  border-radius: $radius.l;
+  border-bottom-right-radius: $radius.s;
+  $type.body-l;
+  color: $color.paper;
+}
+.ububble .unstable {
+  color: $color.paper-2;
+}
+/* the assistant's side: steps, cards and the reply on the left, open on the sheet */
+.ci.steps {
+  display: flex;
+  flex-direction: column;
+  gap: $space.s3;
+}
+.dstep {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+  $type.body;
+}
+.dstep .icon {
+  font-size: 28dp;
+  width: 32dp;
+  text-align: center;
+}
+.dstep .spinner {
+  width: 32dp;
+  height: 32dp;
+}
+.ci.reply {
+  $type.title-m;
+  color: $color.paper;
+}
+/* the pending reply while the assistant thinks: three dots in a wave where the reply will come, opacity and
+   transform alone; the element leaves with the first reply word or step, and its animation with it */
+.ci.thinking {
+  display: block;
+}
+.tbubble {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s3;
+  height: 56dp;
+  padding: 0 $space.s5;
+  border-radius: $radius.l;
+  border-bottom-left-radius: $radius.s;
+  background-color: $color.line;
+}
+.tdot {
+  display: block;
+  width: 14dp;
+  height: 14dp;
+  border-radius: 7dp;
+  background-color: $color.paper-2;
+  opacity: 0.3;
+  animation: 0.6s cubic-in-out infinite alternate thinking-dot;
+}
+.tdot.t2 {
+  animation: 0.6s 0.2s cubic-in-out infinite alternate thinking-dot;
+}
+.tdot.t3 {
+  animation: 0.6s 0.4s cubic-in-out infinite alternate thinking-dot;
+}
+@keyframes thinking-dot {
+  from { opacity: 0.3; transform: translateY(4dp); }
+  to { opacity: 1; transform: translateY(-4dp); }
+}
+.reduced .tdot {
+  animation: none;
+  opacity: 0.6;
+}
+/* words and steps still to fade in: the drawer drives their opacity up to their item's */
+.chat .fresh {
+  opacity: 0;
+}
+/* citations: a 30 dp numbered square on the text's baseline, reachable; focused it turns ember */
+.cmark {
+  position: relative;
+  display: inline-block;
+  width: $size.cite;
+  height: $size.cite;
+  margin: 0 $space.s1;
+  border-radius: $radius.s;
+  background-color: $color.line;
+  font-family: $font.figures;
+  font-weight: 500;
+  font-size: 20dp;
+  line-height: 30dp;
+  text-align: center;
+  vertical-align: baseline;
+  color: $color.paper;
+}
+.cmark:focus {
+  background-color: $color.ember;
+  color: $color.ink;
+}
+/* words not yet spoken hold their place unseen, so nothing moves as they appear */
+.unseen {
+  color: $color.transparent;
+}
+.unseen .cmark {
+  background-color: $color.transparent;
+  color: $color.transparent;
+}
+.drawer.resting .ci.reply.live, .drawer.resting .ci.user.live .stable {
+  color: $color.paper-2;
+}
+.ci.src {
+  $type.label;
+  color: $color.paper-2;
+  border-top: 1dp $color.line;
+  padding-top: $space.s4;
+}
+.chat .ccard, .tcards .ccard {
+  width: auto;
+  background-color: $color.ink-raised;
+}/* in the chat a card is a compact block under its step: the reply stays the round's main line, so a results card
+   holds a few rows (the server sends three posts, its links' snippets one line) and never the drawer's height */
+.chat .ccard {
+  padding: $space.s4 $space.s5 $space.s5 $space.s5;
+}
+.chat .ccard .chead {
+  margin-bottom: $space.s3;
+}
+.chat .ccard.k-posts .clist, .chat .ccard.k-links .clist {
+  max-height: 520dp;
+  overflow: hidden;
+}
+.chat .ccard.k-links .lsnippet {
+  max-height: 30dp;
+}
+/* a content card's line in the chat: the card itself is in the showcase on the left */
+.ci.ref {
+  transform-origin: 0% 100%;
+}
+.sref {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s3;
+  $type.label;
+  color: $color.paper-2;
+}
+.sref .sarrow {
+  font-size: 24dp;
+  color: $color.ember;
+}
+.sref .sicon {
+  font-size: 28dp;
+}
+
+/* ---------- the showcase: the assistant's found things on the left, a deck of cards (reel.h) ----------
+   the front card at the deck's top edge; the two before it stepped back behind it, smaller and dimmer, peeking above;
+   a new one rises from below. only transform and opacity move, each slot by a transition the reel's pace sets */
+.showcase {
+  position: absolute;
+  left: $size.safe-x;
+  top: 0dp;
+  width: 960dp;
+  height: 100%;
+  display: none;
+}
+.showcase.on {
+  display: block;
+}
+.dlayer.entering .showcase, .dlayer.leaving .showcase {
+  opacity: 0;
+}
+/* the turn's media started here: the left cards fade out */
+.showcase {
+  opacity: 1;
+  transition: opacity $motion.quick-exit;
+}
+.showcase.away {
+  opacity: 0;
+}
+/* the deck's own ground: the page behind dims further under it, so a card never reads against posters (one more
+   translucent layer, over the left 60 % alone, only while the deck holds a card) */
+.sback {
+  position: absolute;
+  left: -$size.safe-x;
+  top: 0dp;
+  /* on under the drawer's rounded corners too, so no undimmed strip shows beside them (the drawer is opaque) */
+  width: 1240dp;
+  height: 100%;
+  background-color: $scrim.sheet;
+}
+.sdeck {
+  position: absolute;
+  left: 0dp;
+  right: 0dp;
+  top: 168dp;
+  bottom: 96dp;
+}
+.sslot {
+  position: absolute;
+  left: 0dp;
+  right: 0dp;
+  top: 0dp;
+  transform-origin: 50% 0%;
+  transform: translateY(0dp) scale(1);
+  opacity: 1;
+}
+.sslot.p0 {
+  z-index: 3;
+}
+.sslot.p1 {
+  z-index: 2;
+  transform: translateY(-56dp) scale(0.94);
+  opacity: 0.5;
+}
+.sslot.p2 {
+  z-index: 1;
+  transform: translateY(-100dp) scale(0.88);
+  opacity: 0.2;
+}
+/* a card behind the front one is a bare band above the front card: never its body under it, and never its text,
+   which would cross the bands above and below it */
+.sslot.p1 .ccard, .sslot.p2 .ccard, .sslot.gone .ccard {
+  max-height: 120dp;
+}
+.sslot.p1 .ccard > *, .sslot.p2 .ccard > *, .sslot.gone .ccard > * {
+  visibility: hidden;
+}
+.sslot.gone {
+  z-index: 0;
+  transform: translateY(-128dp) scale(0.84);
+  opacity: 0;
+}
+.sslot.wait {
+  z-index: 4;
+  transform: translateY(160dp) scale(1);
+  opacity: 0;
+}
+/* the front card reads from the sofa: wider type than the chat's, a few rows of found things, never past the deck */
+.sslot .ccard {
+  width: auto;
+  max-height: 816dp;
+  overflow: hidden;
+  background-color: $color.sheet;
+}
+.sslot .cpost .ptext {
+  font-size: 28dp;
+  line-height: 38dp;
+  max-height: 114dp;
+}
+.sslot .cpost .pwho {
+  font-size: 24dp;
+}
+.sslot .clink .ltitle {
+  font-size: 28dp;
+  line-height: 36dp;
+}
+.sslot .clink .lsnippet {
+  font-size: 24dp;
+  line-height: 32dp;
+  max-height: 64dp;
+}
+.sslot .clink .lthumb {
+  width: 192dp;
+  height: 108dp;
+}
+.sslot .clist {
+  gap: $space.s4;
+}
+/* media tiles sit in a wrapping row */
+.sslot .ccard.k-tiles .clist, .chat .ccard.k-tiles .clist {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+/* posters in the deck: four a row and two rows inside the front card (a catalog search's eight titles), cut a
+   little shorter than 2:3 (the art covers its box), the line under each a size smaller so its score fits */
+.sslot .ccard.k-tiles .card.poster {
+  width: 216dp;
+}
+.sslot .ccard.k-tiles .card.poster .art {
+  height: 284dp;
+}
+.sslot .ccard.k-tiles .card .meta {
+  font-size: 21dp;
+}
+/* square covers (music) four to a row in the showcase, so a search's results fit its card */
+.sslot .ccard.k-tiles .card.square {
+  width: 216dp;
+}
+.sslot .ccard.k-tiles .card.square .art {
+  height: 216dp;
+}
+.ci.card.empty {
+  display: none;
+}
+.dstate {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space.s4;
+  margin-top: $space.s6;
+}
+.dstate .icon {
+  font-size: 72dp;
+  line-height: 80dp;
+  color: $color.paper-2;
+}
+.dstate .icon.tone-danger {
+  color: $tone.danger;
+}
+.dstate .stitle {
+  $type.title-m;
+}
+.dstate .sbody {
+  $type.body;
+  color: $color.paper-2;
+}
+.dstate .scode {
+  $type.label;
+  color: $color.paper-2;
+}
+.dqr {
+  width: $size.qr;
+  height: $size.qr;
+}
+/* the foot, fixed at y 900-990: the cadence line (560 dp) and the state's one button */
+/* the level line is gone from the foot (the owner's): its element stays for the drawer's timing, never drawn */
+.dtrack {
+  display: none;
+  position: absolute;
+  left: 100dp;
+  top: 900dp;
+  width: $size.drawer-line;
+  height: 24dp;
+}
+.dline {
+  position: absolute;
+  left: 0dp;
+  top: 10dp;
+  width: 100%;
+  height: $size.line;
+  border-radius: 2dp;
+  background-color: $color.ember;
+  transform-origin: 50% 50%;
+  overflow: hidden;
+}
+.dline.count {
+  transform-origin: 0% 50%;
+}
+.dline .dseg {
+  display: none;
+}
+/* thinking: 4 dp, a 25 % segment sweeping every 1.2 s */
+.dline.sweep {
+  background-color: $color.line;
+}
+.dline.sweep .dseg {
+  display: block;
+  position: absolute;
+  left: 0dp;
+  top: 0dp;
+  width: 25%;
+  height: 100%;
+  border-radius: 2dp;
+  background-color: $color.ember;
+  animation: $motion.pulse infinite sweep;
+}
+@keyframes sweep {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(400%); }
+}
+.dfootb {
+  position: absolute;
+  left: 60dp;
+  right: 60dp;
+  top: 926dp;
+  height: 64dp;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 12dp;
+}
+.dfollow {
+  $type.label;
+  color: $color.paper-2;
+  line-height: 64dp;
+}
+.dhint {
+  position: absolute;
+  left: 60dp;
+  right: 60dp;
+  top: 994dp;
+  $type.label;
+  color: $color.paper-2;
+  text-align: center;
+}
+.dhint.hidden {
+  display: none;
+}
+/* long BACK: the mic glyph fades in at bottom centre past 250 ms */
+.backhint {
+  position: absolute;
+  left: 936dp;
+  top: 960dp;
+  width: 48dp;
+  height: 48dp;
+  font-family: $font.icons;
+  font-size: 40dp;
+  line-height: 48dp;
+  text-align: center;
+  color: $color.paper;
+  opacity: 0;
+  transition: opacity $motion.quick;
+}
+.backhint.on {
+  opacity: 1;
+}
+
+/* ---------- tasks: the indicator, the tasks panel and a task's panel (the right sheet) ---------- */
+.topbar-i3 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s4;
+}
+.tind, .micbtn {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s2;
+  height: $size.chip-h;
+  padding: 0 $space.s4;
+  border-radius: 24dp;
+  border: 2dp $color.line;
+  $type.label;
+  line-height: 44dp;
+  white-space: nowrap;
+  color: $color.paper;
+  transition: background-color $motion.quick, color $motion.quick;
+}
+.tind .icon, .micbtn .icon {
+  font-size: 28dp;
+}
+.tind:focus, .micbtn:focus {
+  background-color: $color.ember;
+  border-color: $color.ember;
+  color: $color.ink;
+}
+.tind .ring, .tind .glow, .micbtn .ring, .micbtn .glow {
+  display: none;
+}
+.tcount {
+  font-family: $font.figures;
+  font-weight: 500;
+}
+.tdot {
+  width: 12dp;
+  height: 12dp;
+  border-radius: 6dp;
+  background-color: $tone.warning;
+}
+.micword {
+  display: none;
+}
+.micbtn:focus .micword {
+  display: inline;
+}
+.micbtn .micmark {
+  font-size: 20dp;
+  margin-left: -12dp;
+}
+.micbtn.none, .micbtn.offline {
+  color: $color.paper-2;
+}
+.tlayer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+.tlayer.open {
+  display: block;
+}
+.tscrim {
+  opacity: 1;
+  transition: opacity $motion.sheet;
+}
+.tlayer.entering .tscrim {
+  opacity: 0;
+  transition: none;
+}
+.tlayer.leaving .tscrim {
+  opacity: 0;
+  transition: opacity $motion.sheet-exit;
+}
+/* the drawer's duck stands in for this scrim while it is open over the panel */
+.tlayer.under .tscrim {
+  display: none;
+}
+.tpanel {
+  position: absolute;
+  right: 0dp;
+  top: 0dp;
+  width: $size.drawer-w;
+  height: 100%;
+  background-color: $color.sheet;
+  border-top-left-radius: $radius.l;
+  border-bottom-left-radius: $radius.l;
+  opacity: 1;
+  transform: translateX(0dp);
+  transition: opacity $motion.sheet, transform $motion.sheet;
+}
+.tlayer.entering .tpanel {
+  opacity: 0;
+  transform: translateX(48dp);
+  transition: none;
+}
+.tlayer.leaving .tpanel {
+  opacity: 0;
+  transform: translateX(48dp);
+  transition: opacity $motion.sheet-exit, transform $motion.sheet-exit;
+}
+.tk-head {
+  position: absolute;
+  left: 60dp;
+  right: 60dp;
+  top: $size.safe-y;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s3;
+}
+.tk-head .ticon {
+  font-size: 36dp;
+  color: $color.paper-2;
+}
+.tk-title {
+  $type.title-m;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tbody {
+  position: absolute;
+  left: 60dp;
+  right: 60dp;
+  top: 130dp;
+  bottom: 0dp;
+  overflow: hidden;
+}
+.tcards {
+  padding-bottom: $size.safe-y;
+}
+/* the sheet is narrow: a row of buttons (a player's previous, pause, next) keeps to one line, and a cover beside a
+   track's lines (title on two, artist, album, source) is as tall as most of them */
+.tcards .crow > .btn {
+  padding: 0 $space.s4;
+  gap: $space.s2;
+}
+.tcards .crow > .cimage.img-square {
+  width: 160dp;
+  height: 160dp;
+  align-self: flex-start;
+}
+.tdivider {
+  $type.label;
+  color: $color.paper-2;
+  border-top: 1dp $color.line;
+  padding-top: $space.s4;
+}
+.tempty {
+  $type.body;
+  color: $color.paper-2;
+}
+/* the card's own «новое» line stays hidden: the panel's pill says it */
+.newbelow.hidden {
+  display: none;
+}
+/* a live tail is a log: its lines stay lines */
+.clong.tail .ltext {
+  white-space: pre-wrap;
+}
+/* «новое ↓»: new lines below what the reader looks at */
+.tnew {
+  position: absolute;
+  left: 260dp;
+  width: 240dp;
+  bottom: 70dp;
+  height: 40dp;
+  border-radius: 20dp;
+  background-color: $color.paper;
+  color: $color.ink;
+  $type.label;
+  line-height: 40dp;
+  text-align: center;
+}
+.tnew.hidden {
+  display: none;
+}
+
+/* ---------- enrollment ---------- */
+.ewrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: $space.s8;
+}
+.etitle {
+  $type.title-l;
+}
+.ewhat {
+  $type.body-l;
+  color: $color.paper-2;
+  margin-top: $space.s4;
+}
+.econnect {
+  gap: $space.s4;
+  margin-top: $space.s7;
+  $type.title-s;
+}
+.eaddress {
+  $type.figures;
+  color: $color.paper-2;
+  margin-top: $space.s4;
+}
+.eclaim {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s9;
+  margin-top: $space.s7;
+}
+.eqr {
+  width: 360dp;
+  height: 360dp;
+  flex: 0 0 auto;
+}
+.eright {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space.s4;
+}
+.ecode {
+  $type.code-l;
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity $motion.enter;
+}
+.ecode.fresh {
+  opacity: 0;
+  transition: none;
+}
+.emeta {
+  $type.body;
+  color: $color.paper-2;
+}
+.eline {
+  position: relative;
+  width: $size.drawer-line;
+  height: $size.line;
+  border-radius: 2dp;
+  background-color: $color.line;
+  margin-top: $space.s4;
+}
+.elinefill {
+  position: absolute;
+  left: 0dp;
+  top: 0dp;
+  width: 100%;
+  height: 100%;
+  border-radius: 2dp;
+  background-color: $color.ember;
+  transform-origin: 0% 50%;
+}
+.eexpiry {
+  $type.figures;
+  color: $color.paper-2;
+}
+.enotice {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s3;
+  $type.body;
+}
+.enotice .icon {
+  font-size: 32dp;
+}
+.ebuttons {
+  display: flex;
+  flex-direction: row;
+  gap: $space.s5;
+  margin-top: $space.s6;
+}
+.estate {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space.s4;
+  margin-top: $space.s8;
+}
+.estate .icon {
+  font-size: 72dp;
+  line-height: 80dp;
+  color: $color.paper-2;
+}
+.estate .icon.tone-success {
+  color: $tone.success;
+}
+.estate .icon.tone-danger {
+  color: $tone.danger;
+}
+.estate .stitle {
+  $type.title-m;
+}
+.en-head {
+  $type.title-m;
+}
+.eboxes {
+  display: flex;
+  flex-direction: row;
+  gap: $space.s3;
+  margin: $space.s6 0dp;
+}
+.ebox {
+  width: 88dp;
+  height: 104dp;
+  border-radius: $radius.s;
+  background-color: $color.ink-raised;
+  border: 2dp $color.line;
+  $type.figures-l;
+  line-height: 100dp;
+  text-align: center;
+}
+.ebox.cur {
+  border-color: $color.ember;
+}
+.ekeys {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: $space.s2;
+  width: 760dp;
+}
+.eaddr .osk {
+  margin-top: $space.s5;
+}
+
+/* ---------- airplay: the corner badge while mirroring, the pin full screen ---------- */
+.apbadge {
+  position: absolute;
+  right: $size.safe-x;
+  top: $size.safe-y;
+  height: $size.badge-h;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space.s2;
+  padding: 0 $space.s4;
+  border-radius: 20dp;
+  background-color: $color.sheet;
+  $type.badge;
+  line-height: 40dp;
+  opacity: 0.7;
+}
+.apbadge .icon {
+  font-size: 24dp;
+}
+.apbadge.hidden, .appin.hidden {
+  display: none;
+}
+.appin {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $color.ink;
+}
+.apbox {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 300dp;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space.s5;
+}
+.aptitle {
+  $type.title-m;
+}
+.apdigits {
+  $type.pin;
+  white-space: nowrap;
+}
+.apname {
+  $type.body-l;
+  color: $color.paper-2;
+}
+.apline {
+  margin-top: $space.s5;
+}
+
+/* ---------- settings, room and microphone ---------- */
+.stitle-l {
+  $type.title-l;
+  margin-bottom: $space.s6;
+}
+.slist {
+  display: flex;
+  flex-direction: column;
+  gap: $space.s2;
+  width: $size.sheet-w;
+}
+.sgroup {
+  $type.label;
+  color: $color.paper-2;
+  margin-top: $space.s5;
+}
+.slist .toggle {
+  height: $size.list-item-h;
+  padding: 0 $space.s5;
+}
+.smeta {
+  $type.body;
+  color: $color.paper-2;
+  margin-top: $space.s5;
+}
+.roomqr {
+  margin-top: $space.s5;
+}
+
+/* ---------- reduced motion: opacity only ---------- */
+.reduced .drawer, .reduced .tpanel {
+  transition: opacity $motion.reduced;
+}
+.reduced .dlayer.entering .drawer, .reduced .dlayer.leaving .drawer, .reduced .tlayer.entering .tpanel,
+.reduced .tlayer.leaving .tpanel {
+  transform: none;
+}
+.dhold {
+  width: 1dp;
+  height: 64dp;
+}
+/* a turn's foot is empty (no buttons): the chat reaches down to the sheet's bottom margin */
+.drawer.nofoot .dscroll {
+  bottom: 60dp;
+}

@@ -1,0 +1,1 @@
+state_delta { capability: "audio.output" json: "{\"level\":40}" }

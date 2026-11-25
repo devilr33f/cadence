@@ -1,0 +1,100 @@
+{
+ "version": 1,
+ "id": "catalog.search.q1",
+ "revision": 1,
+ "fallbackText": "Найдено: «Монолог фармацевта» у трёх источников и два трека",
+ "root": {
+  "card": {
+   "title": "Нашёл",
+   "subtitle": "«фармацевт»",
+   "icon": "search",
+   "children": [
+    {
+     "pagedList": {
+      "items": [
+       {
+        "mediaTile": {
+         "image": {
+          "ref": "img:a1b2c3d4",
+          "aspect": "ASPECT_POSTER"
+         },
+         "title": "Монолог фармацевта",
+         "subtitle": "2 сезон · 24 серии · у 3 источников",
+         "action": {
+          "id": "a:s1"
+         },
+         "badges": [
+          {
+           "kind": "BADGE_KIND_PROVIDER",
+           "text": "torrplayer"
+          },
+          {
+           "kind": "BADGE_KIND_NEW"
+          }
+         ],
+         "secondary": [
+          {
+           "action": {
+            "id": "a:s1m"
+           },
+           "label": "В мой список",
+           "icon": "bookmark"
+          }
+         ]
+        }
+       },
+       {
+        "mediaTile": {
+         "image": {
+          "ref": "img:b2c3d4e5",
+          "aspect": "ASPECT_SQUARE"
+         },
+         "title": "Hana ni Nare",
+         "subtitle": "Ким Хён Мин · сингл",
+         "action": {
+          "id": "a:s2"
+         },
+         "badges": [
+          {
+           "kind": "BADGE_KIND_PROVIDER",
+           "text": "YouTube Music"
+          }
+         ]
+        }
+       },
+       {
+        "mediaTile": {
+         "image": {
+          "ref": "img:c3d4e5f6",
+          "aspect": "ASPECT_WIDE"
+         },
+         "title": "Опенинг 2 сезона",
+         "subtitle": "Аниме-канал · 1,2 млн просмотров",
+         "action": {
+          "id": "a:s3"
+         },
+         "badges": [
+          {
+           "kind": "BADGE_KIND_HD"
+          }
+         ]
+        }
+       }
+      ],
+      "more": {
+       "action": {
+        "id": "a:s:more"
+       },
+       "label": "Показать ещё"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "media_tile",
+  "paged_list"
+ ]
+}

@@ -1,0 +1,311 @@
+{
+ "contents": {
+  "tabbedSearchResultsRenderer": {
+   "tabs": [
+    {
+     "tabRenderer": {
+      "title": "YT Music",
+      "selected": true,
+      "content": {
+       "sectionListRenderer": {
+        "contents": [
+         {},
+         {
+          "musicShelfRenderer": {
+           "title": {
+            "runs": [
+             {
+              "text": "Albums"
+             }
+            ]
+           },
+           "contents": [
+            {
+             "musicResponsiveListItemRenderer": {
+              "thumbnail": {
+               "musicThumbnailRenderer": {
+                "thumbnail": {
+                 "thumbnails": [
+                  {
+                   "url": "https://yt3.googleusercontent.com/dNfpEZtqYYsrHaHpSE9ik5vGgUSVLKE5DycRz8VMLdIQV_GYz7GpGUkMnU9I0926zLRQEAIUwdsjYCuG=w60-h60-l90-rj",
+                   "width": 60,
+                   "height": 60
+                  },
+                  {
+                   "url": "https://yt3.googleusercontent.com/dNfpEZtqYYsrHaHpSE9ik5vGgUSVLKE5DycRz8VMLdIQV_GYz7GpGUkMnU9I0926zLRQEAIUwdsjYCuG=w120-h120-l90-rj",
+                   "width": 120,
+                   "height": 120
+                  },
+                  {
+                   "url": "https://yt3.googleusercontent.com/dNfpEZtqYYsrHaHpSE9ik5vGgUSVLKE5DycRz8VMLdIQV_GYz7GpGUkMnU9I0926zLRQEAIUwdsjYCuG=w226-h226-l90-rj",
+                   "width": 226,
+                   "height": 226
+                  },
+                  {
+                   "url": "https://yt3.googleusercontent.com/dNfpEZtqYYsrHaHpSE9ik5vGgUSVLKE5DycRz8VMLdIQV_GYz7GpGUkMnU9I0926zLRQEAIUwdsjYCuG=w544-h544-l90-rj",
+                   "width": 544,
+                   "height": 544
+                  }
+                 ]
+                }
+               }
+              },
+              "flexColumns": [
+               {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Meteora"
+                   }
+                  ]
+                 }
+                }
+               },
+               {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Album"
+                   },
+                   {
+                    "text": " • "
+                   },
+                   {
+                    "text": "Linkin Park",
+                    "navigationEndpoint": {
+                     "browseEndpoint": {
+                      "browseId": "UCxgN32UVVztKAQd2HkXzBtw",
+                      "browseEndpointContextSupportedConfigs": {
+                       "browseEndpointContextMusicConfig": {
+                        "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                       }
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "text": " • "
+                   },
+                   {
+                    "text": "2003"
+                   }
+                  ]
+                 }
+                }
+               }
+              ],
+              "navigationEndpoint": {
+               "browseEndpoint": {
+                "browseId": "MPREb_qMlbe7gLeuH",
+                "browseEndpointContextSupportedConfigs": {
+                 "browseEndpointContextMusicConfig": {
+                  "pageType": "MUSIC_PAGE_TYPE_ALBUM"
+                 }
+                }
+               }
+              }
+             }
+            },
+            {
+             "musicResponsiveListItemRenderer": {
+              "thumbnail": {
+               "musicThumbnailRenderer": {
+                "thumbnail": {
+                 "thumbnails": [
+                  {
+                   "url": "https://yt3.googleusercontent.com/lkNJVMp3siDfSw_zVYj3tE6fQS7G6Gj2gzoxrIwS7K4TwqmL_uSBb9-PKACNLIP_7XLQib4tC5XwWbpD=w60-h60-l90-rj",
+                   "width": 60,
+                   "height": 60
+                  },
+                  {
+                   "url": "https://yt3.googleusercontent.com/lkNJVMp3siDfSw_zVYj3tE6fQS7G6Gj2gzoxrIwS7K4TwqmL_uSBb9-PKACNLIP_7XLQib4tC5XwWbpD=w120-h120-l90-rj",
+                   "width": 120,
+                   "height": 120
+                  },
+                  {
+                   "url": "https://yt3.googleusercontent.com/lkNJVMp3siDfSw_zVYj3tE6fQS7G6Gj2gzoxrIwS7K4TwqmL_uSBb9-PKACNLIP_7XLQib4tC5XwWbpD=w226-h226-l90-rj",
+                   "width": 226,
+                   "height": 226
+                  },
+                  {
+                   "url": "https://yt3.googleusercontent.com/lkNJVMp3siDfSw_zVYj3tE6fQS7G6Gj2gzoxrIwS7K4TwqmL_uSBb9-PKACNLIP_7XLQib4tC5XwWbpD=w544-h544-l90-rj",
+                   "width": 544,
+                   "height": 544
+                  }
+                 ]
+                }
+               }
+              },
+              "flexColumns": [
+               {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Hybrid Theory"
+                   }
+                  ]
+                 }
+                }
+               },
+               {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Album"
+                   },
+                   {
+                    "text": " • "
+                   },
+                   {
+                    "text": "Linkin Park",
+                    "navigationEndpoint": {
+                     "browseEndpoint": {
+                      "browseId": "UCxgN32UVVztKAQd2HkXzBtw",
+                      "browseEndpointContextSupportedConfigs": {
+                       "browseEndpointContextMusicConfig": {
+                        "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                       }
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "text": " • "
+                   },
+                   {
+                    "text": "2000"
+                   }
+                  ]
+                 }
+                }
+               }
+              ],
+              "navigationEndpoint": {
+               "browseEndpoint": {
+                "browseId": "MPREb_odUae150mq3",
+                "browseEndpointContextSupportedConfigs": {
+                 "browseEndpointContextMusicConfig": {
+                  "pageType": "MUSIC_PAGE_TYPE_ALBUM"
+                 }
+                }
+               }
+              }
+             }
+            },
+            {
+             "musicResponsiveListItemRenderer": {
+              "thumbnail": {
+               "musicThumbnailRenderer": {
+                "thumbnail": {
+                 "thumbnails": [
+                  {
+                   "url": "https://yt3.googleusercontent.com/BtAKhqmTBoZWEQPlcF9tgpqILWNkQ4vc0tk0nlSrIpdvhW9sf9K-tQDoym1zh9Svl-8PnpFCY_6vNYg7=w60-h60-l90-rj",
+                   "width": 60,
+                   "height": 60
+                  },
+                  {
+                   "url": "https://yt3.googleusercontent.com/BtAKhqmTBoZWEQPlcF9tgpqILWNkQ4vc0tk0nlSrIpdvhW9sf9K-tQDoym1zh9Svl-8PnpFCY_6vNYg7=w120-h120-l90-rj",
+                   "width": 120,
+                   "height": 120
+                  },
+                  {
+                   "url": "https://yt3.googleusercontent.com/BtAKhqmTBoZWEQPlcF9tgpqILWNkQ4vc0tk0nlSrIpdvhW9sf9K-tQDoym1zh9Svl-8PnpFCY_6vNYg7=w226-h226-l90-rj",
+                   "width": 226,
+                   "height": 226
+                  },
+                  {
+                   "url": "https://yt3.googleusercontent.com/BtAKhqmTBoZWEQPlcF9tgpqILWNkQ4vc0tk0nlSrIpdvhW9sf9K-tQDoym1zh9Svl-8PnpFCY_6vNYg7=w544-h544-l90-rj",
+                   "width": 544,
+                   "height": 544
+                  }
+                 ]
+                }
+               }
+              },
+              "flexColumns": [
+               {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Minutes to Midnight"
+                   }
+                  ]
+                 }
+                }
+               },
+               {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                 "text": {
+                  "runs": [
+                   {
+                    "text": "Album"
+                   },
+                   {
+                    "text": " • "
+                   },
+                   {
+                    "text": "Linkin Park",
+                    "navigationEndpoint": {
+                     "browseEndpoint": {
+                      "browseId": "UCxgN32UVVztKAQd2HkXzBtw",
+                      "browseEndpointContextSupportedConfigs": {
+                       "browseEndpointContextMusicConfig": {
+                        "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                       }
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "text": " • "
+                   },
+                   {
+                    "text": "2007"
+                   }
+                  ]
+                 }
+                }
+               }
+              ],
+              "navigationEndpoint": {
+               "browseEndpoint": {
+                "browseId": "MPREb_VKZiZdjp9B6",
+                "browseEndpointContextSupportedConfigs": {
+                 "browseEndpointContextMusicConfig": {
+                  "pageType": "MUSIC_PAGE_TYPE_ALBUM"
+                 }
+                }
+               }
+              }
+             }
+            }
+           ],
+           "continuations": [
+            {
+             "nextContinuationData": {
+              "continuation": "EooGEhNsaW5raW4gcGFyayBtZXRlb3JhGvIFRWdXS0FRSVlBVWdVYWd3UURoQUtFQU1RQkJBSkVBV0NBUmhWUTJobmQxQnpOa1pqU0cxNFdGVkdhVmh6WVhaUFdtZUNBUmhWUTI5MmNscFNNekZNT1dKRWVqZFNiRVpMZG1Zd2NWR0NBUmhWUTNSdVduTTJXVkptTkZwZlNEbHhNV0pIVWxCTFEwR0NBUmhWUTB3Mk1FWmxVM2hHVERob1kycGxkamQ0UnpoTGFuZUNBUmhWUTFWcFRtZFNMVEo0WkhoNVpVbGtWVEEyVm01U2JGR0NBUmhWUTBKWlgwUklSV3BFTW14b2VHZ3hlRzVTVG1GNFdYZUNBUmhWUTNCRU0zcHpOM3BUUkRoT1dGVnlUV2RIV2xsWWNsR0NBUmhWUXpkVmIwaHVaMjEwVldaRVNFVldSRGwyUVhwT1RFR0NBUmhWUTFkSVVFUkNPRzVDYWxKalpHNVBRbWhKVEVoYU4xR0NBUmhWUTFJMFRtVTNZbk53U1ZwMGJqbG1ZelpKVlhVek0zZUNBUmhWUTJoeGFIZGpPVWxZY1hoM1FqTmtNVmMxVmxOb1dWR0NBUmhWUXpaQlVUWnBVbWgyZDJaNmFsWmxTVkJTWDBJd09GR0NBUmhWUTJSS2VEZEVWRmxuWlVWRk5qQmhhMk52Ym1wVkxWR0NBUmhWUTBwdFVsbzNUMnRPTlZndFNreGplVFJJVEdkdFVWR0NBUmhWUTBaQlNtRXpkR1JLYzJOUGJqVnZZMTl4YlRkbk1GR0NBUmhWUXpGcmFEbFJWMDEyZUZkdmFEUkxkbkZEU1hWSmJsR0NBUmhWUTFWMmVrczRXRlZHZWs1RGVVUnVOMmw2WW1GeE1XZUNBUmhWUTJsbU5IVjVUVVJCWm1nNFUxRXRWVUpDVWtreU4yZUNBUmhWUTJWeU9FazFVMloyWmxSVFpsTjRPVk4wUjNKbGFrR0NBUmhWUTJkM1IwdE1aekl0YzJaWFQzRm9TVzVxY25kcFFXYyUzRBjx6tAu"
+             }
+            }
+           ],
+           "shelfDivider": {
+            "musicShelfDividerRenderer": {
+             "hidden": true
+            }
+           }
+          }
+         }
+        ]
+       }
+      },
+      "tabIdentifier": "music_search_catalog"
+     }
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,1 @@
+mirror_state { session_id: "mir-1" active: true codec: MIRROR_CODEC_H264 width: 1920 height: 1080 client_name: "iPhone" }

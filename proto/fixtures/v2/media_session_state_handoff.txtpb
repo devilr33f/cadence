@@ -1,0 +1,12 @@
+media_session_state {
+  session_id: "sess-h1"
+  source: MEDIA_SOURCE_EXTERNAL
+  state: PLAYBACK_STATE_PLAYING
+  metadata { title: "Song title" kind: MEDIA_KIND_TRACK provider { id: "spotify" name: "Spotify" } }
+  actions: ["pause", "next"]
+  audio_route: AUDIO_ROUTE_REMOTE
+  audio_controls: [AUDIO_CONTROL_VOLUME]
+  control_latency_ms: 300
+  playable: PLAYABLE_KIND_HANDOFF
+  handoff_device_id: "0f8fad5b-d9cb-469f-a165-70867728950e"
+}

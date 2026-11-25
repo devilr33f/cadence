@@ -1,0 +1,1 @@
+capability_config { capability: "display.screen" json: "{\"overscan\":2.5}" }

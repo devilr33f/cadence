@@ -1,0 +1,25 @@
+{
+ "version": 1,
+ "id": "media-24341c7d3f9c8e67cd",
+ "revision": 1,
+ "fallbackText": "Воспроизведение: Пауза",
+ "root": {
+  "card": {
+   "title": "Воспроизведение",
+   "icon": "pause",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Пауза",
+      "kind": "STATE_KIND_ON"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state"
+ ]
+}

@@ -1,0 +1,6 @@
+configure {
+  capture { backend: BACKEND_FILE device: "hw:0,0" file_path: "/data/sim/mic.wav" sample_rate: 16000 channels: 1 }
+  output { backend: BACKEND_ALSA device: "default" dir: "/data/sim/out" mixer_control: "Master" }
+  mic { sample_rate: 16000 bitrate: 24000 frame_ms: 20 }
+  volume { level: 40 }
+}

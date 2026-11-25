@@ -1,0 +1,142 @@
+# the airplay runtime for the image's cpu (M4d-D8), built as deploy/builder/airplay.Dockerfile builds it, by the same
+# scripts in the same steps, so the two share their cache
+FROM debian:trixie-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2 AS airplay
+COPY deploy/builder/airplay-build-deps.sh /tmp/airplay-build-deps.sh
+RUN sh /tmp/airplay-build-deps.sh && rm /tmp/airplay-build-deps.sh
+COPY deploy/builder/build-ffmpeg.sh /tmp/build-ffmpeg.sh
+RUN sh /tmp/build-ffmpeg.sh /opt/airplay --enable-decoder=alac && rm /tmp/build-ffmpeg.sh
+ENV AIRPLAY_SOURCES=/opt/airplay-sources
+COPY deploy/builder/build-airplay.sh deploy/builder/airplay-runtime.pins /w/deploy/builder/
+RUN sh /w/deploy/builder/build-airplay.sh /opt/airplay /w/deploy/builder/airplay-runtime.pins
+ARG TARGETARCH
+ENV AIRPLAY_DEBS=/opt/airplay-debs
+COPY deploy/builder/assemble-airplay-runtime.sh /w/deploy/builder/
+RUN bash /w/deploy/builder/assemble-airplay-runtime.sh "$TARGETARCH" /opt/airplay /out/airplay-runtime.tar
+
+# audiod: the c++ audio engine, file backends only (no alsa), with the url source on the minimal lgpl ffmpeg
+# (deploy/builder/build-ffmpeg.sh). opus, speexdsp and the c++ runtime are linked in; besides glibc only ffmpeg (in
+# lib/ beside the binary, its runpath) and openssl 3 (the runtime's own) stay dynamic. soloist runs unjailed, as the sim
+# runs nonroot without CAP_SYS_ADMIN and only ever runs the fake soloist (M4c-D4). airplay runs neither avahi nor nqptp,
+# as the sim has no multicast and no ptp ports, and only ever runs the fake shairport sync (M4d-D8)
+FROM debian:trixie-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2 AS audiod
+RUN apt-get update \
+  && apt-get install --yes --no-install-recommends ca-certificates cmake curl g++ libopus-dev libspeexdsp-dev \
+    libssl-dev make nasm ninja-build pkg-config xz-utils \
+  && rm -rf /var/lib/apt/lists/*
+COPY deploy/builder/build-ffmpeg.sh /tmp/build-ffmpeg.sh
+RUN sh /tmp/build-ffmpeg.sh /opt/ffmpeg && rm /tmp/build-ffmpeg.sh
+COPY media /src/media
+# audiod's trace marks (media/CMakeLists.txt, CADENCE_TRACING): on unless a build passes OFF
+ARG CADENCE_TRACING=ON
+RUN PKG_CONFIG_PATH=/opt/ffmpeg/lib/pkgconfig cmake -S /src/media -B /build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+    -DCADENCE_MEDIA_ALSA=OFF -DCADENCE_MEDIA_URL=ON -DCADENCE_MEDIA_TESTS=OFF -DCADENCE_MEDIA_STATIC=ON \
+    "-DCADENCE_TRACING=$CADENCE_TRACING" \
+    -DCADENCE_MEDIA_SIM=ON -DCADENCE_MEDIA_SOLOIST_JAIL=OFF -DCADENCE_MEDIA_FAKE_SOLOIST=ON \
+    -DCADENCE_MEDIA_AIRPLAY_LAN=OFF -DCADENCE_MEDIA_FAKE_SHAIRPORT=ON \
+  && cmake --build /build --target cadence-audiod fake-soloist-e2e fake-shairport \
+  && /build/cadence-audiod --version | grep -qx 'cadence-audiod .*-sim'
+# the runtime's tree: audiod, each ffmpeg library under its soname, and the notices of what is linked in or shipped
+# (libopus and speexdsp statically, from these debian packages; nlohmann/json vendored)
+RUN set -e; dir=/usr/lib/cadence; \
+  mkdir -p "$dir/lib" "$dir/licenses/ffmpeg" "$dir/licenses/speexdsp" "$dir/licenses/opus" \
+    "$dir/licenses/nlohmann-json"; \
+  install -m 755 /build/cadence-audiod "$dir/cadence-audiod"; \
+  for name in avformat avcodec avutil swresample; do \
+    soname=$(readelf -d "/opt/ffmpeg/lib/lib$name.so" | sed -n 's/.*Library soname: \[\(.*\)\]/\1/p'); \
+    cp -L "/opt/ffmpeg/lib/$soname" "$dir/lib/$soname"; \
+  done; \
+  cp /opt/ffmpeg/share/licenses/ffmpeg/* "$dir/licenses/ffmpeg/"; \
+  cp /usr/share/doc/libspeexdsp-dev/copyright "$dir/licenses/speexdsp/COPYING"; \
+  cp /usr/share/doc/libopus-dev/copyright "$dir/licenses/opus/COPYING"; \
+  cp /src/media/third_party/nlohmann/LICENSE.MIT "$dir/licenses/nlohmann-json/LICENSE.MIT"; \
+  find "$dir" -type f | sort
+# allowlist: glibc, ffmpeg from lib/ (libavcodec needs libswresample for its opus decoder) and the runtime's openssl 3
+# with the zlib and zstd its libcrypto links, nothing else
+RUN ldd /usr/lib/cadence/cadence-audiod \
+  && ldd /usr/lib/cadence/cadence-audiod | grep -qE '^\s+libavformat\.so\.[0-9]+ => /usr/lib/cadence/lib/' \
+  && ! ldd /usr/lib/cadence/cadence-audiod | grep -vE \
+    -e '^\s+(linux-vdso\.so\.1|/\S+/ld-linux\S*\.so\.[0-9]+) \(0x[0-9a-f]+\)$' \
+    -e '^\s+lib(c|m)\.so\.6 => /\S+/lib(c|m)\.so\.6 \(0x[0-9a-f]+\)$' \
+    -e '^\s+lib(ssl|crypto)\.so\.3 => /(usr/)?lib/\S+/lib(ssl|crypto)\.so\.3 \(0x[0-9a-f]+\)$' \
+    -e '^\s+lib(z|zstd)\.so\.1 => /(usr/)?lib/\S+/lib(z|zstd)\.so\.1 \(0x[0-9a-f]+\)$' \
+    -e '^\s+lib(avformat|avcodec|avutil|swresample)\.so\.[0-9]+ => /usr/lib/cadence/lib/lib(avformat|avcodec|avutil|swresample)\.so\.[0-9]+ \(0x[0-9a-f]+\)$'
+# soloist's runtime for the image's cpu (M4c-D12) where the board keeps it: <data dir>/soloist/runtime. the unjailed
+# sim chroots into nothing, but audiod still checks the jail's placeholders in it, and the fake soloist loads its shim
+COPY deploy/builder/assemble-soloist-runtime.sh /src/deploy/builder/assemble-soloist-runtime.sh
+ARG TARGETARCH
+RUN bash /src/deploy/builder/assemble-soloist-runtime.sh "$TARGETARCH" /out/soloist-runtime.tar \
+  && mkdir -p /out/data/soloist/runtime \
+  && tar -xf /out/soloist-runtime.tar -C /out/data/soloist/runtime
+# the release the e2e's fake cdn serves as spotify's: the fake soloist as the top-level soloist, behind a decoy at
+# decoy/soloist that the updater must pass over. as installed, beside the runtime, it loads the runtime's shim, and
+# besides that only glibc
+RUN set -e; release=/tmp/release; check=/tmp/installed; \
+  mkdir -p "$release/decoy" "$check" /out/cdn; \
+  printf 'not soloist\n' >"$release/decoy/soloist"; \
+  install -s -m 755 /build/tests/support/fake-soloist-e2e "$release/soloist"; \
+  tar --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner -C "$release" -cf - decoy soloist \
+    | gzip -n >"/out/cdn/soloist_release_$TARGETARCH.tar.gz"; \
+  tar -tvzf "/out/cdn/soloist_release_$TARGETARCH.tar.gz"; \
+  cp "$release/soloist" "$check/soloist"; \
+  cp -a /out/data/soloist/runtime "$check/runtime"; \
+  pulse=$(ls "$check"/runtime/usr/lib/*/libpulse.so.0); \
+  ldd "$check/soloist"; \
+  ldd "$check/soloist" | grep -qE "^\s+libpulse\.so\.0 => $pulse \(0x[0-9a-f]+\)$"; \
+  if ldd "$check/soloist" | grep -vE \
+    -e '^\s+(linux-vdso\.so\.1|/\S+/ld-linux\S*\.so\.[0-9]+) \(0x[0-9a-f]+\)$' \
+    -e '^\s+lib(c|m)\.so\.6 => /\S+/lib(c|m)\.so\.6 \(0x[0-9a-f]+\)$' \
+    -e "^\s+libpulse\.so\.0 => $pulse \(0x[0-9a-f]+\)$"; then exit 1; fi; \
+  ldd "$pulse"; \
+  if ldd "$pulse" | grep -vE \
+    -e '^\s+(linux-vdso\.so\.1|/\S+/ld-linux\S*\.so\.[0-9]+) \(0x[0-9a-f]+\)$' \
+    -e '^\s+lib(c|m)\.so\.6 => /\S+/lib(c|m)\.so\.6 \(0x[0-9a-f]+\)$' \
+    -e '^\s+libpthread\.so\.0 => /\S+/libpthread\.so\.0 \(0x[0-9a-f]+\)$'; then exit 1; fi; \
+  "$check/soloist" --version
+# airplay's runtime where the board keeps it, <data dir>/airplay/runtime, with the e2e's fake shairport sync as its
+# shairport-sync. the notices of every program it was built with stay in its licenses/ (nqptp's gpl-2 text and source
+# pointer among them), as do the real avahi-daemon and nqptp, which the sim never runs. the fake runs through the
+# runtime's loader as shairport would, and every library it needs is the runtime's
+COPY --from=airplay /out/airplay-runtime.tar /tmp/airplay-runtime.tar
+RUN set -e; runtime=/out/data/airplay/runtime; \
+  mkdir -p "$runtime"; \
+  tar -xf /tmp/airplay-runtime.tar -C "$runtime"; \
+  rm /tmp/airplay-runtime.tar; \
+  install -s -m 755 /build/tests/support/fake-shairport "$runtime/bin/shairport-sync"; \
+  for notice in shairport-sync/LICENSES shairport-sync/SOURCE nqptp/LICENSE nqptp/SOURCE avahi/LICENSE avahi/copyright \
+    avahi/SOURCE ffmpeg/COPYING.LGPLv2.1 debian/PACKAGES debian/dbus-daemon/copyright debian/libc6/copyright; do \
+    [ -s "$runtime/licenses/$notice" ] || { echo "licenses/$notice is missing" >&2; exit 1; }; \
+  done; \
+  loader=$(ls "$runtime"/lib/ld-linux-*); \
+  "$loader" --library-path "$runtime/lib" "$runtime/bin/shairport-sync" -V; \
+  "$loader" --library-path "$runtime/lib" --list "$runtime/bin/shairport-sync"; \
+  if "$loader" --library-path "$runtime/lib" --list "$runtime/bin/shairport-sync" \
+    | grep -v -e "=> $runtime/lib/" -e 'linux-vdso\.so\.1 '; then exit 1; fi
+
+FROM golang:1.27-trixie@sha256:af1bfc2614ebb1dbd31af514b78740fd678850e76498762b425ecee4c5c6ea80 AS build
+ARG VERSION=dev
+WORKDIR /src
+COPY go.work go.work.su[m] ./
+COPY pkg/ pkg/
+COPY server/ server/
+COPY device/ device/
+RUN cd device && CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" -o /out/cadenced ./cmd/cadenced
+
+# the e2e's fake soloist cdn (deploy/dev/compose.yml): the fake's release over https, with the certificate the stack's
+# cdn-certs made
+FROM nginx:1.31.8-alpine-slim@sha256:9c68ad4f28e7dee4b9484a7859bf451da39ef661bcd038ef62e87593fcd91c86 AS fake-cdn
+COPY deploy/dev/fake-cdn.conf /etc/nginx/conf.d/default.conf
+COPY --from=audiod /out/cdn/ /usr/share/nginx/html/
+
+# distroless cc ships glibc and openssl 3 (libssl3t64), which audiod and ffmpeg load
+FROM gcr.io/distroless/cc-debian13:nonroot@sha256:08476c244888bfb425bae1ae4dd7c17f093e972aab8426883d97f3c6f280f7c1
+ENV CADENCE_SIM=1
+COPY --from=build /out/cadenced /cadenced
+COPY --from=audiod /usr/lib/cadence /usr/lib/cadence
+# fails the build unless audiod loads here, with the runtime's libraries
+RUN ["/usr/lib/cadence/cadence-audiod", "--version"]
+# owned by nonroot, so a fresh named volume mounted here is writable for enroll and the soloist updater: empty but for
+# soloist's runtime and airplay's
+COPY --from=audiod --chown=65532:65532 /out/data /var/lib/cadence
+USER nonroot
+ENTRYPOINT ["/cadenced"]
+CMD ["--wait-config", "--config", "/var/lib/cadence/config.json"]

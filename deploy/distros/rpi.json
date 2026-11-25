@@ -1,0 +1,129 @@
+{
+  "$schema": "./schema.json",
+  "name": "rpi",
+  "board": "rpi",
+  "kind": "screen",
+  "status": "shipping",
+  "os": "linux",
+  "arch": [
+    "arm64"
+  ],
+  "package": {
+    "format": "deb",
+    "output": "build/dist/cadence-{version}-rpi-arm64.deb"
+  },
+  "builder": {
+    "dockerfile": "deploy/builder/rpi.Dockerfile",
+    "image": "debian:trixie-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2",
+    "command": "make dist DISTRO=rpi",
+    "platform": "linux/arm64"
+  },
+  "runtime": {
+    "libc": "glibc",
+    "glibcMax": "2.41",
+    "openssl": "3.5",
+    "loader": "/lib/ld-linux-aarch64.so.1"
+  },
+  "serverUrl": null,
+  "components": [
+    "cadenced",
+    "cadence-audiod",
+    "cadence-screen",
+    "libairplay"
+  ],
+  "media": {
+    "url": false,
+    "airplay": "uxplay",
+    "audioBackend": "alsa",
+    "soloistJail": false,
+    "staticLink": true,
+    "screen": true,
+    "video": "mpv-render"
+  },
+  "dependencies": [
+    {
+      "name": "screen-libs",
+      "source": "system",
+      "use": "build",
+      "distro": "debian-trixie",
+      "packages": [
+        "libsdl3-dev",
+        "libfreetype-dev",
+        "libcurl4-openssl-dev",
+        "libegl-dev",
+        "libgles-dev",
+        "libstb-dev",
+        "libmpv-dev"
+      ],
+      "snapshot": "20261104T212339Z",
+      "license": "Zlib",
+      "note": "SDL 3.2, GLES 3, freetype, stb, curl and the stock mpv headers; the package's dpkg-shlibdeps carries the runtime dependencies"
+    },
+    {
+      "name": "mpv",
+      "source": "tarball",
+      "use": "runtime",
+      "version": "0.40.0-3+deb13u1",
+      "license": "GPL-2.0-or-later",
+      "pinsFile": "media/third_party/mpv/mpv.pins",
+      "note": "trixie's mpv source package rebuilt with the ao_cadence patch as a quilt patch (make mpv MPV_TARGET=deb-0.40, debs versioned +cadence1); only libmpv2 is installed beside cadence's deb, against the pi's own ffmpeg"
+    },
+    {
+      "name": "ffmpeg-audiod",
+      "source": "system",
+      "use": "both",
+      "distro": "debian-trixie",
+      "packages": [
+        "libavcodec-dev",
+        "libavutil-dev"
+      ],
+      "snapshot": "20261104T212339Z",
+      "note": "AirPlay's AAC-ELD and ALAC for audiod; the screen's audiod has no url source"
+    },
+    {
+      "name": "airplay-libs",
+      "source": "system",
+      "use": "both",
+      "distro": "debian-trixie",
+      "packages": [
+        "libssl-dev",
+        "libplist-dev",
+        "libavahi-client-dev"
+      ],
+      "snapshot": "20261104T212339Z",
+      "note": "libairplay and its avahi-client dnssd backend; opus, speexdsp and alsa come from the same snapshot"
+    },
+    {
+      "name": "rmlui",
+      "source": "tarball",
+      "use": "build",
+      "version": "6.3",
+      "url": "https://github.com/mikke89/RmlUi/archive/refs/tags/6.3.tar.gz",
+      "sha256": "d977298bb6147610e5984d5db85ddf284020d655a8713913f6982074f1dbdede",
+      "script": "deploy/builder/rpi.Dockerfile",
+      "license": "MIT",
+      "note": "the core library alone, built statically against trixie's freetype; the screen carries its own GLES renderer"
+    },
+    {
+      "name": "uxplay",
+      "source": "submodule",
+      "use": "build",
+      "path": "media/third_party/uxplay",
+      "repository": "https://github.com/FDH2/UxPlay",
+      "commit": "df67c212a433cf6dda3676dd40c097900d24e645",
+      "patches": "media/third_party/android-airplay-server/app/src/main/cpp/patches/UxPlay",
+      "license": "GPL-3.0-or-later",
+      "note": "lib/ only (v1.73.7), android-airplay-server's UxPlay pin, built as libairplay (media/third_party/uxplay.cmake) with its patches applied out of tree"
+    },
+    {
+      "name": "android-airplay-server",
+      "source": "submodule",
+      "use": "build",
+      "path": "media/third_party/android-airplay-server",
+      "repository": "https://github.com/jqssun/android-airplay-server",
+      "commit": "a46cca0a6a1274e9e33c0e750f0f1c1eb1d881ea",
+      "license": "GPL-3.0-or-later",
+      "note": "v0.0.36, for its UxPlay patch series alone; none of its own third-party dependencies is built"
+    }
+  ]
+}

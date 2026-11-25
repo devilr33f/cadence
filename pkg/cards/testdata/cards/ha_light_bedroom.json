@@ -1,0 +1,27 @@
+{
+ "version": 1,
+ "id": "ha-3cf6e630d3b0582f0a",
+ "revision": 1,
+ "fallbackText": "Bedroom Chandelier: Выключено",
+ "root": {
+  "card": {
+   "title": "Bedroom Chandelier",
+   "icon": "light",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "toggle": {
+      "label": "Выключено",
+      "action": {
+       "id": "a:1"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "toggle"
+ ]
+}

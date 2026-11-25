@@ -1,0 +1,25 @@
+# shellcheck shell=sh
+# board-hook: yandex-pickle's part of cadence-run, which sources it from beside itself. the CADENCE_* variables are for
+# tests: init passes none
+DEV=${CADENCE_DEV:-/dev}
+LEDS=${CADENCE_LEDS:-/sys/class/leds}
+
+# the ring (16 leds) and the button (6), 3 bytes each, and every clock segment
+board_blank() {
+    status=0
+    [ ! -e "$DEV/fb1" ] || head -c 48 /dev/zero > "$DEV/fb1" || status=1
+    [ ! -e "$DEV/fb0" ] || head -c 18 /dev/zero > "$DEV/fb0" || status=1
+    for led in "$LEDS"/pickle:white:clock*; do
+        [ ! -e "$led/brightness" ] || echo 0 > "$led/brightness" || status=1
+    done
+    return "$status"
+}
+
+# provisioning deleted quasar from a pickle: nothing of the vendor's is left to stop before a start or while cadenced
+# runs
+board_prestart() {
+    return 0
+}
+board_watch() {
+    return 0
+}

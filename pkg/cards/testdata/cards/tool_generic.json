@@ -1,0 +1,26 @@
+{
+ "version": 1,
+ "id": "tool-cc1f1719eac3826edd",
+ "revision": 1,
+ "fallbackText": "notes_add: Готово",
+ "root": {
+  "card": {
+   "title": "notes_add",
+   "subtitle": "Инструмент",
+   "icon": "sparkle",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "state": {
+      "label": "Готово",
+      "kind": "STATE_KIND_ON"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "state"
+ ]
+}

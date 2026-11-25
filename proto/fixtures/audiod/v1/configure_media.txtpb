@@ -1,0 +1,13 @@
+configure {
+  capture { backend: BACKEND_ALSA device: "hw:0,0" sample_rate: 16000 channels: 2 }
+  output {
+    backend: BACKEND_ALSA
+    device: "default"
+    mixer_control: "Master"
+    channels: 2
+    eq { preamp_db: -2 bands { type: EQ_TYPE_HIGH_PASS freq_hz: 60 q: 0.7 } }
+  }
+  mic { sample_rate: 16000 bitrate: 24000 frame_ms: 20 }
+  volume { level: 40 }
+  ca_file: "/data/cadence/ca-certificates.crt"
+}

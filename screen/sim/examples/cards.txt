@@ -1,0 +1,57 @@
+# the assistant's tool cards, one round each: the drawer opened by the remote, a turn per card set with
+# its steps, cards and reply. `build/screen-sim/sim run screen/sim/examples/cards.txt` (screenshots in
+# ./sim-out/cards). every card is the server's own bytes (pkg/cards/testdata -> proto/fixtures/cards/v1)
+start --headless --lang ru --size 1920x1080
+wait-for route:home
+hold BACK 800
+wait-for drawer
+
+send {"assistant_turn": {"turnId": "t-1", "state": "listening", "transcript": "Как дела"}}
+send {"assistant_turn": {"turnId": "t-1", "revision": 2, "state": "speaking", "reply": "У меня всё хорошо, спасибо! Как твои дела?"}}
+wait 600
+send {"assistant_turn": {"turnId": "t-1", "revision": 3, "state": "follow_up"}}
+
+send {"assistant_turn": {"turnId": "t-2", "state": "thinking", "transcript": "Включи свет в спальне", "steps": [{"id": "s1", "label": "Управляю домом", "status": "done"}], "cards": ["card_ha_light_kitchen.binpb"]}}
+send {"assistant_turn": {"turnId": "t-2", "revision": 2, "state": "speaking", "reply": "Свет включён.", "steps": [{"id": "s1", "label": "Управляю домом", "status": "done"}]}}
+wait 900
+screenshot sim-out/cards/01-light.png
+send {"assistant_turn": {"turnId": "t-2", "revision": 3, "state": "follow_up", "steps": [{"id": "s1", "label": "Управляю домом", "status": "done"}]}}
+wait 600
+screenshot sim-out/cards/02-light-follow-up.png
+
+send {"assistant_turn": {"turnId": "t-3", "state": "speaking", "transcript": "Что дома", "reply": "Вот что сейчас дома.", "cards": ["card_ha_climate_living.binpb", "card_ha_switch_plug.binpb", "card_ha_cover_garage.binpb"]}}
+wait 900
+screenshot sim-out/cards/03-climate-switch-cover.png
+
+send {"assistant_turn": {"turnId": "t-3b", "state": "speaking", "transcript": "Включи чайник", "reply": "Чайник не включился.", "cards": ["card_ha_water_heater_kettle.binpb", "card_ha_climate_range.binpb"]}}
+wait 900
+screenshot sim-out/cards/03b-kettle-range.png
+
+send {"assistant_turn": {"turnId": "t-4", "state": "speaking", "transcript": "А датчики", "reply": "Влажность в ванной 48 процентов.", "cards": ["card_ha_sensor_humidity.binpb", "card_ha_binary_sensor_door.binpb", "card_ha_media_player_tv.binpb", "card_ha_lock_front.binpb"]}}
+wait 900
+screenshot sim-out/cards/04-sensors-media-lock.png
+
+send {"assistant_turn": {"turnId": "t-5", "state": "speaking", "transcript": "Какая погода", "reply": "Сегодня до плюс четырёх, небольшой дождь.", "cards": ["card_tool_weather_day.binpb", "card_tool_weather_days.binpb"]}}
+wait 900
+screenshot sim-out/cards/05-weather.png
+
+send {"assistant_turn": {"turnId": "t-6", "state": "speaking", "transcript": "Поставь таймер", "reply": "Таймер на десять минут.", "cards": ["card_tool_timer.binpb", "card_tool_alarm_set.binpb", "card_tool_volume.binpb"]}}
+wait 900
+screenshot sim-out/cards/06-timer-alarm-volume.png
+
+send {"assistant_turn": {"turnId": "t-7", "state": "speaking", "transcript": "Что пишут про Anthropic", "reply": "По поводу Anthropic обсуждают IPO компании [1] и вычислительные ресурсы [2].", "citations": [{"n": 1, "cardId": "web-65272d1deb825764e7"}, {"n": 2, "cardId": "web-65272d1deb825764e7"}], "cards": ["card_tool_web_search.binpb"]}}
+wait 1200
+screenshot sim-out/cards/07-web.png
+
+send {"assistant_turn": {"turnId": "t-8", "state": "speaking", "transcript": "А в X", "reply": "В X пишут про IPO и новые навыки Claude Code.", "cards": ["card_tool_x_search.binpb"]}}
+wait 1200
+screenshot sim-out/cards/08-x.png
+
+send {"assistant_turn": {"turnId": "t-9", "state": "speaking", "transcript": "Найди музыку и видео", "reply": "Нашёл.", "cards": ["card_tool_music_search.binpb", "card_tool_video_search.binpb"]}}
+wait 900
+screenshot sim-out/cards/09-music-video.png
+
+send {"assistant_turn": {"turnId": "t-10", "state": "speaking", "transcript": "Открой Тьму", "reply": "Вот сериал.", "cards": ["card_tool_catalog_item.binpb", "card_tool_generic_failed.binpb"]}}
+wait 900
+screenshot sim-out/cards/10-catalog-error.png
+quit

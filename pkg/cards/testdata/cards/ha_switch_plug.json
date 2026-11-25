@@ -1,0 +1,27 @@
+{
+ "version": 1,
+ "id": "ha-998f32c4e1818a606e",
+ "revision": 1,
+ "fallbackText": "Plug: Выключено",
+ "root": {
+  "card": {
+   "title": "Plug",
+   "icon": "plug",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "toggle": {
+      "label": "Выключено",
+      "action": {
+       "id": "a:1"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "toggle"
+ ]
+}

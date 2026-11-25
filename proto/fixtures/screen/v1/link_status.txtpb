@@ -1,0 +1,1 @@
+link_status { state: LINK_STATE_OFFLINE server_url: "https://cadence.example" code: "unreachable" }

@@ -1,0 +1,24 @@
+Notices of everything this tarball ships, by where it sits.
+
+bin/cadenced                 licenses/go/: Go's own, and each Go module linked in
+bin/cadence-audiod           licenses/opus/, licenses/speexdsp/: linked in, from Debian bookworm's packages
+                             licenses/gcc/: libstdc++ and libgcc, linked in under GCC's runtime library exception
+                             (yandex-pickle)
+                             licenses/llvm/: LLVM's libc++, libc++abi and libunwind (Apache License 2.0 with LLVM
+                             exceptions) and Zig's own runtime (zig-LICENSE, MIT), linked in by Zig (yandex-midi,
+                             yandex-micro, vk-capsula-mini)
+                             licenses/nanopb/, licenses/nlohmann-json/: vendored sources
+                             licenses/tflite-micro/, licenses/flatbuffers/, licenses/cmsis-nn/: TensorFlow Lite Micro,
+                             the FlatBuffers headers and CMSIS-NN it builds on (all Apache License 2.0), fetched
+                             pinned and built in for the keyword engine (vk-capsula-mini)
+bin/lib/                     licenses/ffmpeg/: FFmpeg (LGPL version 3 or later), with its release and configure line
+                             licenses/openssl/: OpenSSL (Apache License 2.0, its text in Apache-2.0), built from
+                             its release tarball, in the tarballs whose bin/lib holds libssl.so.3 and libcrypto.so.3
+                             (yandex-midi, yandex-micro, vk-capsula-mini); patchelf set the RUNPATH of both to
+                             $ORIGIN, nothing else changed
+share/ca-certificates.crt    licenses/ca-certificates/: Debian bookworm's ca-certificates
+soloist/runtime/             its own: soloist/runtime/usr/share/doc/ (Debian's libc6, libgcc-s1 and libatomic1)
+airplay/runtime/             its own: airplay/runtime/licenses/ (Shairport Sync, nqptp with its source tarball, Avahi
+                             with its Debian source package, FFmpeg, and each Debian package with debian/PACKAGES)
+
+MANIFEST lists every file with its SHA-256 and the versions it was built from.

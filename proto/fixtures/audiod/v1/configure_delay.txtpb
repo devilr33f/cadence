@@ -1,0 +1,3 @@
+configure {
+  output { backend: BACKEND_ALSA device: "hdmi:CARD=vc4hdmi0" channels: 2 delay_ms: -40 }
+}

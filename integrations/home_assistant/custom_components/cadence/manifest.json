@@ -1,0 +1,13 @@
+{
+  "domain": "cadence",
+  "name": "Cadence",
+  "codeowners": [],
+  "config_flow": true,
+  "dependencies": ["media_source"],
+  "documentation": "https://git.shino.boo/devilreef/cadence/-/tree/main/integrations/home_assistant",
+  "integration_type": "hub",
+  "iot_class": "local_push",
+  "issue_tracker": "https://git.shino.boo/devilreef/cadence/-/issues",
+  "requirements": [],
+  "version": "2.2.0"
+}

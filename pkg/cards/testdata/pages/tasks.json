@@ -1,0 +1,130 @@
+{
+ "version": 1,
+ "cards": [
+  {
+   "version": 1,
+   "id": "task.9f2a",
+   "revision": 7,
+   "fallbackText": "Ждёт разрешения: почистить диск",
+   "root": {
+    "card": {
+     "title": "Почистить диск на сервере",
+     "subtitle": "Ждёт ответа · 3 мин",
+     "icon": "hand",
+     "tone": "TONE_WARNING",
+     "children": [
+      {
+       "state": {
+        "kind": "STATE_KIND_UNKNOWN",
+        "label": "Ждёт ответа",
+        "tone": "TONE_WARNING"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "label": "Открыть",
+       "action": {
+        "id": "a:k:open1"
+       }
+      }
+     ]
+    }
+   },
+   "features": [
+    "button",
+    "card",
+    "state"
+   ]
+  },
+  {
+   "version": 1,
+   "id": "task.7c1d",
+   "revision": 5,
+   "fallbackText": "Работает 12 мин: сравнить цены",
+   "root": {
+    "card": {
+     "title": "Сравнить цены на билеты",
+     "subtitle": "Работает · 12 мин",
+     "icon": "sparkle",
+     "children": [
+      {
+       "progress": {
+        "indeterminate": true
+       }
+      },
+      {
+       "text": {
+        "style": "TEXT_STYLE_META",
+        "text": "Сейчас: сравниваю цены у трёх перевозчиков"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "label": "Открыть",
+       "action": {
+        "id": "a:k:open2"
+       }
+      }
+     ]
+    }
+   },
+   "features": [
+    "button",
+    "card",
+    "progress",
+    "text"
+   ]
+  },
+  {
+   "version": 1,
+   "id": "task.1a0b",
+   "revision": 9,
+   "fallbackText": "Готово: сводка новостей",
+   "root": {
+    "card": {
+     "title": "Сводка новостей за неделю",
+     "subtitle": "Готово · вчера",
+     "icon": "check",
+     "tone": "TONE_SUCCESS",
+     "children": [
+      {
+       "state": {
+        "kind": "STATE_KIND_OFF",
+        "label": "Готово"
+       }
+      },
+      {
+       "sparkline": {
+        "points": [
+         1,
+         3,
+         2,
+         5,
+         4,
+         6
+        ],
+        "label": "Источников в час"
+       }
+      }
+     ],
+     "actions": [
+      {
+       "label": "Открыть",
+       "action": {
+        "id": "a:k:open3"
+       }
+      }
+     ]
+    }
+   },
+   "features": [
+    "button",
+    "card",
+    "sparkline",
+    "state"
+   ]
+  }
+ ]
+}

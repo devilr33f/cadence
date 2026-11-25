@@ -1,0 +1,37 @@
+{
+  "type": "group_state",
+  "deviceId": "0b6f3c52-7d1e-4a8b-9f2c-5e4d3a2b1c0d",
+  "at": "2026-11-12T10:00:00Z",
+  "data": {
+    "groupId": "9c1d2e3f-4a5b-4c6d-8e7f-0a1b2c3d4e5f",
+    "status": {
+      "groupId": "9c1d2e3f-4a5b-4c6d-8e7f-0a1b2c3d4e5f",
+      "role": "leader",
+      "state": "idle",
+      "synced": true,
+      "clockErrorUs": 0,
+      "queueMs": 0,
+      "steerPpm": 0,
+      "rejoins": 0,
+      "underruns": 0,
+      "placementErrorUs": 0,
+      "latencyMs": 1000,
+      "members": [
+        {
+          "deviceId": "5a9e7f10-2c3d-4e5f-8a6b-7c8d9e0f1a2b",
+          "state": "connecting",
+          "connected": false,
+          "synced": false,
+          "clockErrorUs": 0,
+          "queueMs": 0,
+          "rejoins": 0,
+          "placementErrorUs": 0
+        }
+      ],
+      "tracking": {
+        "state": "",
+        "members": null
+      }
+    }
+  }
+}

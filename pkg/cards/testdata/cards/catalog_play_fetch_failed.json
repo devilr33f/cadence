@@ -1,0 +1,36 @@
+{
+ "version": 1,
+ "id": "catalog-play-79f4629fd87a85cd0e",
+ "revision": 1,
+ "fallbackText": "Тьма · ссылка устарела — Bedroom TV",
+ "root": {
+  "card": {
+   "title": "Тьма",
+   "icon": "tv",
+   "tone": "TONE_WARNING",
+   "children": [
+    {
+     "state": {
+      "label": "ссылка устарела",
+      "kind": "STATE_KIND_UNAVAILABLE"
+     }
+    },
+    {
+     "keyvalue": {
+      "items": [
+       {
+        "key": "Экран",
+        "value": "Bedroom TV"
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "keyvalue",
+  "state"
+ ]
+}

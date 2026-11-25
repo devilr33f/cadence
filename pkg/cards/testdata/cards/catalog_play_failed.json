@@ -1,0 +1,37 @@
+{
+ "version": 1,
+ "id": "catalog-play-4d0e0e834d517f65eb",
+ "revision": 1,
+ "fallbackText": "Тьма · Серия 1 · Не включилось — Bedroom TV",
+ "root": {
+  "card": {
+   "title": "Тьма",
+   "subtitle": "Серия 1",
+   "icon": "tv",
+   "tone": "TONE_WARNING",
+   "children": [
+    {
+     "state": {
+      "label": "Не включилось",
+      "kind": "STATE_KIND_UNAVAILABLE"
+     }
+    },
+    {
+     "keyvalue": {
+      "items": [
+       {
+        "key": "Экран",
+        "value": "Bedroom TV"
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "keyvalue",
+  "state"
+ ]
+}

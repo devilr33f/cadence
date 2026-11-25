@@ -1,0 +1,29 @@
+configure {
+  capture {
+    backend: BACKEND_ALSA
+    device: "single_plugin"
+    sample_rate: 16000
+    channels: 1
+    period_frames: 640
+    buffer_frames: 2560
+    keyword {
+      kind: "vk-kws"
+      model_path: "/usr/share/voice-agent/model.bin"
+      model_sha256: "8b33272b9fa8569f85630fd6208f475021ea806a7d79168e070a374569732f3b"
+      pos_threshold: 0.999
+      sp_threshold: 0.2
+      rearm_frames: 147
+      consecutive_calls: 1
+    }
+  }
+  output {
+    backend: BACKEND_ALSA
+    device: "playback"
+    channels: 2
+    period_frames: 960
+    buffer_frames: 3840
+  }
+  mic { sample_rate: 16000 bitrate: 24000 frame_ms: 20 }
+  volume { level: 30 }
+  ca_file: "/data/cadence/share/ca-certificates.crt"
+}

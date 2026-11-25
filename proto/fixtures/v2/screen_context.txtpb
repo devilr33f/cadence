@@ -1,0 +1,16 @@
+screen_context {
+  revision: 7
+  route: SCREEN_ROUTE_TITLE
+  page_ref: "t:abc"
+  focused_ref: "e:13"
+  visible_refs: ["e:12", "e:13", "e:14"]
+  selection { source: "s:aniliberty" voiceover: "v:anilibria" quality: "q:1080" episode: "13" }
+  query: ""
+  player {
+    item_ref: "e:12"
+    position_ms: 600000
+    tracks { id: "a1" kind: MEDIA_TRACK_KIND_AUDIO language: "ru" label: "AniLibria" selected: true }
+    tracks { id: "s1" kind: MEDIA_TRACK_KIND_SUBTITLE language: "en" external: true }
+  }
+  drawer_open: true
+}

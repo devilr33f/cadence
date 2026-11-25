@@ -1,0 +1,223 @@
+#!/bin/sh
+# cadence-run: runs cadenced for busybox init (::respawn:/data/cadence/bin/cadence-run, put there by cadence-install)
+# and keeps it running, on any board: the board's part is board-hook beside it, which it sources for board_blank, which
+# turns the lights off, board_prestart, which must succeed before every start of cadenced (midi's suspends its stock
+# assistant, M2m-D2), and board_watch, which runs at every poll while cadenced runs (midi's suspends stock that started
+# since, M2m-R5, and asks for the level again, M2m-R7). three more have defaults: board_volume LEVEL, which sets Master
+# (amixer), board_stop, which runs once at a stop after cadenced has exited and before board_blank, and board_release,
+# which cadence-run release runs once. until board_prestart succeeds, cadenced does not start: it is
+# tried again 2 s after each failed attempt, and an attempt may itself take a while (midi's up to ~7 s while a stock
+# process will not stop); without the hook nothing starts. the stock boot leaves Master at 100 %, so before every start
+# the lights are blanked and Master is set to the persisted level: state/volume exactly as cadenced writes it
+# ({"level":N}, N in 0..100), else 30, the board's default (M2-D3, rule 7); the same level is set again whenever
+# board_watch stopped something that may have moved it. a failure to set it is logged and never stops the start. a
+# run shorter than a minute is followed by a pause, 5 s doubling to 60 s, so a board cadenced refuses (exit 3) or a
+# broken config never makes init spin. cadenced's output goes to log/cadenced.log, copied to cadenced.log.1 and
+# emptied past the limit, so both stay under 1 MB.
+#
+# cadence-run level prints the level it would set; cadence-run blank turns the lights off; cadence-run prestart runs
+# board_prestart once, for the installer before it stages anything; cadence-run release runs board_release once and exits
+# with its status. the CADENCE_* variables are for tests: init passes
+# none
+set -u
+
+HOME_DIR=${CADENCE_HOME:-/data/cadence}
+AMIXER=${CADENCE_AMIXER:-amixer}
+LOG=$HOME_DIR/log/cadenced.log
+VOLUME=$HOME_DIR/state/volume
+DEFAULT_LEVEL=30
+# assumes cadenced writes at most 32 KiB/s, as v1's supervisor did
+LOG_LIMIT=${CADENCE_LOG_LIMIT:-393216}
+POLL=${CADENCE_POLL_SECONDS:-2}
+MIN_BACKOFF=${CADENCE_BACKOFF:-5}
+MAX_BACKOFF=60
+STABLE_SECONDS=${CADENCE_STABLE_SECONDS:-60}
+# a cadenced still running this long after TERM is killed
+STOP_SECONDS=3
+# a board_prestart that failed is tried again this long after
+RETRY_SECONDS=2
+mode=${1:-}
+
+# the level in state/volume: one line of at most 64 bytes, a newline only at its end, no NUL, and nothing but
+# {"level":N} with blanks around the tokens. anything else, though cadenced might read it, gives the default. it uses
+# wc, tr, cat and shell patterns alone, as a minimal busybox has no sed or head -c
+TAB=$(printf '\t')
+CR=$(printf '\r')
+skip_blanks() {
+    while :; do
+        case $t in
+            ' '* | "$TAB"* | "$CR"*) t=${t#?} ;;
+            *) break ;;
+        esac
+    done
+}
+persisted() {
+    [ -f "$VOLUME" ] || return 1
+    bytes=$(($(wc -c < "$VOLUME")))
+    [ "$bytes" -le 64 ] || return 1
+    newlines=$(($(wc -l < "$VOLUME")))
+    nonul=$(($(tr -d '\000' < "$VOLUME" | wc -c)))
+    t=$(cat "$VOLUME")
+    [ "$newlines" -le 1 ] && [ "$nonul" -eq "$bytes" ] && [ $((${#t} + newlines)) -eq "$bytes" ] || return 1
+    skip_blanks
+    case $t in '{'*) t=${t#?} ;; *) return 1 ;; esac
+    skip_blanks
+    case $t in '"level"'*) t=${t#'"level"'} ;; *) return 1 ;; esac
+    skip_blanks
+    case $t in ':'*) t=${t#?} ;; *) return 1 ;; esac
+    skip_blanks
+    n=${t%%[!0-9]*}
+    t=${t#"$n"}
+    skip_blanks
+    case $t in '}'*) t=${t#?} ;; *) return 1 ;; esac
+    skip_blanks
+    [ -z "$t" ] || return 1
+    case $n in
+        0 | [1-9] | [1-9][0-9] | 100) echo "$n" ;;
+        *) return 1 ;;
+    esac
+}
+
+level() {
+    persisted || echo "$DEFAULT_LEVEL"
+}
+
+[ "$mode" != level ] || { level; exit 0; }
+
+# to the log while supervising; blank, which the installer runs, says it on stderr
+note() {
+    if [ -z "$mode" ]; then
+        echo "cadence-run: $(date '+%Y-%m-%dT%H:%M:%S') $*" >> "$LOG"
+    else
+        echo "cadence-run: $*" >&2
+    fi
+}
+
+# the board's hook replaces these; without it nothing is blanked and nothing starts
+board_blank() {
+    return 1
+}
+board_prestart() {
+    note "event=board_control_failed code=hook"
+    return 1
+}
+board_watch() {
+    return 0
+}
+board_volume() {
+    "$AMIXER" -q sset Master "$1%"
+}
+board_stop() {
+    return 0
+}
+board_release() {
+    return 0
+}
+case $0 in
+    */*) HOOK=${0%/*}/board-hook ;;
+    *) HOOK=./board-hook ;;
+esac
+# shellcheck source=/dev/null
+[ ! -f "$HOOK" ] || . "$HOOK"
+
+case $mode in
+    blank) board_blank; exit ;;
+    prestart) board_prestart; exit ;;
+    release) board_release; exit ;;
+    '') ;;
+    *) echo "usage: cadence-run [level | blank | prestart | release]" >&2; exit 64 ;;
+esac
+
+mkdir -p "$HOME_DIR/log"
+
+rotate() {
+    [ -f "$LOG" ] || return 0
+    # arithmetic, since wc may pad the count with spaces that test refuses
+    if [ $(($(wc -c < "$LOG"))) -gt "$LOG_LIMIT" ]; then
+        cp "$LOG" "$LOG.1" && : > "$LOG"
+    fi
+}
+
+# the last outcome, so a steady state is logged once
+volume=
+apply_volume() {
+    wanted=$(level)
+    if board_volume "$wanted" > /dev/null 2>&1; then
+        [ "$volume" = "applied $wanted" ] || note "event=volume_applied level=$wanted"
+        volume="applied $wanted"
+    else
+        [ "$volume" = failed ] || note "event=volume_failed"
+        volume=failed
+    fi
+}
+
+# keeps the log bounded while $1 runs, and gives the board's hook its look after every poll. a hook that stopped
+# something which may have moved Master (midi's stock) sets reapply, and the persisted level is set again (M2m-R7);
+# a level cadenced persisted meanwhile, which the first amixer may have overwritten, is set right after it, whether
+# lower or higher (the owner may have asked for either)
+watch() {
+    while kill -0 "$1" 2> /dev/null; do
+        rotate
+        sleep "$POLL"
+        kill -0 "$1" 2> /dev/null || break
+        reapply=
+        board_watch
+        [ -z "$reapply" ] || {
+            apply_volume
+            [ "$(level)" = "$wanted" ] || apply_volume
+        }
+    done
+}
+
+child=
+watcher=
+stop() {
+    [ -z "$watcher" ] || kill "$watcher" 2> /dev/null
+    if [ -n "$child" ]; then
+        kill -TERM "$child" 2> /dev/null
+        (sleep "$STOP_SECONDS"; kill -KILL "$child" 2> /dev/null) &
+        killer=$!
+        wait "$child"
+        # KILL, not TERM: a TERM that comes before the subshell let go of this shell's trap is lost, and the killer
+        # would outlive the stop, then KILL whatever process has the pid by then
+        kill -KILL "$killer" 2> /dev/null
+    fi
+    board_stop
+    board_blank || note "event=blank_failed"
+    note "event=stopped"
+    exit 0
+}
+trap stop TERM INT
+
+# sleeps run in the background, so a TERM is handled at once rather than after them
+backoff=$MIN_BACKOFF
+while :; do
+    until board_prestart; do
+        rotate
+        sleep "$RETRY_SECONDS" &
+        wait $!
+    done
+    board_blank || note "event=blank_failed"
+    apply_volume
+    rotate
+    note "event=start"
+    started=$(date +%s)
+    "$HOME_DIR/bin/cadenced" --config "$HOME_DIR/config.json" >> "$LOG" 2>&1 &
+    child=$!
+    watch "$child" &
+    watcher=$!
+    wait "$child"
+    rc=$?
+    kill "$watcher" 2> /dev/null
+    child=
+    watcher=
+    board_blank || note "event=blank_failed"
+    ran=$(($(date +%s) - started))
+    note "event=exit rc=$rc ran_s=$ran"
+    [ "$ran" -lt "$STABLE_SECONDS" ] || backoff=$MIN_BACKOFF
+    note "event=restart delay_s=$backoff"
+    sleep "$backoff" &
+    wait $!
+    backoff=$((backoff * 2))
+    [ "$backoff" -le "$MAX_BACKOFF" ] || backoff=$MAX_BACKOFF
+done

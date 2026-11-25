@@ -1,0 +1,7 @@
+repository: https://github.com/open-telemetry/opentelemetry-proto
+tag: v1.11.1
+commit: b3f75588eb23c5fca62264edd05d382de49beb1a
+tag-object: 58232798eae2f0d08ea6682c6885299db08177da
+released: 2026-09-29
+license: Apache-2.0 (LICENSE)
+files: collector/logs/v1/logs_service, collector/metrics/v1/metrics_service, collector/trace/v1/trace_service, logs/v1/logs, metrics/v1/metrics, trace/v1/trace, common/v1/common, resource/v1/resource

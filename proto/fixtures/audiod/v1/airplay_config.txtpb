@@ -1,0 +1,6 @@
+airplay_config {
+  enabled: true
+  name: "Cadence"
+  dir: "/data/cadence/airplay"
+  scratch_dir: "/tmp/cadence-media/airplay"
+}

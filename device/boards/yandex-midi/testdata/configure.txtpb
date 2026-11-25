@@ -1,0 +1,29 @@
+# the midi's audiod Configure, every value from v1's board profile; the supervisor adds the volume
+capture {
+  backend: BACKEND_ALSA
+  device: "default"
+  sample_rate: 48000
+  channels: 7
+  period_frames: 512
+  buffer_frames: 32768
+  layout { channels: 7 mic_channels: [0, 1, 2, 3] reference_channels: [4, 5] sample_rate: 48000 }
+  engines {
+    enabled: true
+    stock_roots: ["/usr/lib/cadence-stock", "/system/vendor/quasar", "/system/vendor/.quasar-disabled"]
+    library: "libs/libyandex_evil.so"
+    activation_model: "spotter_models/activation/alisa"
+    command_model: "/data/cadence/stock/command"
+    vqe_preset: "yandexmidi"
+    command_words: ["стоп", "хватит", "пауза", "тише", "громче", "дальше", "следующий", "назад", "продолжи", "играй", "выше", "ниже", "вправо", "влево", "вверх", "вниз", "домой", "включи свет", "выключи свет", "включи телевизор", "выключи телевизор", "включи блютуз", "выключи блютуз", "лайк", "дизлайк"]
+  }
+}
+output {
+  backend: BACKEND_ALSA
+  device: "default"
+  mixer_control: "Master"
+  channels: 2
+  period_frames: 960
+  buffer_frames: 7680
+}
+mic { sample_rate: 16000 bitrate: 24000 frame_ms: 20 }
+ca_file: "/data/cadence/share/ca-certificates.crt"

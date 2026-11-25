@@ -1,0 +1,1 @@
+session_close { session_id: "s-1" follow_up_allowed: true follow_up_window_ms: 5000 }

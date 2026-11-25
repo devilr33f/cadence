@@ -1,0 +1,107 @@
+{
+ "version": 1,
+ "id": "weather-591d34f023a306ec43",
+ "revision": 1,
+ "fallbackText": "Москва: Облачно, -2…+4 °C",
+ "root": {
+  "card": {
+   "title": "Погода · Москва",
+   "subtitle": "Облачно",
+   "icon": "cloud",
+   "tone": "TONE_NEUTRAL",
+   "children": [
+    {
+     "grid": {
+      "children": [
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "сб, 14",
+            "style": "TEXT_STYLE_META"
+           }
+          },
+          {
+           "icon": {
+            "name": "cloud",
+            "size": 32
+           }
+          },
+          {
+           "value": {
+            "value": "-2…+4",
+            "unit": "°C"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       },
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "вс, 15",
+            "style": "TEXT_STYLE_META"
+           }
+          },
+          {
+           "icon": {
+            "name": "snow",
+            "size": 32
+           }
+          },
+          {
+           "value": {
+            "value": "-5…0",
+            "unit": "°C"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       },
+       {
+        "column": {
+         "children": [
+          {
+           "text": {
+            "text": "пн, 16",
+            "style": "TEXT_STYLE_META"
+           }
+          },
+          {
+           "icon": {
+            "name": "sun",
+            "size": 32
+           }
+          },
+          {
+           "value": {
+            "value": "-6…-1",
+            "unit": "°C"
+           }
+          }
+         ],
+         "gap": "GAP_S"
+        }
+       }
+      ],
+      "columns": 3,
+      "gap": "GAP_M"
+     }
+    }
+   ]
+  }
+ },
+ "features": [
+  "card",
+  "column",
+  "grid",
+  "icon",
+  "text",
+  "value"
+ ]
+}

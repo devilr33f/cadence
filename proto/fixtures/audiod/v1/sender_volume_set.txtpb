@@ -1,0 +1,1 @@
+sender_volume_set { sender: SENDER_BLUETOOTH level: 100 }

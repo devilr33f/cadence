@@ -1,0 +1,89 @@
+{
+ "version": 1,
+ "id": "sp.track.4uLU6h",
+ "revision": 2,
+ "fallbackText": "Spotify: «Blinding Lights», The Weeknd, в избранном",
+ "root": {
+  "card": {
+   "title": "Blinding Lights",
+   "subtitle": "The Weeknd · After Hours",
+   "icon": "music",
+   "children": [
+    {
+     "row": {
+      "gap": "GAP_M",
+      "children": [
+       {
+        "image": {
+         "ref": "img:e5f6a7b8",
+         "aspect": "ASPECT_SQUARE",
+         "alt": "After Hours"
+        }
+       },
+       {
+        "column": {
+         "gap": "GAP_S",
+         "children": [
+          {
+           "row": {
+            "gap": "GAP_S",
+            "children": [
+             {
+              "badge": {
+               "kind": "BADGE_KIND_EXPLICIT"
+              }
+             },
+             {
+              "badge": {
+               "kind": "BADGE_KIND_PROVIDER",
+               "text": "Spotify"
+              }
+             }
+            ]
+           }
+          },
+          {
+           "text": {
+            "style": "TEXT_STYLE_META",
+            "text": "3:20"
+           }
+          },
+          {
+           "toggle": {
+            "label": "В избранном",
+            "on": true,
+            "action": {
+             "id": "a:sp:save"
+            }
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "actions": [
+    {
+     "label": "Включить",
+     "icon": "play",
+     "action": {
+      "id": "a:sp:play"
+     },
+     "primary": true
+    }
+   ]
+  }
+ },
+ "features": [
+  "badge",
+  "button",
+  "card",
+  "column",
+  "image",
+  "row",
+  "text",
+  "toggle"
+ ]
+}

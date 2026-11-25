@@ -1,0 +1,23 @@
+{
+  "status": "ok",
+  "json": {
+    "name": "Вечерний микс",
+    "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042",
+    "total": 12,
+    "position": 5,
+    "items": [
+      {"ref": "mq:0", "title": "Ночной паром", "subtitle": "Северные огни", "durationMs": 231000, "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042"},
+      {"ref": "mq:1", "title": "Туман над Невой", "subtitle": "Полярные огни", "durationMs": 198000, "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042"},
+      {"ref": "mq:2", "title": "Последний трамвай", "subtitle": "Городские истории", "durationMs": 245000, "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042"},
+      {"ref": "mq:3", "title": "Свет в окнах", "subtitle": "Северные огни", "durationMs": 187000, "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042"},
+      {"ref": "mq:4", "title": "Дом у воды", "subtitle": "Тихий причал", "durationMs": 263000, "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042"},
+      {"ref": "mq:5", "title": "Северное сияние", "subtitle": "Полярные огни", "durationMs": 214000, "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042"},
+      {"ref": "mq:6", "title": "Белые ночи", "subtitle": "Северные огни", "durationMs": 226000, "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042"},
+      {"ref": "mq:7", "title": "На берегу", "subtitle": "Тихий причал", "durationMs": 205000, "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042"},
+      {"ref": "mq:8", "title": "Облака над городом", "subtitle": "Городские истории", "durationMs": 252000, "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042"},
+      {"ref": "mq:9", "title": "Далёкий маяк", "subtitle": "Северные огни", "durationMs": 219000, "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042"},
+      {"ref": "mq:10", "title": "Первый снег", "subtitle": "Полярные огни", "durationMs": 238000, "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042"},
+      {"ref": "mq:11", "title": "Тихий рассвет", "subtitle": "Тихий причал", "durationMs": 194000, "artworkUrl": "https://cadence.example/v2/images/fakeart00000000000000042"}
+    ]
+  }
+}

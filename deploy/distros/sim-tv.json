@@ -1,0 +1,125 @@
+{
+  "$schema": "./schema.json",
+  "name": "sim-tv",
+  "board": "sim-tv",
+  "kind": "screen",
+  "status": "planned",
+  "os": "linux",
+  "arch": [
+    "amd64",
+    "arm64"
+  ],
+  "package": {
+    "format": "image",
+    "output": "cadence-sim-tv:{version}"
+  },
+  "builder": {
+    "dockerfile": "deploy/builder/screen.Dockerfile",
+    "command": "make dist DISTRO=sim-tv"
+  },
+  "runtime": {
+    "libc": "glibc"
+  },
+  "serverUrl": null,
+  "components": [
+    "cadenced",
+    "cadence-audiod",
+    "cadence-screen",
+    "libairplay"
+  ],
+  "media": {
+    "url": false,
+    "airplay": "uxplay",
+    "audioBackend": "sim",
+    "soloistJail": false,
+    "staticLink": false,
+    "screen": true,
+    "video": "mpv-render"
+  },
+  "dependencies": [
+    {
+      "name": "sdl3",
+      "source": "system",
+      "use": "both",
+      "distro": "debian-trixie",
+      "packages": [
+        "libsdl3-dev"
+      ],
+      "license": "Zlib",
+      "note": "the code stays within SDL 3.2's API",
+      "snapshot": "20261104T212339Z"
+    },
+    {
+      "name": "mpv",
+      "source": "tarball",
+      "use": "both",
+      "version": "0.40.0-3+deb13u1",
+      "license": "GPL-2.0-or-later",
+      "pinsFile": "media/third_party/mpv/mpv.pins",
+      "note": "trixie's mpv source package rebuilt with the ao_cadence patch as a quilt patch (make mpv MPV_TARGET=deb-0.40, debs versioned +cadence1); libmpv2 and libmpv-dev replace the distro's, against its own ffmpeg"
+    },
+    {
+      "name": "ffmpeg-audiod",
+      "source": "system",
+      "use": "both",
+      "distro": "debian-trixie",
+      "packages": [
+        "libavcodec-dev"
+      ],
+      "note": "AirPlay's AAC-ELD and ALAC for audiod",
+      "snapshot": "20261104T212339Z"
+    },
+    {
+      "name": "airplay-libs",
+      "source": "system",
+      "use": "both",
+      "distro": "debian-trixie",
+      "packages": [
+        "libssl-dev",
+        "libplist-2.0-dev",
+        "libavahi-client-dev"
+      ],
+      "snapshot": "20261104T212339Z"
+    },
+    {
+      "name": "freetype",
+      "source": "system",
+      "use": "both",
+      "distro": "debian-trixie",
+      "packages": [
+        "libfreetype-dev"
+      ],
+      "snapshot": "20261104T212339Z"
+    },
+    {
+      "name": "rmlui",
+      "source": "vcpkg",
+      "use": "build",
+      "port": "rmlui",
+      "triplet": "arm64-linux",
+      "license": "MIT",
+      "pending": "the vcpkg baseline commit in vcpkg.json (stream E); spike S1 used RmlUi 6.3 at ba95ffe8"
+    },
+    {
+      "name": "uxplay",
+      "source": "submodule",
+      "use": "build",
+      "path": "media/third_party/uxplay",
+      "repository": "https://github.com/FDH2/UxPlay",
+      "commit": "df67c212a433cf6dda3676dd40c097900d24e645",
+      "patches": "media/third_party/android-airplay-server/app/src/main/cpp/patches/UxPlay",
+      "license": "GPL-3.0-or-later",
+      "note": "lib/ only (v1.73.7), android-airplay-server's UxPlay pin, built as libairplay (media/third_party/uxplay.cmake) with its 9 patches applied out of tree by deploy/builder/apply-patches.sh"
+    },
+    {
+      "name": "android-airplay-server",
+      "source": "submodule",
+      "use": "build",
+      "path": "media/third_party/android-airplay-server",
+      "repository": "https://github.com/jqssun/android-airplay-server",
+      "commit": "a46cca0a6a1274e9e33c0e750f0f1c1eb1d881ea",
+      "license": "GPL-3.0-or-later",
+      "note": "v0.0.36, for its UxPlay patch series alone; its own submodules (UxPlay, libplist, openssl-cmake, FFmpeg) are never initialised"
+    }
+  ]
+}

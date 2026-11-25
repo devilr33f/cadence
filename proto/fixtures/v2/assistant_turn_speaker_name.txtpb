@@ -1,0 +1,8 @@
+assistant_turn {
+  turn_id: "turn-5"
+  revision: 1
+  origin_device_id: "0f8fad5b-d9cb-469f-a165-70867728950e"
+  trigger: TRIGGER_BUTTON
+  state: ASSISTANT_STATE_INVOKED
+  mic_source { kind: MIC_SOURCE_KIND_SPEAKER device_id: "0f8fad5b-d9cb-469f-a165-70867728950e" device_name: "Кухня" }
+}

@@ -1,0 +1,12 @@
+services:
+  cadence-v2:
+    environment:
+      CADENCE_YANDEX_PROXY_LISTEN: :7443
+      CADENCE_YANDEX_PROXY_CA_CERT: /run/yandex/ca.pem
+      CADENCE_YANDEX_PROXY_CA_KEY: /run/yandex/ca.key
+    volumes:
+      - ./config/yandex-ca.pem:/run/yandex/ca.pem:ro
+      - ./config/yandex-ca.key:/run/yandex/ca.key:ro
+    # dnat a station's tcp/443 here; do not expose this listener to the internet
+    ports:
+      - "${CADENCE_YANDEX_PROXY_BIND:-0.0.0.0}:${CADENCE_YANDEX_PROXY_PORT:-7443}:7443"

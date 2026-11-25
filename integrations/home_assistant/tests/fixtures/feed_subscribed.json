@@ -1,0 +1,10 @@
+{
+  "type": "subscribed",
+  "topics": [
+    "devices",
+    "media",
+    "vitals",
+    "groups",
+    "alarms"
+  ]
+}
