@@ -76,6 +76,14 @@ sh "$qs/setup.sh" --no-password </dev/null >"$tmp/out" 2>&1 || fail "--no-passwo
 echo 'a-long-password-3' | sh "$qs/setup.sh" >"$tmp/out" 2>&1 || fail "the run after --no-password failed"
 [ "$(passwords)" = 1 ] || fail "the run after --no-password asked none"
 
+# a checkout's version is its git describe (git for windows reads no msys path with MSYS_NO_PATHCONV set)
+stack versioned 'CADENCE_HOST=cadence.lan'
+(cd "$tmp/versioned" && git init -q && git -c user.name=t -c user.email=t@example.com -c commit.gpgsign=false add -A &&
+  git -c user.name=t -c user.email=t@example.com -c commit.gpgsign=false commit -q -m init)
+echo 'a-long-password-4' | sh "$qs/setup.sh" >"$tmp/out" 2>&1 || fail "the versioned run failed: $(cat "$tmp/out")"
+want=$(cd "$tmp/versioned" && git describe --always --dirty)
+[ "$(val CADENCE_VERSION)" = "$want" ] || fail "version $(val CADENCE_VERSION), want $want"
+
 # a host with a scheme is refused before docker builds anything
 stack scheme 'CADENCE_HOST=https://cadence.lan'
 if sh "$qs/setup.sh" </dev/null >"$tmp/out" 2>&1; then fail "a host with a scheme passed"; fi

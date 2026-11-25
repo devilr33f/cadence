@@ -98,7 +98,8 @@ case $(uname -m) in
   *) die "this machine's cpu ($(uname -m)) has no server image: amd64 or arm64 only" ;;
 esac
 env_set CADENCE_ARCH "$arch"
-env_set CADENCE_VERSION "$(git -C "$root" describe --always --dirty 2>/dev/null || echo quickstart)"
+# from inside the checkout: git for windows takes no msys path once MSYS_NO_PATHCONV is set
+env_set CADENCE_VERSION "$(cd "$root" && git describe --always --dirty 2>/dev/null || echo quickstart)"
 mkdir -p data/ca-certs
 
 command -v bash >/dev/null 2>&1 || die "bash is needed for the prebuilt ffmpeg fetch"
