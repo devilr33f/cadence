@@ -624,18 +624,18 @@ Run everything from the repo root (Git Bash on Windows). Host needs Go 1.27, mak
   rooms, ambient and the remote find no screen) and shows `available` in the detail. Nothing is reported again, so
   config and secrets survive an unplug. The dashboard sees a flip at its next detail fetch: no live event carries it
   yet. Only rpi uses it.
-- **RPi screen hot-plug (owner-attended):** only a fake sysfs and a fake unit control have run it. On a Pi with
+- **RPi screen hot-plug (owner-attended):** the Pi otherwise works (owner, 2026-11-25); its hot-plug has run only
+  against a fake sysfs and a fake unit control. On a Pi with
   nothing on either HDMI port: after the deb upgrade, `cadence-screen.service` is `static`, inactive and no longer
   restarting, `cec_claimed` is not repeated, and the dashboard marks the five screen capabilities Unavailable; then a
   display plugged in starts the screen within ~4 s (`hdmi_sink connected=true`), CEC finds the tv, and unplugging
   stops it. Unchecked: whether vc4 holds `connected` through a tv's standby, and whether SDL's kmsdrm exits cleanly
   when its connector goes before cadenced stops it.
-- **Micro (Lite) experimental bring-up (owner-attended):** `yandex-micro` supports only the probed Station Micro v1.2
+- **Micro (Lite) (owner-attended):** `yandex-micro` supports only the probed Station Micro v1.2
   on firmware `0.369.1.48.4790768027.20261019.297`; its slim 24 MiB tarball fits the 87.5 MiB `/data` by omitting
   Soloist and AirPlay. Bluetooth receive uses the stock BlueZ/bluealsa services, and multiroom needs no extra runtime.
-  Cadence enrolled, linked and started the stock wake/VQE engines on
-  2026-11-16; an actual voice turn, microphone quality, URL playback, alarms, buttons and the three LEDs' colour order
-  and orientation have not had physical acceptance. The mute key is deliberately unmapped. Root ADB uses the stock
+  Cadence enrolled, linked and started the stock wake/VQE engines on 2026-11-16, and the owner reports it works
+  (2026-11-25). The mute key is deliberately unmapped. Root ADB uses the stock
   persistent markers and must stay available (the provisioning proxy keeps them refreshed); OTA hardening remains
   `not_inspected`, so every install or stock restore needs `--ota-blocked`. See `deploy/micro/README.md`.
 - **VK Capsula Mini bring-up (owner-attended; agents never run these on the device):** one unit (the A113X, firmware
@@ -646,16 +646,13 @@ Run everything from the repo root (Git Bash on Windows). Host needs Go 1.27, mak
     `--restore-stock`, the stock holding the watchdog again with no reset; a reinstall over the running stock; the
     mute key (injected through evdev); `arecord` from `single_plugin` and `aplay` of silence; the clock rendering per
     its map; ambient brightness. Idle on M1: cadenced RSS 21 MB, audiod 7.5 MB, about 8 % CPU, `/data/cadence` 25 MB.
+  - Since then the owner reports the Capsula working, talk-key turns included, except its wake word (2026-11-25): the
+    «Маруся» wake (M2 below) does not wake it yet, so a turn starts from the talk key.
   - Still to see:
-    - a talk-key turn, with audiod's own capture through `single_plugin` and its playback: audiod never opened
-      `single_plugin` on the unit (M1 opens it only per session, and no turn ran), so the vendor plugin in audiod's
-      process is unproven;
-    - the M2 tarball on the A53, never run there: `vendor_status code=keyword`, `kws_started invoke_ms` (the shipped
-      TFLM build measured 22.95/23.45 ms p50/p90 a call there in a standalone benchmark, not inside audiod), audiod's
-      RSS and CPU with the vendor plugin held open, and a live `WakeEvent`;
-    - the listening check: `TV-Set` loudness (an attenuator or an input to the amp's processing) and the level
-      mapping; volume keys;
-    - the ring's orientation and colour order; an alarm ringing offline (owner only);
+    - why the M2 wake does not fire on the A53: `vendor_status code=keyword`, `kws_started invoke_ms` (the shipped
+      TFLM build measured 22.95/23.45 ms p50/p90 a call there in a standalone benchmark, not inside audiod), the
+      keyword scores real voices reach against the 0.999 gate, audiod's RSS and CPU with the vendor plugin held open,
+      and a live `WakeEvent`;
     - `gpio446`: whether it is the hardware mic gate (watch it while toggling mute); if so the board drives it too;
     - magic close: whether `meson_wdt` honours it is unmeasured, and the design does not depend on it (the feeder
       never writes it: a feeder that ends leaves the watchdog running for the next holder, or for a reset).
